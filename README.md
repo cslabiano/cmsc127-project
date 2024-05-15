@@ -2,8 +2,8 @@
 
 ### Technology Stack
 
-- '''Backend:''' MariaDB
-- '''Frontend:''' Python
+- **Backend:** MariaDB
+- **Frontend:** Python
 
 ### Core Contributors
 
