@@ -1,4 +1,5 @@
 import React from 'react';
+import KusinaButton from '../components/KusinaButton';
 
 function Signup() {
     return (
@@ -16,9 +17,7 @@ function Signup() {
                 </div>
                 
             <div className='pt-6'>
-                <button className='px-20 rounded-full bg-gradient-to-r from-kusinaprimary to-kusinaprimarylight outline-none py-3 text-white font-medium 
-                                    hover:from-kusinaprimarylight hover:to-kusinaprimary shadow-lg'>
-                                        Sign up</button>
+                <KusinaButton link='/kusina' action='Sign up' />
             </div>
             <div className='pt-5 text-kusinablack font-medium text-xs text-left w-full max-w-xs px-11'>
                Already have an account? <a  className='text-kusinaprimary font-semibold hover:text-kusinaprimarylight' href='/'>Tara, tuloy ka</a>
