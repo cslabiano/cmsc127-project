@@ -545,16 +545,16 @@ function KusinaMenu() {
               </div>
 
               <div className="flex justify-end">
-                {/* <button
+                <button
                   type="submit"
                   className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
                   //   onClick={}
                 >
-                  Apply Changes
-                </button> */}
+                  Add food item
+                </button>
                 <button
                   type="button"
-                  className="ml-4 bg-neutral hover:bg-grn-i hover:text-neutral text-grn-i font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                  className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
                   onClick={() => document.getElementById("add_modal").close()}
                 >
                   Cancel
