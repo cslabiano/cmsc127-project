@@ -6,7 +6,7 @@ USE kusina;
 CREATE OR REPLACE TABLE user(
     user_id int(4) NOT NULL AUTO_INCREMENT,
     user_name varchar(15) NOT NULL,
-    password varchar(15) NOT NULL,
+    password longtext NOT NULL,
     primary key (user_id),
     constraint user_user_name_uk unique(user_name)
 );
@@ -39,7 +39,7 @@ CREATE OR REPLACE TABLE item(
 CREATE OR REPLACE TABLE estabcontact(
 	estab_id int(4) NOT NULL,
 	contact int(11) NOT NULL,
-	primary key(estab_id),
+	primary key(estab_id, contact),
 	constraint estabcontact_estab_id_fk foreign key(estab_id) references establishment(estab_id)	
 );
 
@@ -57,7 +57,7 @@ CREATE OR REPLACE TABLE estabreview(
 	time time default curtime() NOT NULL,
 	rating int(1) NOT NULL,
 	comment varchar(500),
-	primary key(user_id, estab_id, date, time),
+	primary key(user_id, estab_id, date, time, rating, comment),
 	constraint estabreview_user_id_fk foreign key(user_id) references user(user_id),
 	constraint estabreview_estab_id_fk foreign key(estab_id) references establishment(estab_id)
 );
@@ -69,7 +69,7 @@ CREATE OR REPLACE TABLE itemreview(
 	time time default curtime() NOT NULL,
 	rating int(1) NOT NULL,
 	comment varchar(500),
-	primary key(user_id, item_id, date, time),
+	primary key(user_id, item_id, date, time, rating, comment),
 	constraint itemreview_user_id_fk foreign key(user_id) references user(user_id),
 	constraint itemreview_item_id_fk foreign key(item_id) references item(item_id)
 );
