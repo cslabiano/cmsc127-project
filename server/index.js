@@ -14,6 +14,7 @@ const db = mysql.createConnection({
 });
 
 db.connect((err) => {
+  //connecting the database
   if (err) {
     console.error("Error connecting to the database:", err);
     return;
@@ -21,9 +22,8 @@ db.connect((err) => {
   console.log("Connected to the MySQL server.");
 });
 
-/*************** IUSER TABLE ***************/
-
 app.get("/users", (req, res) => {
+  //getting all users
   const sql = "SELECT * FROM user";
   db.query(sql, (err, data) => {
     if (err) return res.json(err);
@@ -32,6 +32,7 @@ app.get("/users", (req, res) => {
 });
 
 app.post("/users", (req, res) => {
+  //for signing up
   const { user_name, password } = req.body;
 
   const checkUserSql = "SELECT * FROM user WHERE user_name = ?";
