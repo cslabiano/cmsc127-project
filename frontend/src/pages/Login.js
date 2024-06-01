@@ -9,22 +9,36 @@ function Login() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    useEffect(()=>{
-        fetch('http://localhost:3001/users')
-        .then(res => res.json())
-        .then(data => setData(data))
-        .catch(err => console.log(err));
-    }, [])
-
     const handleLogin = () => {
-        const user = data.find(user => user.user_name === inputUsername && user.password === inputPassword);
-        if (user && inputUsername !== '' && inputPassword !== '') {
-            navigate('/kusina');
-        } else if(inputUsername === '' || inputPassword === '') {
-            setError('No username or password entered');
-        } else {
-            setError('Invalid username or password');
+
+        if(inputUsername.trim() === '' || inputPassword.trim() === '') {
+            setError('Username and password cannot be empty');
+            return;
         }
+
+        fetch('http://localhost:3001/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_name: inputUsername,
+                password: inputPassword
+            })
+        })
+        .then(res => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                return res.json().then(error => {throw new Error(error.error)})
+            }
+        })
+        .then(() => {
+            navigate('/kusina');
+        })
+        .catch(err => {
+            setError(err.message);
+        })
     }
 
     const handleKeyPress = (e) => {

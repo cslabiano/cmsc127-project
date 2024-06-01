@@ -22,16 +22,25 @@ db.connect((err) => {
   console.log("Connected to the MySQL server.");
 });
 
-app.get("/users", (req, res) => {
+/*********** USER TABLE ************/
+
+app.post("/login", (req, res) => {
   //getting all users
-  const sql = "SELECT * FROM user";
-  db.query(sql, (err, data) => {
-    if (err) return res.json(err);
-    return res.json(data);
+  const { user_name, password} = req.body;
+
+  const getUserSql = "SELECT * FROM user WHERE user_name = ? AND password = PASSWORD(?)";
+  db.query(getUserSql, [user_name, password], (err, results) => {
+    if (err) return res.status(500).json({ error: err});
+    
+    if (results.length === 0) {
+      return res.status(401).json({ error: "Invalid username or password"});
+    }
+
+    return res.status(200).json({ message: "Login successful"});
   });
 });
 
-app.post("/users", (req, res) => {
+app.post("/signup", (req, res) => {
   //for signing up
   const { user_name, password } = req.body;
 
@@ -42,7 +51,7 @@ app.post("/users", (req, res) => {
       return res.status(400).json({ error: "User already exists" });
     }
 
-    const insertUserSql = "INSERT INTO user(user_name, password) VALUES (?, ?)";
+    const insertUserSql = "INSERT INTO user(user_name, password) VALUES (?, PASSWORD(?))";
     db.query(insertUserSql, [user_name, password], (err, results) => {
       if (err) return res.status(500).json({ error: err });
       return res.status(201).json({ message: "User registered successfully" });

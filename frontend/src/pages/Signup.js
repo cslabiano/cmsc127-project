@@ -19,7 +19,7 @@ function Signup() {
             setError('Password must at least have 6 characters');
             return;
         }
-        fetch('http://localhost:3001/users', {
+        fetch('http://localhost:3001/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
