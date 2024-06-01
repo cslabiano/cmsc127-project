@@ -21,6 +21,14 @@ db.connect((err) => {
   console.log("Connected to the MySQL server.");
 });
 
+app.get('/users', (req, res) => {
+    const sql = "SELECT * FROM user";
+    db.query(sql, (err, data) => {
+        if(err) return res.json(err);
+        return res.json(data);
+    })
+})
+
 app.post("/users", (req, res) => {
   const { user_name, password } = req.body;
 
