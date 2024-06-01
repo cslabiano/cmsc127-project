@@ -9,7 +9,7 @@ app.use(express.json());
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "mandyjenny",
+  password: "1234",
   database: "kusina",
 });
 
@@ -131,6 +131,36 @@ app.delete("/items/:item_id", (req, res) => {
     return res.json({ message: "Item deleted successfully" });
   });
 });
+
+app.post("/establishments", (req, res) => {
+  const { estab_name, address} = req.body;
+
+  const checkEstabSql = "SELECT * FROM establishment where estab_name = ? and address = ?";
+  db.query(checkEstabSql, [estab_name, address], (err, results) => {
+    if (err) return res.status(500).json({ error: err});
+    if (results.length > 0) {
+      return res.status(400).json({error: "Establishment in that address already exists"});
+    }
+
+    const insertEstabSql = "INSERT INTO establishment(estab_name, address) VALUES (?, ?)";
+    db.query(insertEstabSql, [estab_name, address], (err, results) => {
+      if (err) return res.status(500).json({error: err});
+      return res.status(201).json({message: "Establishment added successfully"});
+    })
+  })
+})
+
+app.post("/establishmentSearch", (req, res) => {
+  const { estab_name } = req.body;
+
+  const findEstabSql = "SELECT * FROM establishment where LOWER(estab_name) LIKE LOWER(?)";
+  db.query(findEstabSql, [`%${estab_name}%`], (err, results) => {
+    if (err) return res.status(500).json({error: err});
+    if (results.length > 0) {
+      return res.status(200).json(results);
+    }
+  })
+})
 
 app.listen(3001, () => {
   console.log("Listening to port 3001");
