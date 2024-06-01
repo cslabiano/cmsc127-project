@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import KusinaButton from '../components/KusinaButton';
 import { useNavigate } from 'react-router-dom';
 
 function Signup() {
-    const [data, setData] = useState([]);
     const [inputUsername, setInputUsername] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const [error, setError] = useState('');
@@ -45,6 +44,12 @@ function Signup() {
         })
     }
 
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSignup();
+        }
+    }
+
     return (
         <div className='bg-kusinabg min-h-screen min-w-screen flex flex-col items-center justify-center'>
             <div className='text-kusinaprimary font-bold text-4xl pb-5 text-left w-full max-w-xs px-11'>
@@ -52,10 +57,10 @@ function Signup() {
             </div>
                 <div className='flex flex-col align-middle justify-center items-center'>
                     <div className='pb-4'>
-                        <input type="text" placeholder="Username" onChange={(e)=>setInputUsername(e.target.value)} className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
+                        <input type="text" placeholder="Username" onChange={(e)=>setInputUsername(e.target.value)} onKeyPress={handleKeyPress} className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
                     </div>
                     <div className=''>
-                        <input type="password" placeholder="Password" onChange={(e)=>setInputPassword(e.target.value)} className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
+                        <input type="password" placeholder="Password" onChange={(e)=>setInputPassword(e.target.value)} onKeyPress={handleKeyPress} className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
                     </div>
                 </div>
                 {error && <div className='text-kusinaprimarylight text-sm'>{error}</div>}

@@ -18,12 +18,18 @@ function Login() {
 
     const handleLogin = () => {
         const user = data.find(user => user.user_name === inputUsername && user.password === inputPassword);
-        if (user && inputUsername != '' && inputPassword != '') {
+        if (user && inputUsername !== '' && inputPassword !== '') {
             navigate('/kusina');
-        } else if(inputUsername == '' || inputPassword == '') {
+        } else if(inputUsername === '' || inputPassword === '') {
             setError('No username or password entered');
         } else {
             setError('Invalid username or password');
+        }
+    }
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleLogin();
         }
     }
 
@@ -34,10 +40,10 @@ function Login() {
             </div>
                 <div className='flex flex-col align-middle justify-center items-center'>
                     <div className='pb-4'>
-                        <input type="text" value={inputUsername} onChange={(e)=>setInputUsername(e.target.value)} placeholder="Username" className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
+                        <input type="text" value={inputUsername} onChange={(e)=>setInputUsername(e.target.value)} onKeyPress={handleKeyPress} placeholder="Username" className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
                     </div>
                     <div className=''>
-                        <input type="password" value={inputPassword} placeholder="Password" onChange={(e)=>setInputPassword(e.target.value)} className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
+                        <input type="password" value={inputPassword} placeholder="Password" onChange={(e)=>setInputPassword(e.target.value)} onKeyPress={handleKeyPress} className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
                     </div>
                 </div>
                 {error && <div className='text-kusinaprimarylight text-sm'>{error}</div>}
