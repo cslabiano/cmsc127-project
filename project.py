@@ -7,7 +7,7 @@ class UI(QMainWindow):
         super(UI, self).__init__()
 
         # Load the UI file
-        uic.loadUi("test.ui", self)
+        uic.loadUi("test2.ui", self)
 
         # Define the widgets from the UI file
         self.button = self.findChild(QPushButton, "pushButton")
