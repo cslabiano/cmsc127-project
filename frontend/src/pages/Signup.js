@@ -10,6 +10,16 @@ function Signup() {
     const navigate = useNavigate();
 
     const handleSignup = () => {
+
+        if(inputUsername.trim() === '' || inputPassword.trim() === '') {
+            setError('Username and password cannot be empty');
+            return;
+        }
+
+        if(inputPassword.length < 6) {
+            setError('Password must at least have 6 characters');
+            return;
+        }
         fetch('http://localhost:3001/users', {
             method: 'POST',
             headers: {
@@ -44,13 +54,13 @@ function Signup() {
                     <div className='pb-4'>
                         <input type="text" placeholder="Username" onChange={(e)=>setInputUsername(e.target.value)} className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
                     </div>
-                    <div className='pb-2'>
+                    <div className=''>
                         <input type="password" placeholder="Password" onChange={(e)=>setInputPassword(e.target.value)} className="input input-bordered input-accent w-full max-w-xs placeholder-accent bg-transparent" />
                     </div>
                 </div>
-                {error && <div className='text-kusinaprimary '>{error}</div>}
+                {error && <div className='text-kusinaprimarylight text-sm'>{error}</div>}
             <div className='pt-6'>
-                <KusinaButton link='/' action='Sign up' onClick={handleSignup}/>
+                <KusinaButton action='Sign up' onClick={handleSignup}/>
             </div>
             <div className='pt-5 text-kusinablack font-medium text-xs text-left w-full max-w-xs px-11'>
                Already have an account? <a  className='text-kusinaprimary font-semibold hover:text-kusinaprimarylight' href='/'>Tara, tuloy ka</a>
