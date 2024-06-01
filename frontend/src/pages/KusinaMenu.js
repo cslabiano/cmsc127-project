@@ -14,6 +14,7 @@ function KusinaMenu() {
   const [between, setBetween] = useState(false);
   const [minprice, setMinPrice] = useState(0);
   const [maxprice, setMaxPrice] = useState(0);
+  const [itemClassifications, setItemClassifications] = useState([]);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -35,6 +36,16 @@ function KusinaMenu() {
       />
     );
   }
+
+  const toggleClassification = (classType) => {
+    if (itemClassifications.includes(classType)) {
+      setItemClassifications(
+        itemClassifications.filter((cls) => cls !== classType)
+      );
+    } else {
+      setItemClassifications([...itemClassifications, classType]);
+    }
+  };
 
   return (
     <>
@@ -93,13 +104,22 @@ function KusinaMenu() {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-10"
           >
-            <div className="flex flex-col justify-center items-center">
-              <div className="flex justify-center bg-kusinaprimary text-white rounded-3xl mt-10">
-                <button className=" text-kusinabg font-semibold px-8 py-3">
-                  Add a Food Item
-                </button>
+            <div className="flex flex-col justify-center">
+              <div className="flex justify-center">
+                {" "}
+                {/* Add this div to center the button */}
+                <div className="flex w-56 justify-center bg-kusinaprimary text-white rounded-3xl mt-10">
+                  <button
+                    className="text-kusinabg font-semibold px-8 py-3"
+                    onClick={() =>
+                      document.getElementById("add_modal").showModal()
+                    }
+                  >
+                    Add a Food Item
+                  </button>
+                </div>
               </div>
-              <p className="pt-10">or</p>
+              <p className="pt-10 text-center">or</p>
               <div className="py-10 flex justify-center">
                 <KusinaSearchBar placeholder="Search for a food item..." />
               </div>
@@ -110,7 +130,7 @@ function KusinaMenu() {
                 </div>
               </button>
               {showPopup && (
-                <div className="popup flex justify-around flex-wrap animate-transitionIn">
+                <div className="popup flex justify-between flex-wrap animate-transitionIn">
                   <div className="Category mt-8 flex align-middle">
                     <p className="px-4 py-2 text-grn-i font-bold">
                       Classification:
@@ -350,7 +370,6 @@ function KusinaMenu() {
                   Absolutely loved the ambiance and the food quality.
                 </p>
               </div>
-              {/* Add more reviews as needed */}
             </div>
           </div>
         </div>
@@ -365,6 +384,7 @@ function KusinaMenu() {
               //   onSubmit={handleSubmit}
             >
               <div className="mb-2">
+                <p className="mb-2">Name:</p>
                 <input
                   type="text"
                   id="name"
@@ -372,27 +392,29 @@ function KusinaMenu() {
                   placeholder="Name"
                   //   value={editData.name || ""}
                   //   onChange={handleInfoChange}
-                  value="Food Establishment"
+                  //   value="Food Establishment"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
               <div className="mb-2">
+                <p className="mb-2">Address:</p>
                 <input
                   type="text"
                   id="address"
                   name="address"
-                  placeholder="Middle Name"
-                  value="Address of the food establishment"
+                  placeholder="Address"
+                  //   value="Address of the food establishment"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
               <div className="mb-2">
+                <p className="mb-2">Contact No:</p>
                 <input
                   type="text"
                   id="contact"
                   name="contact"
-                  placeholder="Last Name"
-                  value="09XXXXXXXXX"
+                  placeholder="Contact"
+                  //   value="09XXXXXXXXX"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
@@ -408,6 +430,132 @@ function KusinaMenu() {
                   type="button"
                   className="ml-4 bg-neutral hover:bg-grn-i hover:text-neutral text-grn-i font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
                   onClick={() => document.getElementById("my_modal_1").close()}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="add_modal" className="modal">
+          <div className="modal-box bg-white text-kusinaprimary">
+            <h3 className="font-bold text-lg pb-5">Add Food Item</h3>
+            <form
+              method="dialog"
+              className="modal-content"
+              //   onSubmit={handleSubmit}
+            >
+              <div className="mb-2">
+                <p className="mb-2">Food Item Name:</p>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Item Name"
+                  //   value={editData.name || ""}
+                  //   onChange={handleInfoChange}
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              </div>
+              <div className="mb-2">
+                <p className="mb-2">Description:</p>
+                <input
+                  type="text"
+                  id="desc"
+                  name="desc"
+                  placeholder="Description"
+                  //   value={editData.name || ""}
+                  //   onChange={handleInfoChange}
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              </div>
+              <div className="mb-2">
+                <p className="mb-2">Price:</p>
+                <input
+                  type="number"
+                  id="price"
+                  name="price"
+                  placeholder="0"
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              </div>
+              <div className="mb-2">
+                <p className="mb-2">Classification:</p>
+                <div className="flex gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => toggleClassification("meat")}
+                    className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
+                      itemClassifications.includes("meat")
+                        ? "bg-kusinaprimary text-white"
+                        : "bg-kusinabg text-kusinaprimary"
+                    }`}
+                  >
+                    Meat
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleClassification("vegetable")}
+                    className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
+                      itemClassifications.includes("vegetable")
+                        ? "bg-kusinaprimary text-white"
+                        : "bg-kusinabg text-kusinaprimary"
+                    }`}
+                  >
+                    Vegetable
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleClassification("dairy")}
+                    className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
+                      itemClassifications.includes("dairy")
+                        ? "bg-kusinaprimary text-white"
+                        : "bg-kusinabg text-kusinaprimary"
+                    }`}
+                  >
+                    Dairy
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleClassification("pastry")}
+                    className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
+                      itemClassifications.includes("pastry")
+                        ? "bg-kusinaprimary text-white"
+                        : "bg-kusinabg text-kusinaprimary"
+                    }`}
+                  >
+                    Pastry
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleClassification("beverage")}
+                    className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
+                      itemClassifications.includes("beverage")
+                        ? "bg-kusinaprimary text-white"
+                        : "bg-kusinabg text-kusinaprimary"
+                    }`}
+                  >
+                    Beverage
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                {/* <button
+                  type="submit"
+                  className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                  //   onClick={}
+                >
+                  Apply Changes
+                </button> */}
+                <button
+                  type="button"
+                  className="ml-4 bg-neutral hover:bg-grn-i hover:text-neutral text-grn-i font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                  onClick={() => document.getElementById("add_modal").close()}
                 >
                   Cancel
                 </button>
