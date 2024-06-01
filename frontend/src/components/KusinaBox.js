@@ -18,7 +18,7 @@ const KusinaBox = (props) => {
 
   return (
     <>
-      <div className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary scale-75">
+      <div className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary">
         <figure>
           <img src={props.image} alt={`Photo of  ${props.name}`} />
         </figure>

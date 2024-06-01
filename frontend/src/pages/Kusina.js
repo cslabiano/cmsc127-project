@@ -9,7 +9,7 @@ function Kusina() {
       <div className="z-10">
         <KusinaNavBar />
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col mt-36 mb-36">
         <div className="flex flex-col items-center justify-center">
           <div className="pt-20">
             <KusinaSearchBar placeholder="Search a kusina" />
