@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import KusinaNavBar from "../components/KusinaNavBar";
 import KusinaSearchBar from "../components/KusinaSearchBar";
+import KusinaBox from "../components/KusinaBox";
 
 function Kusina() {
   const [sort, setSort] = useState("High");
@@ -49,7 +50,11 @@ function Kusina() {
           </div>
         </div>
         <hr className="mt-10 border-gray-500"></hr>
-        <div className="flex pt-10">
+        <KusinaBox image={"https://cdn.vox-cdn.com/thumbor/5d_RtADj8ncnVqh-afV3mU-XQv0=/0x0:1600x1067/1200x900/filters:focal(672x406:928x662)/cdn.vox-cdn.com/uploads/chorus_image/image/57698831/51951042270_78ea1e8590_h.7.jpg"} 
+                    name={"Mommy Lode's"} 
+                    address={"Square, Los Baños, Laguna"}
+                    rating={"4.8"} />
+        {/* <div className="flex pt-10">
           <div className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary">
             <figure>
               <img
@@ -105,10 +110,10 @@ function Kusina() {
               {/* <div className="card-actions justify-end">
               <div className="badge badge-outline">Fashion</div>
               <div className="badge badge-outline">Products</div>
-            </div> */}
+            </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

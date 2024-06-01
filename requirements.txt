@@ -1,9 +1,0 @@
-# for presentation
-PyQt5==5.15.9
-PyQt5-Qt5==5.15.2
-PyQt5-sip==12.11.0
-
-# for development
-pyqt5-tools==5.15.9.3.3
-pyqt5-plugins==5.15.9.2.3
-sip==6.8.3

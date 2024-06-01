@@ -1,16 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
-function KusinaButton ({link, action}) {
+function KusinaButton ({action, onClick}) {
     return (
         <div>
-            <Link to={link}>
                 <button className='px-20 rounded-full bg-gradient-to-r from-kusinaprimary to-kusinaprimarylight outline-none py-3 text-white font-medium 
                                     hover:from-kusinaprimarylight hover:to-kusinaprimary shadow-lg'
+                        onClick={(e) => {e.preventDefault(); if (onClick) onClick();}}         
                         >
                         {action}
                 </button>
-            </Link>
         </div>
     )
 }

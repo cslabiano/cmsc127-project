@@ -7,14 +7,7 @@ import KusinaMenu from "./pages/KusinaMenu";
 import KusinaFood from "./pages/KusinaFood";
 
 function App() {
-  // const [data, setData] = useState([]);
 
-  // useEffect(()=>{
-  //   fetch('http://localhost:3001/users')
-  //   .then(res => res.json())
-  //   .then(data => setData(data))
-  //   .catch(err => console.log(err));
-  // }, [])
   return (
     <Router>
       <div>
