@@ -63,7 +63,11 @@ function KusinaMenu() {
             </h2>
             <div className="rating rating-lg mt-4">{stars}</div>
             <div className="flex justify-end mt-4">
-              <button>
+              <button
+                onClick={() =>
+                  document.getElementById("my_modal_1").showModal()
+                }
+              >
                 <img src={edit_icon} className="h-10 pl-2 pt-2"></img>
               </button>
               <button>
@@ -350,6 +354,67 @@ function KusinaMenu() {
             </div>
           </div>
         </div>
+        <dialog id="my_modal_1" className="modal">
+          <div className="modal-box bg-white text-kusinaprimary">
+            <h3 className="font-bold text-lg pb-5">
+              Edit Establishment Details
+            </h3>
+            <form
+              method="dialog"
+              className="modal-content"
+              //   onSubmit={handleSubmit}
+            >
+              <div className="mb-2">
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Name"
+                  //   value={editData.name || ""}
+                  //   onChange={handleInfoChange}
+                  value="Food Establishment"
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              </div>
+              <div className="mb-2">
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  placeholder="Middle Name"
+                  value="Address of the food establishment"
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              </div>
+              <div className="mb-2">
+                <input
+                  type="text"
+                  id="contact"
+                  name="contact"
+                  placeholder="Last Name"
+                  value="09XXXXXXXXX"
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                  //   onClick={}
+                >
+                  Apply Changes
+                </button>
+                <button
+                  type="button"
+                  className="ml-4 bg-neutral hover:bg-grn-i hover:text-neutral text-grn-i font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                  onClick={() => document.getElementById("my_modal_1").close()}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </dialog>
       </div>
     </>
   );
