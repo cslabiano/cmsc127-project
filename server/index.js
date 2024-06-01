@@ -9,7 +9,7 @@ app.use(express.json());
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "mandyjenny",
+  password: "1234",
   database: "kusina",
 });
 
@@ -47,6 +47,53 @@ app.post("/users", (req, res) => {
       if (err) return res.status(500).json({ error: err });
       return res.status(201).json({ message: "User registered successfully" });
     });
+  });
+});
+
+/*************** ESTABLISHMENT TABLE ***************/
+
+app.get("/establishments", (req, res) => {
+  const sql = "SELECT * FROM establishment";
+  db.query(sql, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  })
+});
+
+app.post("/establishments", (req, res) => {
+  const { estab_name, address } = req.body;
+
+  const checkEstabSql =
+    "SELECT * FROM establishment where estab_name = ? and address = ?";
+  db.query(checkEstabSql, [estab_name, address], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    if (results.length > 0) {
+      return res
+        .status(400)
+        .json({ error: "Establishment in that address already exists" });
+    }
+
+    const insertEstabSql =
+      "INSERT INTO establishment(estab_name, address) VALUES (?, ?)";
+    db.query(insertEstabSql, [estab_name, address], (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      return res
+        .status(201)
+        .json({ message: "Establishment added successfully" });
+    });
+  });
+});
+
+app.post("/establishmentSearch", (req, res) => {
+  const { estab_name } = req.body;
+
+  const findEstabSql =
+    "SELECT * FROM establishment where LOWER(estab_name) LIKE LOWER(?)";
+  db.query(findEstabSql, [`%${estab_name}%`], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    if (results.length > 0) {
+      return res.status(200).json(results);
+    }
   });
 });
 
@@ -101,9 +148,9 @@ app.get("/:estab_id/items", (req, res) => {
 });
 
 // read or search items
-app.get("/items/search", (req, res) => {
+app.get("/items", (req, res) => {
   const { search_term } = req.query;
-  const sql = "SELECT * FROM item WHERE name LIKE '%${search_term}%';";
+  const sql = "SELECT * FROM item WHERE name LIKE '%${search_term}%'";
   db.query(sql, (err, data) => {
     if (err) return res.status(500).json({ error: err });
     return res.json(data);
@@ -131,6 +178,95 @@ app.delete("/items/:item_id", (req, res) => {
     return res.json({ message: "Item deleted successfully" });
   });
 });
+
+/*************** ITEM REVIEW TABLE ***************/
+
+// create or add food review
+app.post("/:item_id/reviews", (req, res) => {
+  const { user_id, rating, comment } = req.body;
+  const { item_id } = req.params;
+
+  const insertReviewSql =
+    "INSERT INTO itemreview (user_id, item_id, rating, comment) VALUES (?, ?, ?, ?)";
+  db.query(
+    insertReviewSql,
+    [user_id, item_id, rating, comment],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      return res.status(201).json({ message: "Review added successfully" });
+    }
+  );
+});
+
+// read or get all reviews
+app.get("/:item_id/reviews", (req, res) => {
+  const { item_id } = req.params;
+
+  const fetchReviewsSql = "SELECT * FROM itemreview WHERE item_id = ?";
+  db.query(fetchReviewsSql, [item_id], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    return res.json(results);
+  });
+});
+
+// update review
+app.put("/:item_id/reviews/", (req, res) => {
+  const { rating, comment } = req.body;
+  const { item_id } = req.params;
+
+  // assuming the review is uniquely identified by user_id, item_id, date, and time
+  const { user_id } = req.body;
+  const currentDate = new Date().toISOString().slice(0, 10);
+  const currentTime = new Date().toISOString().slice(11, 19);
+
+  const updateReviewSql = `
+    UPDATE itemreview 
+    SET rating = ?, comment = ?, date = ?, time = ? 
+    WHERE user_id = ? AND item_id = ? AND date = ? AND time = ?
+  `;
+  db.query(
+    updateReviewSql,
+    [
+      rating,
+      comment,
+      currentDate,
+      currentTime,
+      user_id,
+      item_id,
+      currentDate,
+      currentTime,
+    ],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      return res.json({ message: "Review updated successfully" });
+    }
+  );
+});
+
+// delete review
+app.delete("/:item_id/reviews/", (req, res) => {
+  const { item_id } = req.params;
+
+  // assuming the review is uniquely identified by user_id, item_id, date, and time
+  const { user_id } = req.body;
+  const currentDate = new Date().toISOString().slice(0, 10);
+  const currentTime = new Date().toISOString().slice(11, 19);
+
+  const deleteReviewSql = `
+    DELETE FROM itemreview 
+    WHERE user_id = ? AND item_id = ? AND date = ? AND time = ?
+  `;
+  db.query(
+    deleteReviewSql,
+    [user_id, item_id, currentDate, currentTime],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      return res.json({ message: "Review deleted successfully" });
+    }
+  );
+});
+
+
 
 app.listen(3001, () => {
   console.log("Listening to port 3001");
