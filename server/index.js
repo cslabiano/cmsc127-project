@@ -52,6 +52,14 @@ app.post("/users", (req, res) => {
 
 /*************** ESTABLISHMENT TABLE ***************/
 
+app.get("/establishments", (req, res) => {
+  const sql = "SELECT * FROM establishment";
+  db.query(sql, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  })
+});
+
 app.post("/establishments", (req, res) => {
   const { estab_name, address } = req.body;
 
@@ -257,6 +265,8 @@ app.delete("/:item_id/reviews/", (req, res) => {
     }
   );
 });
+
+
 
 app.listen(3001, () => {
   console.log("Listening to port 3001");
