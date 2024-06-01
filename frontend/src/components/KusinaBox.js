@@ -9,7 +9,7 @@ const KusinaBox = (props) => {
         key={i}
         type="radio"
         name="rating-2"
-        className="mask mask-star-2 bg-kusinaprimary"
+        className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
         checked={i === Math.round(props.rating)}
         disabled
       />

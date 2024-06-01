@@ -17,7 +17,7 @@ function Kusina() {
         </div>
       </div>
       <div className="px-10">
-        <div className="flex justify-between flex-wrap">
+        <div className="flex justify-around flex-wrap">
           <div className="mt-8 flex align-middle">
             <p className="px-4 py-2 text-kusinaaccent font-bold text-xl">
               Filter Kusinas by
@@ -71,32 +71,32 @@ function Kusina() {
                     <input
                       type="radio"
                       name="rating-2"
-                      className="mask mask-star-2 bg-kusinaprimary"
+                      className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
                       disabled
                     />
                     <input
                       type="radio"
                       name="rating-2"
-                      className="mask mask-star-2 bg-kusinaprimary"
+                      className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
                       disabled
                     />
                     <input
                       type="radio"
                       name="rating-2"
-                      className="mask mask-star-2 bg-kusinaprimary"
+                      className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
                       disabled
                     />
                     <input
                       type="radio"
                       name="rating-2"
-                      className="mask mask-star-2 bg-kusinaprimary"
+                      className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
                       checked
                       disabled
                     />
                     <input
                       type="radio"
                       name="rating-2"
-                      className="mask mask-star-2 bg-kusinaprimary"
+                      className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
                       disabled
                     />
                   </div>
