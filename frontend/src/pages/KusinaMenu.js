@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import KusinaNavBar from "../components/KusinaNavBar";
 import KusinaSearchBar from "../components/KusinaSearchBar";
 import sort_icon from "../assets/Sort.png";
+import delete_icon from "../assets/delete.png";
+import edit_icon from "../assets/edit.png";
 import KusinaFoodBox from "../components/KusinaFoodBox";
 
 function KusinaMenu() {
@@ -18,14 +20,17 @@ function KusinaMenu() {
   };
 
   const stars = [];
+  const rating = 4.5;
   for (let i = 1; i <= 5; i++) {
     stars.push(
       <input
         key={i}
         type="radio"
         name="rating-2"
-        className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
-        checked={i === Math.round(4)}
+        className={`mask mask-star-2 ${
+          i <= rating ? "bg-kusinaprimary" : "bg-red-200"
+        } hover:cursor-default`}
+        checked={i === Math.floor(rating)}
         disabled
       />
     );
@@ -57,6 +62,14 @@ function KusinaMenu() {
               4.5
             </h2>
             <div className="rating rating-lg mt-4">{stars}</div>
+            <div className="flex justify-end mt-4">
+              <button>
+                <img src={edit_icon} className="h-10 pl-2 pt-2"></img>
+              </button>
+              <button>
+                <img src={delete_icon} className="h-10 pl-2 pt-2"></img>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -76,7 +89,13 @@ function KusinaMenu() {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-10"
           >
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center items-center">
+              <div className="flex justify-center bg-kusinaprimary text-white rounded-3xl mt-10">
+                <button className=" text-kusinabg font-semibold px-8 py-3">
+                  Add a Food Item
+                </button>
+              </div>
+              <p className="pt-10">or</p>
               <div className="py-10 flex justify-center">
                 <KusinaSearchBar placeholder="Search for a food item..." />
               </div>
