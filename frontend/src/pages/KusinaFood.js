@@ -1,16 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import KusinaNavBar from "../components/KusinaNavBar";
 import KusinaSearchBar from "../components/KusinaSearchBar";
 import sort_icon from "../assets/Sort.png";
 import delete_icon from "../assets/delete.png";
 import edit_icon from "../assets/edit.png";
 import KusinaComment from "../components/KusinaComment";
+import { useParams } from "react-router-dom";
 
 function KusinaFood() {
+  let { establishment_id, item_id } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [sortReviews, setSortReviews] = useState("month");
   const [sort, setSort] = useState("month");
   const [itemClassifications, setItemClassifications] = useState([]);
+  const [itemData, setItemData] = useState([]);
+
+  const fetchItemData = () => {
+    fetch(`http://localhost:3001/${establishment_id}/${item_id}`)
+      .then((res) => res.json())
+      .then((itemData) => setItemData(itemData))
+      .catch((err) => console.log(err));
+  }
+
+  useEffect(() => {
+    fetchItemData();
+  }, [])
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -27,7 +41,14 @@ function KusinaFood() {
   };
 
   const stars = [];
-  const rating = 4.2;
+  let rating = 0;
+  if (
+    itemData &&
+    itemData.length > 0 &&
+    itemData[0].avg_rating !== undefined
+  ) {
+    rating = itemData[0].avg_rating;
+  }
   for (let i = 1; i <= 5; i++) {
     stars.push(
       <input
@@ -57,18 +78,23 @@ function KusinaFood() {
         <div className="flex justify-between p-12">
           <div className="flex flex-col text-kusinaprimary">
             <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
-              Food Item
+              {itemData.length > 0 ? itemData[0].name : "NONE"}
             </h2>
             <p className="text-3xl mt-4 font-semibold">
-              Food Establishment serving the item.
+              {itemData.length > 0 ? itemData[0].estab_name : "NONE"}
             </p>
-            <p className="text-xl mt-2">A description of the food item.</p>
-            <p className="text-3xl mt-2 font-semibold">PHP 65</p>
+            <p className="text-xl mt-2">{itemData.length > 0 ? itemData[0].description : "NONE"}</p>
+            <p className="text-3xl mt-2 font-semibold">PHP {itemData.length > 0 ? itemData[0].price : "NONE"}</p>
           </div>
           <div className="flex flex-col">
-            <h2 className="card-title text-5xl font-extrabold text-kusinaprimary justify-end">
-              {rating}
-            </h2>
+            {itemData.length > 0 && (
+              <>
+                <h2 className="card-title text-5xl font-extrabold text-kusinaprimary justify-end">
+                  {itemData[0].avg_rating? Number(itemData[0].avg_rating).toFixed(1)
+                        : "0"}
+                </h2>
+              </>
+            )}
             <div className="rating rating-lg mt-4">{stars}</div>
             <div className="flex justify-end mt-4">
               <button

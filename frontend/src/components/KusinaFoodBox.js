@@ -30,7 +30,7 @@ const KusinaFoodBox = (props) => {
   }
 
   const handleClick = () => {
-    navigate(`/kusina/${props.estab_id}/${props.id}`);
+    navigate(`/kusina/${props.estab_id}/${props.item_id}`);
   };
 
   return (

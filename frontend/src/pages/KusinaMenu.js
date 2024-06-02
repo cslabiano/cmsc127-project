@@ -456,11 +456,11 @@ function KusinaMenu(props) {
                     <div key={item.id}>
                       <KusinaFoodBox
                         name={item.name}
-                        id={item.item_id}
+                        item_id={item.item_id}
+                        estab_id={item.estab_id}
                         description={item.description}
                         price={item.price}
                         image={item.imageLink}
-                        estab_id={item.estab_id}
                         classifications={item.classifications}
                         rating={
                           item.avg_rating
