@@ -26,23 +26,23 @@ function KusinaMenu(props) {
   const navigate = useNavigate();
 
   const fetchItemData = () => {
-      fetch(`http://localhost:3001/${establishment_id}`)
-        .then((res) => res.json())
-        .then((foodItems) => setFoodItems(foodItems))
-        .catch((error) => console.error("Error fetching food items:", error));
-  }
+    fetch(`http://localhost:3001/${establishment_id}`)
+      .then((res) => res.json())
+      .then((foodItems) => setFoodItems(foodItems))
+      .catch((error) => console.error("Error fetching food items:", error));
+  };
 
   const fetchEstabData = () => {
     fetch(`http://localhost:3001/${establishment_id}/estab`)
-    .then((res) => res.json())
-    .then((estabData) => setEstabData(estabData))
-    .catch((err) => console.log(err));
-  }
-  
+      .then((res) => res.json())
+      .then((estabData) => setEstabData(estabData))
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     fetchItemData();
     fetchEstabData();
-  }, [])
+  }, []);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -50,7 +50,11 @@ function KusinaMenu(props) {
 
   const stars = [];
   let rating = 0;
-  if (estabData && estabData.length > 0 && estabData[0].avg_rating !== undefined) {
+  if (
+    estabData &&
+    estabData.length > 0 &&
+    estabData[0].avg_rating !== undefined
+  ) {
     rating = estabData[0].avg_rating;
   }
   for (let i = 1; i <= 5; i++) {
@@ -144,29 +148,28 @@ function KusinaMenu(props) {
         <div className="flex justify-between p-12">
           {estabData.length > 0 && (
             <>
-            <div className="flex flex-col text-kusinaprimary">
-              <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
-                {estabData[0].estab_name}
-              </h2>
-              <p className="text-3xl mt-4">
-                {estabData[0].address}
-              </p>
-              <p className="text-xl mt-2">Contact Number: 09XXXXXXXXX</p>
-            </div>
-
+              <div className="flex flex-col text-kusinaprimary">
+                <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
+                  {estabData[0].estab_name}
+                </h2>
+                <p className="text-3xl mt-4">{estabData[0].address}</p>
+                <p className="text-xl mt-2">Contact Number: 09XXXXXXXXX</p>
+              </div>
             </>
           )}
-          
+
           <div className="flex flex-col">
             {estabData.length > 0 && (
               <>
                 <h2 className="card-title text-5xl font-extrabold text-kusinaprimary justify-end">
-                  {estabData[0].avg_rating ? Number(estabData[0].avg_rating).toFixed(1) : "0"}
+                  {estabData[0].avg_rating
+                    ? Number(estabData[0].avg_rating).toFixed(1)
+                    : "0"}
                 </h2>
                 <div className="rating rating-lg mt-4">{stars}</div>
               </>
             )}
-            
+
             <div className="flex justify-end mt-4">
               <button
                 onClick={() =>
@@ -567,6 +570,17 @@ function KusinaMenu(props) {
                   id="contact"
                   name="contact"
                   placeholder="Contact"
+                  //   value="09XXXXXXXXX"
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              </div>
+              <div className="mb-2">
+                <p className="mb-2">Image Link:</p>
+                <input
+                  type="text"
+                  id="contact"
+                  name="contact"
+                  placeholder="Link"
                   //   value="09XXXXXXXXX"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />

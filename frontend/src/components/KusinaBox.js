@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import estab_img from "../assets/estab.png";
 
 const KusinaBox = (props) => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const KusinaBox = (props) => {
         onClick={handleClick}
       >
         <figure>
-          <img src={props.image} alt={`Photo of  ${props.name}`} />
+          <img src={estab_img} alt={`Photo of  ${props.name}`} />
         </figure>
         <div className="card-body font-sans">
           <h2 className="card-title font-sans text-xl font-extrabold">
