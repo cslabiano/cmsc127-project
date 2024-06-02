@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import KusinaNavBar from "../components/KusinaNavBar";
 import KusinaSearchBar from "../components/KusinaSearchBar";
 import sort_icon from "../assets/Sort.png";
@@ -6,9 +6,10 @@ import delete_icon from "../assets/delete.png";
 import edit_icon from "../assets/edit.png";
 import KusinaFoodBox from "../components/KusinaFoodBox";
 import KusinaComment from "../components/KusinaComment";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-function KusinaMenu() {
+function KusinaMenu(props) {
+  let { establishment_id } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [classification, setClassification] = useState("NONE");
   const [price, setPrice] = useState("NONE");
@@ -21,7 +22,15 @@ function KusinaMenu() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortReviews, setSortReviews] = useState("month");
   const [activeTab, setActiveTab] = useState("food");
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/${establishment_id}`)
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((error) => console.error("Error fetching food items:", error));
+  }, []);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -85,12 +94,12 @@ function KusinaMenu() {
       });
   };
 
-  // Function to handle deleting a food item
+  // function to handle deleting a food item
   const handleDeleteFoodItem = (id) => {
     setFoodItems(foodItems.filter((item) => item.id !== id));
   };
 
-  // Function to handle updating a food item
+  // function to handle updating a food item
   const handleUpdateFoodItem = (event) => {
     event.preventDefault();
     const updatedItem = {
@@ -120,10 +129,14 @@ function KusinaMenu() {
         <div className="flex justify-between p-12">
           <div className="flex flex-col text-kusinaprimary">
             <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
-              Food Establishment
+              {data.length > 0
+                ? data[0].establishmentName
+                : "Establishment Name"}
             </h2>
             <p className="text-3xl mt-4">
-              Place the address of the food establishment here.
+              {data.length > 0
+                ? data[0].establishmentAddress
+                : "Establishment Name"}
             </p>
             <p className="text-xl mt-2">Contact Number: 09XXXXXXXXX</p>
           </div>
@@ -361,16 +374,18 @@ function KusinaMenu() {
                   </div>
                 </div>
               )}
-
-              <KusinaFoodBox
-                name={"Food Item"}
-                image={
-                  "https://cdn.vox-cdn.com/thumbor/5d_RtADj8ncnVqh-afV3mU-XQv0=/0x0:1600x1067/1200x900/filters:focal(672x406:928x662)/cdn.vox-cdn.com/uploads/chorus_image/image/57698831/51951042270_78ea1e8590_h.7.jpg"
-                }
-                description={"Description of the food item"}
-                price={"100"}
-                rating={2}
-              />
+              <div>
+                {data.map((item) => (
+                  <div key={item.id}>
+                    <KusinaFoodBox
+                      name={item.name}
+                      description={item.description}
+                      price={item.price}
+                      rating={2} // TODO: make this dynamic
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
