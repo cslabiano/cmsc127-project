@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "qwerty",
+  password: "1234",
   database: "kusina",
 });
 
@@ -156,15 +156,24 @@ app.post("/item", (req, res) => {
 // read all item from establishment
 app.get(`/:estab_id`, (req, res) => {
   const { estab_id } = req.params;
-  console.log(estab_id);
   const sql =
     "SELECT i.*, e.estab_name AS establishmentName, e.address AS establishmentAddress FROM item i JOIN establishment e ON i.estab_id = e.estab_id WHERE i.estab_id = ?";
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
-    console.log("Query results:", data);
+    // console.log("Query results:", data);
     return res.json(data);
   });
 });
+
+app.get(`/:estab_id/estab`, (req, res) => {
+  const { estab_id} = req.params;
+  const sql = "SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id WHERE e.estab_id = ? GROUP BY e.estab_id ";
+  db.query(sql, [estab_id], (err, data) => {
+    if (err) return res.json(err);
+    console.log(data);
+    return res.json(data);
+  })
+})
 
 // read or search items
 app.get("/items", (req, res) => {
