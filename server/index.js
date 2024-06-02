@@ -194,6 +194,17 @@ app.get(`/:estab_id/estab`, (req, res) => {
   });
 });
 
+app.get(`/:estab_id/estreviews`, (req, res) => {
+  const { estab_id } = req.params;
+  const sql =
+    "select user_name, date, time, rating, comment from estabreview natural join user where estab_id= ?";
+  db.query(sql, [estab_id], (err, data) => {
+    if (err) return res.json(err);
+    console.log(data);
+    return res.json(data);
+  });
+});
+
 // read or search items
 app.post("/:estab_id/search", (req, res) => {
   const { name } = req.body;

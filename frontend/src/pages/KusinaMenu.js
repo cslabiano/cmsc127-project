@@ -17,6 +17,7 @@ function KusinaMenu(props) {
   const [classification, setClassification] = useState("NONE");
   const [price, setPrice] = useState("NONE");
   const [between, setBetween] = useState(false);
+  const [estRating, setEstRating] = useState(0);
   const [minprice, setMinPrice] = useState(0);
   const [maxprice, setMaxPrice] = useState(0);
   const [itemClassifications, setItemClassifications] = useState([]);
@@ -28,6 +29,7 @@ function KusinaMenu(props) {
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [reviewData, setReviewData] = useState([]);
 
   // const itemsToShow =
   //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
@@ -46,9 +48,20 @@ function KusinaMenu(props) {
       .catch((err) => console.log(err));
   };
 
+  const fetchReviewData = () => {
+    fetch(`http://localhost:3001/${establishment_id}/estreviews`)
+      .then((res) => res.json())
+      .then((reviewData) => {
+        console.log("Review Data:", reviewData);
+        setReviewData(reviewData);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     fetchItemData();
     fetchEstabData();
+    fetchReviewData();
   }, []);
 
   const togglePopup = () => {
@@ -499,26 +512,31 @@ function KusinaMenu(props) {
                       type="radio"
                       name="rating-8"
                       className="mask mask-star-2 bg-kusinaaccent"
+                      onClick={() => setEstRating(1)}
                     />
                     <input
                       type="radio"
                       name="rating-8"
                       className="mask mask-star-2 bg-kusinaaccent"
+                      onClick={() => setEstRating(2)}
                     />
                     <input
                       type="radio"
                       name="rating-8"
                       className="mask mask-star-2 bg-kusinaaccent"
+                      onClick={() => setEstRating(3)}
                     />
                     <input
                       type="radio"
                       name="rating-8"
                       className="mask mask-star-2 bg-kusinaaccent"
+                      onClick={() => setEstRating(4)}
                     />
                     <input
                       type="radio"
                       name="rating-8"
                       className="mask mask-star-2 bg-kusinaaccent"
+                      onClick={() => setEstRating(5)}
                     />
                   </div>
                 </div>
@@ -581,13 +599,29 @@ function KusinaMenu(props) {
 
             <hr className="my-10 border-kusinaprimary"></hr>
 
-            <KusinaComment
+            <div className="">
+              <div className="">
+                {reviewData.map((review) => (
+                  <div key={review.id}>
+                    <KusinaComment
+                      name={review.user_name}
+                      rating={review.rating}
+                      comment={review.comment}
+                      date={review.date}
+                      time={review.time}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* <KusinaComment
               name={"Juan Dela Cruz"}
               rating={4.2}
               comment={
                 "Masarap naman, budget meal talaga siya. Medyo maliit lang serving pero ok lang kasi mura naman. May free delivery din sila pag tinatamad ka lumabas."
               }
-            />
+            /> */}
           </div>
         </div>
         <dialog id="my_modal_1" className="modal">
