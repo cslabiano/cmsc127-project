@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const KusinaFoodBox = (props) => {
   const navigate = useNavigate();
   const stars = [];
-  const rating = Number(props.rating)
+  const rating = Number(props.rating);
   for (let i = 1; i <= 5; i++) {
     stars.push(
       <input
@@ -35,7 +35,7 @@ const KusinaFoodBox = (props) => {
 
   return (
     <div
-      className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary"
+      className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary hover:cursor-pointer"
       onClick={handleClick}
     >
       <figure>

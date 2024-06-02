@@ -93,19 +93,7 @@ function Kusina() {
       </div>
       <div className="flex flex-col mt-36 mb-36">
         <div className="flex flex-col items-center justify-center">
-          <div className="flex justify-center animate-transitionIn">
-            {" "}
-            <div className="flex w-56 justify-center bg-kusinaprimary text-white rounded-3xl mt-10">
-              <button
-                className="text-kusinabg font-semibold px-8 py-3"
-                onClick={() => document.getElementById("add_modal").showModal()}
-              >
-                Add a <span className="italic">Kusina</span>
-              </button>
-            </div>
-          </div>
-          <p className="pt-10 text-center animate-transitionIn">or</p>
-          <div className="pt-10 flex flex-row items-center animate-transitionIn">
+          <div className="pt-20 flex flex-row items-center animate-transitionIn">
             <KusinaSearchBar
               placeholder="Search a kusina"
               value={searchTerm}
@@ -127,51 +115,55 @@ function Kusina() {
         </div>
       </div>
       <div className="px-10">
-        <div className="flex justify-around flex-wrap">
-          <div className="mt-8 flex align-middle">
+        <div className="flex justify-between flex-wrap items-center mt-8">
+          <div className="flex gap-2 flex-wrap animate-transitionIn">
             <p className="px-4 py-2 text-kusinaaccent font-bold text-xl animate-transitionIn">
               Filter Kusinas by
             </p>
-            <div className="flex gap-2 flex-wrap animate-transitionIn">
-              <button
-                type="button"
-                onClick={() =>
-                  handleSortChange(sort === "High" ? "NONE" : "High")
-                }
-                className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                  sort === "High"
-                    ? "bg-kusinaaccent text-white"
-                    : "bg-kusinabg text-kusinaaccent"
-                }`}
-              >
-                Highest Rating to Lowest
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  handleSortChange(sort === "Low" ? "NONE" : "Low")
-                }
-                className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                  sort === "Low"
-                    ? "bg-kusinaaccent text-white"
-                    : "bg-kusinabg text-kusinaaccent"
-                }`}
-              >
-                Lowest Rating to Highest
-              </button>
+            <button
+              type="button"
+              onClick={() =>
+                handleSortChange(sort === "High" ? "NONE" : "High")
+              }
+              className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
+                sort === "High"
+                  ? "bg-kusinaaccent text-white"
+                  : "bg-kusinabg text-kusinaaccent"
+              }`}
+            >
+              Highest Rating to Lowest
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSortChange(sort === "Low" ? "NONE" : "Low")}
+              className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
+                sort === "Low"
+                  ? "bg-kusinaaccent text-white"
+                  : "bg-kusinabg text-kusinaaccent"
+              }`}
+            >
+              Lowest Rating to Highest
+            </button>
 
-              <button
-                type="button"
-                onClick={handleRatingFilterToggle}
-                className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                  ratingFilter
-                    ? "bg-kusinaaccent text-white"
-                    : "bg-kusinabg text-kusinaaccent"
-                }`}
-              >
-                Rating {">="} 4
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleRatingFilterToggle}
+              className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
+                ratingFilter
+                  ? "bg-kusinaaccent text-white"
+                  : "bg-kusinabg text-kusinaaccent"
+              }`}
+            >
+              Rating {">="} 4
+            </button>
+          </div>
+          <div className="flex w-56 justify-center bg-kusinaprimary text-white rounded-3xl">
+            <button
+              className="text-kusinabg font-semibold px-8 py-2"
+              onClick={() => document.getElementById("add_modal").showModal()}
+            >
+              Add a <span className="italic">Kusina</span>
+            </button>
           </div>
         </div>
         <hr className="my-10 border-gray-500 animate-transitionIn"></hr>
@@ -210,7 +202,7 @@ function Kusina() {
               Product Page {currentPage}
             </div>
             <button
-              className="join-item btn bg-kusinaprimary border-kusinaprimary text-kusinabg hover:bg-kusinaprimary hover:border-kusinaprimary disabled:bg-kusinaprimary disabled:border-kusinaprimary disabled:text-kusinabg"
+              className="join-item btn bg-kusinaprimary border-kusinaprimary text-kusinabg hover:bg-kusinaprimary hover:border-kusinaprimary disabled:bg-kusinaprimary disabled:border-kusinaprimary disable:                text-kusinabg"
               onClick={() => paginate(currentPage + 1)}
               disabled={
                 currentPage ===
