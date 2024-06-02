@@ -24,7 +24,16 @@ function KusinaFood() {
   };
 
   const fetchReviewData = () => {
-    fetch(`http://localhost:3001/${item_id}/reviews`)
+    let endpoint;
+    if (sortReviews === "month") {
+      endpoint = `http://localhost:3001/${item_id}/itemmonthreviews`;
+    } else {
+      // Determine sorting order based on the sort state
+      const sortOrder = sort === "new" ? "DESC" : "ASC";
+      endpoint = `http://localhost:3001/${item_id}/itemreviews?sort=${sortOrder}`;
+    }
+
+    fetch(endpoint)
       .then((res) => res.json())
       .then((reviewData) => {
         console.log("Review Data:", reviewData);

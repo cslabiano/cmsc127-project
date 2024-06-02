@@ -224,7 +224,53 @@ app.get(`/:estab_id/estreviews`, (req, res) => {
   const { estab_id } = req.params;
   const sql =
     "select user_name, date, time, rating, comment from estabreview natural join user where estab_id= ?";
+
+  if (req.query.sort === "DESC") {
+    sql += " ORDER BY date DESC, time DESC";
+  } else {
+    sql += " ORDER BY date ASC, time ASC";
+  }
   db.query(sql, [estab_id], (err, data) => {
+    if (err) return res.json(err);
+    console.log(data);
+    return res.json(data);
+  });
+});
+
+app.get(`/:estab_id/estmonthreviews`, (req, res) => {
+  const { estab_id } = req.params;
+  const sql =
+    "select user_name, date, time, rating, comment from estabreview natural join user where estab_id= ? and date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
+  db.query(sql, [estab_id], (err, data) => {
+    if (err) return res.json(err);
+    console.log(data);
+    return res.json(data);
+  });
+});
+
+app.get("/:item_id/itemreviews", (req, res) => {
+  const { item_id } = req.params;
+  let sql =
+    "SELECT user_name, date, time, rating, comment FROM itemreview natural join user WHERE item_id = ?";
+
+  if (req.query.sort === "DESC") {
+    sql += " ORDER BY date DESC, time DESC";
+  } else {
+    sql += " ORDER BY date ASC, time ASC";
+  }
+
+  db.query(sql, [item_id], (err, data) => {
+    if (err) return res.json(err);
+    console.log(data);
+    return res.json(data);
+  });
+});
+
+app.get(`/:item_id/itemmonthreviews`, (req, res) => {
+  const { item_id } = req.params;
+  const sql =
+    "select user_name, date, time, rating, comment from itemreview natural join user where item_id= ? and date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
+  db.query(sql, [item_id], (err, data) => {
     if (err) return res.json(err);
     console.log(data);
     return res.json(data);
