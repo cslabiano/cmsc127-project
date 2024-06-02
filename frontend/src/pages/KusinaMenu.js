@@ -129,10 +129,14 @@ function KusinaMenu(props) {
         <div className="flex justify-between p-12">
           <div className="flex flex-col text-kusinaprimary">
             <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
-              {data.establishmentName}
+              {data.length > 0
+                ? data[0].establishmentName
+                : "Establishment Name"}
             </h2>
             <p className="text-3xl mt-4">
-              Place the address of the food establishment here.
+              {data.length > 0
+                ? data[0].establishmentAddress
+                : "Establishment Name"}
             </p>
             <p className="text-xl mt-2">Contact Number: 09XXXXXXXXX</p>
           </div>
