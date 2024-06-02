@@ -232,7 +232,7 @@ app.get(`/:estab_id`, (req, res) => {
     JOIN establishment e ON i.estab_id = e.estab_id
     LEFT JOIN itemclass c ON c.item_id = i.item_id
     LEFT JOIN itemreview ir ON i.item_id = ir.item_id
-    WHERE i.estab_id = 1
+    WHERE i.estab_id = ?
     GROUP BY i.item_id
   `;
   db.query(sql, [estab_id], (err, data) => {
@@ -246,7 +246,7 @@ app.get(`/:estab_id`, (req, res) => {
         : [], // Split into array or return empty array if null
     }));
 
-    console.log("Query results:", formattedData);
+    // console.log("Query results:", formattedData);
     return res.json(formattedData);
   });
 });
@@ -365,6 +365,44 @@ app.get(`/:estab_id/:item_id`, (req, res) => {
   });
 });
 
+app.get(`/:estab_id/filterClass`, (req, res) => {
+  const { classification } = req.query;
+  const { estab_id } = req.params;
+  if (!classification) {
+    return res.status(400).json({ error: 'Classification query parameter is required' });
+  }
+  console.log(classification);
+  const classificationsArray = classification.split(',');
+  const placeholders = classificationsArray.map(() => '?').join(',');
+  console.log(placeholders);
+  const sql = `SELECT i.*, ic.classification FROM item i JOIN itemclass ic ON i.item_id = ic.item_id WHERE i.estab_id = ? AND ic.classification IN (${placeholders})`;
+  const queryParams = [estab_id, ...classificationsArray];
+  db.query(sql, queryParams, (err, results) => {
+    if (err) {
+      console.error('Error fetching food items: ', err)
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+    return res.json(results)
+  })
+})
+
+app.get(`/:estab_id/sortPrice`, (req, res) => {
+  const { sort } = req.query;
+  const { estab_id } = req.params;
+  const sortOrder = sort === "asc" ? "ASC" : "DESC";
+  const sql = `SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, COALESCE(AVG(ir.rating), 0) AS avg_rating, GROUP_CONCAT(DISTINCT c.classification) AS classifications
+    FROM item i
+    JOIN establishment e ON i.estab_id = e.estab_id
+    LEFT JOIN itemclass c ON c.item_id = i.item_id
+    LEFT JOIN itemreview ir ON i.item_id = ir.item_id
+    WHERE i.estab_id = ?
+    GROUP BY i.item_id
+    ORDER BY i.price ${sortOrder}`;
+  db.query(sql, [estab_id], (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+})
 /*************** ITEM REVIEW TABLE ***************/
 
 // create or add food review
