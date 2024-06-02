@@ -53,12 +53,12 @@ function Kusina() {
   const handleSortChange = (order) => {
     setSort(order);
     setSortOrder(order === "High" ? "desc" : "asc");
-    setCurrentPage(1); // Reset page number when sort order changes
+    setCurrentPage(1);
   };
 
   const handleRatingFilterToggle = () => {
     setRatingFilter(!ratingFilter);
-    setCurrentPage(1); // Reset page number when filter changes
+    setCurrentPage(1);
   };
 
   const applyFiltersAndSorting = (data) => {
@@ -85,6 +85,18 @@ function Kusina() {
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const [contactNumbers, setContactNumbers] = useState([""]);
+
+  const handleAddContactField = () => {
+    setContactNumbers([...contactNumbers, ""]);
+  };
+
+  const handleContactChange = (index, value) => {
+    const newContacts = [...contactNumbers];
+    newContacts[index] = value;
+    setContactNumbers(newContacts);
+  };
 
   return (
     <div className="bg-kusinabg min-h-screen min-w-screen z-0">
@@ -228,9 +240,7 @@ function Kusina() {
                 type="text"
                 id="name"
                 name="name"
-                placeholder="Item Name"
-                //   value={editData.name || ""}
-                //   onChange={handleInfoChange}
+                placeholder="Establishment Name"
                 className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
               />
             </div>
@@ -240,35 +250,42 @@ function Kusina() {
                 type="text"
                 id="address"
                 name="address"
-                placeholder="Description"
-                //   value={editData.name || ""}
-                //   onChange={handleInfoChange}
+                placeholder="Address"
                 className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
               />
             </div>
             <div className="mb-2">
-              <p className="mb-2">Contact Number:</p>
-              <input
-                type="number"
-                id="contact"
-                name="contact"
-                placeholder="0"
-                className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
-              />
+              <p className="mb-2">Contact Numbers:</p>
+              {contactNumbers.map((contact, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={contact}
+                  onChange={(e) => handleContactChange(index, e.target.value)}
+                  placeholder={`Contact Number ${index + 1}`}
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              ))}
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleAddContactField}
+                  className="flex justify-end items-end text-kusinaprimary py-2 underline rounded-3xl focus:outline-none focus:shadow-outline"
+                >
+                  <p>Add Another Contact Number</p>
+                </button>
+              </div>
             </div>
-
             <div className="mb-2">
               <p className="mb-2">Image Link:</p>
               <input
                 type="text"
                 id="link"
                 name="link"
-                placeholder="Link"
-                //   value="09XXXXXXXXX"
+                placeholder="Image Link"
                 className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
               />
             </div>
-
             <div className="flex justify-end">
               <button
                 type="submit"
