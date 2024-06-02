@@ -167,3 +167,5 @@ INSERT INTO itemreview(user_id, item_id, rating, comment) VALUES
 	(3, 17, 3, 'Ok naman.'),
 	(3, 18, 4, 'Sarap sarap'),
 	(3, 19, 4, 'Sarap naman ig');
+
+-- INSERT INTO estabcontact(estab_id, contact) VALUES 
