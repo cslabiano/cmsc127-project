@@ -10,6 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function KusinaMenu(props) {
   let { establishment_id } = useParams();
+  let { search_term } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [classification, setClassification] = useState("NONE");
   const [price, setPrice] = useState("NONE");
@@ -19,11 +20,15 @@ function KusinaMenu(props) {
   const [itemClassifications, setItemClassifications] = useState([]);
   const [foodItems, setFoodItems] = useState([]);
   const [editItem, setEditItem] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const [sortReviews, setSortReviews] = useState("month");
   const [activeTab, setActiveTab] = useState("food");
   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const [searchData, setSearchData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const itemsToShow =
+    searchTerm !== "" && searchData.length > 0 ? searchData : data;
 
   useEffect(() => {
     fetch(`http://localhost:3001/${establishment_id}`)
@@ -31,6 +36,19 @@ function KusinaMenu(props) {
       .then((data) => setData(data))
       .catch((error) => console.error("Error fetching food items:", error));
   }, []);
+
+  useEffect(() => {
+    if (searchTerm !== "") {
+      fetch(`http://localhost:3001/kusina/${establishment_id}/${searchTerm}`)
+        .then((res) => res.json())
+        .then((searchData) =>
+          setSearchData(Array.isArray(searchData) ? searchData : [])
+        )
+        .catch((err) => console.log(err));
+    } else {
+      setSearchData([]);
+    }
+  }, [establishment_id, searchTerm]);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -115,6 +133,11 @@ function KusinaMenu(props) {
     document.getElementById("edit_modal").close();
   };
 
+  const handleSearch = () => {
+    // Triggered on search button click
+    setSearchTerm(searchTerm.trim()); // Remove leading/trailing whitespace
+  };
+
   return (
     <>
       <div className="z-10">
@@ -197,7 +220,12 @@ function KusinaMenu(props) {
               </div>
               <p className="pt-10 text-center">or</p>
               <div className="py-10 flex justify-center">
-                <KusinaSearchBar placeholder="Search for a food item..." />
+                <KusinaSearchBar
+                  placeholder="Search for a food item..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onSearch={handleSearch}
+                />
               </div>
               <button onClick={togglePopup}>
                 <div className="flex">
@@ -374,16 +402,15 @@ function KusinaMenu(props) {
                   </div>
                 </div>
               )}
-              <div>
-                {data.map((item) => (
-                  <div key={item.id}>
-                    <KusinaFoodBox
-                      name={item.name}
-                      description={item.description}
-                      price={item.price}
-                      rating={2} // TODO: make this dynamic
-                    />
-                  </div>
+              <div className="flex flex-wrap justify-center items-center space-x-5 space-y-3">
+                {itemsToShow.map((item) => (
+                  <KusinaFoodBox
+                    key={item.id}
+                    name={item.name}
+                    description={item.description}
+                    price={item.price}
+                    rating={2} // TODO: make this dynamic
+                  />
                 ))}
               </div>
             </div>

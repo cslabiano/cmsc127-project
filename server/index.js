@@ -166,10 +166,11 @@ app.get(`/:estab_id`, (req, res) => {
 });
 
 // read or search items
-app.get("/items", (req, res) => {
-  const { search_term } = req.query;
-  const sql = "SELECT * FROM item WHERE name LIKE '%${search_term}%'";
-  db.query(sql, (err, data) => {
+app.get("/kusina/:estab_id/:search_term", (req, res) => {
+  const { estab_id, search_term } = req.query;
+  console.log("Search term: ", estab_id, search_term);
+  const sql = "SELECT * FROM item WHERE LOWER(name) LIKE LOWER(?)";
+  db.query(sql, [`%${search_term}%`], (err, data) => {
     if (err) return res.status(500).json({ error: err });
     console.log("Query results:", data);
     return res.json(data);
