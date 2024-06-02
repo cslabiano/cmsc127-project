@@ -615,13 +615,14 @@ function KusinaMenu(props) {
               </div>
             </div>
 
-            <hr className="my-10 border-kusinaprimary"></hr>
+            <hr className="mt-10 border-kusinaprimary"></hr>
 
             <div className="">
               <div className="">
                 {reviewData.map((review) => (
                   <div key={review.id}>
                     <KusinaComment
+                      userid={review.user_id}
                       name={review.user_name}
                       rating={review.rating}
                       comment={review.comment}
