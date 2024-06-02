@@ -36,7 +36,7 @@ function KusinaMenu() {
         type="radio"
         name="rating-2"
         className={`mask mask-star-2 ${
-          i <= rating ? "bg-kusinaprimary" : "bg-kusinaprimary"
+          i <= rating ? "bg-kusinaprimary" : "bg-lightstar"
         } hover:cursor-default`}
         checked={i <= Math.floor(rating)}
         disabled
