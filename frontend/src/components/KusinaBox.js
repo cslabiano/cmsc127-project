@@ -1,16 +1,16 @@
-import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 
 const KusinaBox = (props) => {
+  const rating = Number(props.rating);
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     stars.push(
       <input
         key={i}
         type="radio"
-        name="rating-2"
+        name={`rating-${props.id}`}
         className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
-        checked={i <= props.rating}
+        checked={i <= rating}
         disabled
       />
     );

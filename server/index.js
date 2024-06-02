@@ -64,7 +64,9 @@ app.post("/signup", (req, res) => {
 /*************** ESTABLISHMENT TABLE ***************/
 
 app.get("/establishments", (req, res) => {
-  const sql = "SELECT * FROM establishment";
+  const { sort } = req.query;
+  const sortOrder = sort === 'asc' ? 'ASC' : 'DESC';
+  const sql = `SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id GROUP BY e.estab_id ORDER BY avg_rating ${sortOrder}`;
   db.query(sql, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);

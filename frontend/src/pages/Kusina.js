@@ -10,13 +10,17 @@ function Kusina() {
   const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
 
-  useEffect(() => {
-    fetch('http://localhost:3001/establishments')
+  const fetchData = (order) => {
+    fetch(`http://localhost:3001/establishments?sort=${order}`)
     .then(res => res.json())
-    .then(data => setData(data))
+    .then(data => setData(Array.isArray(data) ? data : []))
     .catch(err => console.log(err))
-  }, [])
+  }
+  useEffect(() => {
+    fetchData(sortOrder);
+  }, [sortOrder])
 
   const handleSearch = () => {
     fetch('http://localhost:3001/establishmentSearch', {
@@ -27,7 +31,7 @@ function Kusina() {
       body: JSON.stringify({ estab_name: searchTerm })
     })
     .then(res => res.json())
-    .then(searchData => setSearchData(searchData))
+    .then(searchData => setSearchData(Array.isArray(searchData) ? searchData : []))
     .catch(err => console.log(err));
   };
 
@@ -35,7 +39,12 @@ function Kusina() {
 
   const handleArrowClick = () => {
     setSearchData([]);
-  }
+  };
+
+  const handleSortChange = (order) => {
+    setSort(order);
+    setSortOrder(order === 'High' ? 'desc' : 'asc');
+  };
 
   return (
     <div className="bg-kusinabg min-h-screen min-w-screen z-0">
@@ -67,7 +76,7 @@ function Kusina() {
             <div className="flex gap-2 flex-wrap">
               <button
                 type="button"
-                onClick={() => setSort(sort === "High" ? "NONE" : "High")}
+                onClick={() => handleSortChange(sort === "High" ? "NONE" : "High")}
                 className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
                   sort === "High"
                     ? "bg-kusinaaccent text-white"
@@ -78,7 +87,7 @@ function Kusina() {
               </button>
               <button
                 type="button"
-                onClick={() => setSort(sort === "Low" ? "NONE" : "Low")}
+                onClick={() => handleSortChange(sort === "Low" ? "NONE" : "Low")}
                 className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
                   sort === "Low"
                     ? "bg-kusinaaccent text-white"
@@ -91,13 +100,16 @@ function Kusina() {
           </div>
         </div>
         <hr className="mt-10 border-gray-500"></hr>
-        <div className="flex">
+        <div className="flex justify-center">
+        <div className="flex flex-wrap justify-start items-center space-x-5 space-y-3">
         {establishmentsToShow.map((establishment) => (
           <KusinaBox image={"https://cdn.vox-cdn.com/thumbor/5d_RtADj8ncnVqh-afV3mU-XQv0=/0x0:1600x1067/1200x900/filters:focal(672x406:928x662)/cdn.vox-cdn.com/uploads/chorus_image/image/57698831/51951042270_78ea1e8590_h.7.jpg"} 
+          id={establishment.estab_id}
           name={establishment.estab_name} 
           address={establishment.address}
-          rating={"4.8"} />
+          rating={establishment.avg_rating ? Number(establishment.avg_rating).toFixed(1) : "0"} />
         ))}
+        </div>
         </div>
         
       </div>
