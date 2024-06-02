@@ -18,49 +18,48 @@ const KusinaFoodBox = (props) => {
     );
   }
 
-  const renderClassifications = props.classifications
-    ? props.classifications.map((classification, index) => (
+  let renderClassifications = null;
+  if (Array.isArray(props.classifications)) {
+    renderClassifications = props.classifications.map(
+      (classification, index) => (
         <div key={index} className="badge badge-outline">
           {classification}
         </div>
-      ))
-    : null;
+      )
+    );
+  }
 
   const handleClick = () => {
     navigate(`/kusina/${props.estab_id}/${props.id}`);
   };
 
   return (
-    <>
-      <div
-        className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary"
-        onClick={handleClick}
-      >
-        <figure>
-          <img src={props.image} alt={`Photo of ${props.name}`} />
-        </figure>
-        <div className="card-body font-sans">
-          <h2 className="card-title font-sans text-xl font-extrabold">
-            {props.name}
-          </h2>
-          <p>{props.description}</p>
-          <h2 className="card-title font-sans text-xl font-extrabold">
-            PHP {props.price}
-          </h2>
-          <div className="card-actions justify-start">
-            {renderClassifications}
-          </div>
-          <div className="flex justify-between">
-            <h2 className="card-title text-xl font-extrabold">
-              {props.rating}
-            </h2>
-            <div>
-              <div className="rating">{stars}</div>
-            </div>
+    <div
+      className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary"
+      onClick={handleClick}
+    >
+      <figure>
+        <img src={props.image} alt={`Photo of ${props.name}`} />
+      </figure>
+      <div className="card-body font-sans">
+        <h2 className="card-title font-sans text-xl font-extrabold">
+          {props.name}
+        </h2>
+        <p>{props.description}</p>
+        <h2 className="card-title font-sans text-xl font-extrabold">
+          PHP {props.price}
+        </h2>
+        <div className="card-actions justify-start">
+          {renderClassifications}
+        </div>
+        <div className="flex justify-between">
+          <h2 className="card-title text-xl font-extrabold">{props.rating}</h2>
+          <div>
+            <div className="rating">{stars}</div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

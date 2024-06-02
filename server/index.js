@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "qwerty",
+  password: "mandyjenny",
   database: "kusina",
 });
 
@@ -116,23 +116,24 @@ app.post("/establishmentSearch", (req, res) => {
 
 // create or add item
 app.post("/item", (req, res) => {
-  const { price, name, description, estab_id, classifications } = req.body;
+  const { price, name, description, image_link, estab_id, classifications } =
+    req.body;
 
   // insert item into the item table
   const insertItemSql =
-    "INSERT INTO item (price, name, description, estab_id) VALUES (?, ?, ?, ?)";
+    "INSERT INTO item (price, name, description, image_link, estab_id) VALUES (?, ?, ?, ?, ?)";
   db.query(
     insertItemSql,
-    [price, name, description, estab_id],
+    [price, name, description, image_link, estab_id],
     (err, results) => {
       if (err) return res.status(500).json({ error: err });
-
       const item_id = results.insertId;
 
-      // insert classifications into the item_classification table
+      // insert classifications into the item_class table
       if (classifications && classifications.length > 0) {
         const insertClassificationSql =
-          "INSERT INTO item_classification (item_id, classification) VALUES ?";
+          "INSERT INTO itemclass (item_id, classification) VALUES ?";
+        console.log(item_id);
         const classificationValues = classifications.map((classification) => [
           item_id,
           classification,
@@ -141,7 +142,9 @@ app.post("/item", (req, res) => {
           insertClassificationSql,
           [classificationValues],
           (err, results) => {
-            if (err) return res.status(500).json({ error: err });
+            if (err) {
+              return res.status(500).json({ error: err });
+            }
             return res.status(201).json({ message: "Item added successfully" });
           }
         );
@@ -155,12 +158,27 @@ app.post("/item", (req, res) => {
 // read all item from establishment
 app.get(`/:estab_id`, (req, res) => {
   const { estab_id } = req.params;
-  const sql =
-    "SELECT i.name, i.price, i.description, i.image_link, COALESCE(AVG(ir.rating), 0) AS avg_rating, ic.classification FROM item i LEFT JOIN establishment e ON i.estab_id = e.estab_id LEFT JOIN itemreview ir ON i.item_id = ir.item_id LEFT JOIN itemclass ic ON ic.item_id = i.item_id WHERE i.estab_id = ? GROUP BY i.item_id";
+  const sql = `
+    SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, GROUP_CONCAT(c.classification) AS classifications
+    FROM item i
+    JOIN establishment e ON i.estab_id = e.estab_id
+    LEFT JOIN itemclass c ON c.item_id = i.item_id
+    WHERE i.estab_id = ?
+    GROUP BY i.item_id
+  `;
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
-    // console.log("Query results:", data);
-    return res.json(data);
+
+    // Convert classifications string to array
+    const formattedData = data.map((item) => ({
+      ...item,
+      classifications: item.classifications
+        ? item.classifications.split(",")
+        : [], // Split into array or return empty array if null
+    }));
+
+    console.log("Query results:", formattedData);
+    return res.json(formattedData);
   });
 });
 
@@ -180,7 +198,8 @@ app.post("/:estab_id/search", (req, res) => {
   const { name } = req.body;
   const { estab_id } = req.params;
   // console.log("Search term: ", estab_id, search_term);
-  const sql = "SELECT i.name, i.price, i.description, i.image_link, COALESCE(AVG(ir.rating), 0) AS avg_rating, ic.classification FROM item i LEFT JOIN establishment e ON i.estab_id = e.estab_id LEFT JOIN itemreview ir ON i.item_id = ir.item_id LEFT JOIN itemclass ic ON ic.item_id = i.item_id WHERE LOWER(i.name) LIKE LOWER(?) AND i.estab_id = ? GROUP BY i.item_id";
+  const sql =
+    "SELECT i.name, i.price, i.description, i.image_link, COALESCE(AVG(ir.rating), 0) AS avg_rating, ic.classification FROM item i LEFT JOIN establishment e ON i.estab_id = e.estab_id LEFT JOIN itemreview ir ON i.item_id = ir.item_id LEFT JOIN itemclass ic ON ic.item_id = i.item_id WHERE LOWER(i.name) LIKE LOWER(?) AND i.estab_id = ? GROUP BY i.item_id";
   db.query(sql, [`%${name}%`, estab_id], (err, data) => {
     if (err) return res.status(500).json({ error: err });
     console.log("Query results:", data);

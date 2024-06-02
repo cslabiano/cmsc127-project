@@ -98,12 +98,14 @@ function KusinaMenu(props) {
       headers: {
         "Content-Type": "application/json",
       },
+
       body: JSON.stringify({
         price: event.target.price.value,
         name: event.target.name.value,
         description: event.target.desc.value,
         estab_id: 1,
         classifications: itemClassifications,
+        image_link: event.target.link.value,
       }),
     })
       .then((res) => {
@@ -146,11 +148,11 @@ function KusinaMenu(props) {
     fetch(`http://localhost:3001/${establishment_id}/search`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name: searchTerm})
+      body: JSON.stringify({ name: searchTerm }),
     })
-    .then((res) => res.json())
+      .then((res) => res.json())
       .then((searchData) =>
         setSearchData(Array.isArray(searchData) ? searchData : [])
       )
@@ -161,7 +163,8 @@ function KusinaMenu(props) {
     setSearchData([]);
   };
 
-  const foodToShow = searchTerm !== '' && searchData.length > 0 ? searchData : foodItems
+  const foodToShow =
+    searchTerm !== "" && searchData.length > 0 ? searchData : foodItems;
 
   return (
     <>
@@ -456,10 +459,14 @@ function KusinaMenu(props) {
                         id={item.item_id}
                         description={item.description}
                         price={item.price}
-                        rating={item.avg_rating
-                          ? Number(item.avg_rating).toFixed(1)
-                          : "0"} // TODO: make this dynamic
-                        image={item.image_link}
+                        image={item.imageLink}
+                        estab_id={item.estab_id}
+                        classifications={item.classifications}
+                        rating={
+                          item.avg_rating
+                            ? Number(item.avg_rating).toFixed(1)
+                            : "0"
+                        }
                       />
                     </div>
                   ))}
