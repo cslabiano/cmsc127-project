@@ -164,7 +164,7 @@ function KusinaMenu(props) {
                   {estabData[0].estab_name}
                 </h2>
                 <p className="text-3xl mt-4">{estabData[0].address}</p>
-                <p className="text-xl mt-2">Contact Number: 09XXXXXXXXX</p>
+                <p className="text-xl mt-2">Contact Number: {estabData[0].contact}</p>
               </div>
             </>
           )}
