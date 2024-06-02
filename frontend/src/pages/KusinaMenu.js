@@ -432,6 +432,7 @@ function KusinaMenu(props) {
                         rating={2} // TODO: make this dynamic
                         image={item.imageLink}
                         estab_id={item.estab_id}
+                        classifications={item.classifications}
                       />
                     </div>
                   ))}

@@ -129,10 +129,11 @@ app.post("/item", (req, res) => {
       if (err) return res.status(500).json({ error: err });
       const item_id = results.insertId;
 
-      // insert classifications into the item_classification table
+      // insert classifications into the item_class table
       if (classifications && classifications.length > 0) {
         const insertClassificationSql =
-          "INSERT INTO itemclass (item_id, classification) VALUES (?, ?)";
+          "INSERT INTO itemclass (item_id, classification) VALUES ?";
+        console.log(item_id);
         const classificationValues = classifications.map((classification) => [
           item_id,
           classification,
@@ -141,7 +142,9 @@ app.post("/item", (req, res) => {
           insertClassificationSql,
           [classificationValues],
           (err, results) => {
-            if (err) return res.status(500).json({ error: err });
+            if (err) {
+              return res.status(500).json({ error: err });
+            }
             return res.status(201).json({ message: "Item added successfully" });
           }
         );
@@ -155,12 +158,27 @@ app.post("/item", (req, res) => {
 // read all item from establishment
 app.get(`/:estab_id`, (req, res) => {
   const { estab_id } = req.params;
-  const sql =
-    "SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress FROM item i JOIN establishment e ON i.estab_id = e.estab_id WHERE i.estab_id = ?";
+  const sql = `
+    SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, GROUP_CONCAT(c.classification) AS classifications
+    FROM item i
+    JOIN establishment e ON i.estab_id = e.estab_id
+    LEFT JOIN itemclass c ON c.item_id = i.item_id
+    WHERE i.estab_id = ?
+    GROUP BY i.item_id
+  `;
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
-    console.log("Query results:", data);
-    return res.json(data);
+
+    // Convert classifications string to array
+    const formattedData = data.map((item) => ({
+      ...item,
+      classifications: item.classifications
+        ? item.classifications.split(",")
+        : [], // Split into array or return empty array if null
+    }));
+
+    console.log("Query results:", formattedData);
+    return res.json(formattedData);
   });
 });
 

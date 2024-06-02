@@ -15,7 +15,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      sans: ["Inter"],
+      sans: ["General Sans", "sans-serif"],
     },
     boxShadow: {
       "inner-custom": "inset 0 0 10px 4px rgba(0, 0, 0, 0.1)",
