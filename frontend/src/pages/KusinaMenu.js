@@ -598,8 +598,8 @@ function KusinaMenu(props) {
                 <p className="mb-2">Image Link:</p>
                 <input
                   type="text"
-                  id="contact"
-                  name="contact"
+                  id="link"
+                  name="link"
                   placeholder="Link"
                   //   value="09XXXXXXXXX"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
@@ -672,8 +672,8 @@ function KusinaMenu(props) {
                 <p className="mb-2">Image Link:</p>
                 <input
                   type="text"
-                  id="contact"
-                  name="contact"
+                  id="link"
+                  name="link"
                   placeholder="Link"
                   //   value="09XXXXXXXXX"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
