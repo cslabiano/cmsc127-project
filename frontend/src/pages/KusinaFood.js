@@ -229,6 +229,18 @@ function KusinaFood() {
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
+
+              <div className="mb-2">
+                <p className="mb-2">Image Link:</p>
+                <input
+                  type="text"
+                  id="contact"
+                  name="contact"
+                  placeholder="Link"
+                  //   value="09XXXXXXXXX"
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              </div>
               <div className="mb-2">
                 <p className="mb-2">Classification:</p>
                 <div className="flex gap-2 flex-wrap">
@@ -298,17 +310,6 @@ function KusinaFood() {
                   className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
                   //   onClick={}
                 >
-                  <div className="mb-2">
-                    <p className="mb-2">Image Link:</p>
-                    <input
-                      type="text"
-                      id="contact"
-                      name="contact"
-                      placeholder="Link"
-                      //   value="09XXXXXXXXX"
-                      className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
-                    />
-                  </div>
                   Apply Changes
                 </button>
                 <button
