@@ -17,7 +17,7 @@ function KusinaMenu(props) {
   const [classification, setClassification] = useState("NONE");
   const [price, setPrice] = useState("NONE");
   const [between, setBetween] = useState(false);
-  const [estRating, setEstRating] = useState(0);
+  const [estRating, setEstRating] = useState(5);
   const [minprice, setMinPrice] = useState(0);
   const [maxprice, setMaxPrice] = useState(0);
   const [itemClassifications, setItemClassifications] = useState([]);
