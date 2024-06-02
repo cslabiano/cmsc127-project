@@ -96,12 +96,14 @@ function KusinaMenu(props) {
       headers: {
         "Content-Type": "application/json",
       },
+
       body: JSON.stringify({
         price: event.target.price.value,
         name: event.target.name.value,
         description: event.target.desc.value,
         estab_id: 1,
         classifications: itemClassifications,
+        image_link: event.target.link.value,
       }),
     })
       .then((res) => {

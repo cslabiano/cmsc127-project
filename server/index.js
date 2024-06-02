@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "1234",
+  password: "mandyjenny",
   database: "kusina",
 });
 
@@ -116,23 +116,23 @@ app.post("/establishmentSearch", (req, res) => {
 
 // create or add item
 app.post("/item", (req, res) => {
-  const { price, name, description, estab_id, classifications } = req.body;
+  const { price, name, description, image_link, estab_id, classifications } =
+    req.body;
 
   // insert item into the item table
   const insertItemSql =
-    "INSERT INTO item (price, name, description, estab_id) VALUES (?, ?, ?, ?)";
+    "INSERT INTO item (price, name, description, image_link, estab_id) VALUES (?, ?, ?, ?, ?)";
   db.query(
     insertItemSql,
-    [price, name, description, estab_id],
+    [price, name, description, image_link, estab_id],
     (err, results) => {
       if (err) return res.status(500).json({ error: err });
-
       const item_id = results.insertId;
 
       // insert classifications into the item_classification table
       if (classifications && classifications.length > 0) {
         const insertClassificationSql =
-          "INSERT INTO item_classification (item_id, classification) VALUES ?";
+          "INSERT INTO itemclass (item_id, classification) VALUES (?, ?)";
         const classificationValues = classifications.map((classification) => [
           item_id,
           classification,
@@ -165,8 +165,9 @@ app.get(`/:estab_id`, (req, res) => {
 });
 
 app.get(`/:estab_id/estab`, (req, res) => {
-  const { estab_id} = req.params;
-  const sql = "SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating, ec.contact FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id LEFT JOIN estabcontact ec ON e.estab_id = ec.estab_id WHERE e.estab_id = ? GROUP BY e.estab_id";
+  const { estab_id } = req.params;
+  const sql =
+    "SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating, ec.contact FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id LEFT JOIN estabcontact ec ON e.estab_id = ec.estab_id WHERE e.estab_id = ? GROUP BY e.estab_id";
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
     // console.log(data);
