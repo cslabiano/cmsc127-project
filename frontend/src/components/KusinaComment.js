@@ -20,12 +20,16 @@ const KusinaComment = (props) => {
     <>
       <div className="flex flex-col">
         <div className="flex items-center mb-4">
-          <p className="mr-4 text-2xl font-semibold">{props.name}</p>
+          <p className="mr-4 text-2xl text-kusinaprimary font-semibold">
+            {props.name}
+          </p>
           <div className="rating">{stars}</div>
         </div>
         <p className="text-slate-600 text-lg">{props.comment}</p>
 
-        <p className="mt-4 text-md font-semibold">{props.date}</p>
+        <p className="mt-4 text-md text-kusinaprimary font-semibold">
+          {props.date}
+        </p>
 
         <hr className="mt-10 border-kusinaprimary"></hr>
       </div>

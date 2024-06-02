@@ -8,7 +8,8 @@ import KusinaFoodBox from "../components/KusinaFoodBox";
 import KusinaComment from "../components/KusinaComment";
 import { useNavigate, useParams } from "react-router-dom";
 
-function KusinaMenu() {
+function KusinaMenu(props) {
+  let { establishment_id } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [classification, setClassification] = useState("NONE");
   const [price, setPrice] = useState("NONE");
@@ -21,10 +22,15 @@ function KusinaMenu() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortReviews, setSortReviews] = useState("month");
   const [activeTab, setActiveTab] = useState("food");
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
-  const { estab_id } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/${establishment_id}`)
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((error) => console.error("Error fetching food items:", error));
+  }, []);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -39,7 +45,7 @@ function KusinaMenu() {
         type="radio"
         name="rating-2"
         className={`mask mask-star-2 ${
-          i <= rating ? "bg-kusinaprimary" : "bg-kusinaprimary"
+          i <= rating ? "bg-kusinaprimary" : "bg-lightstar"
         } hover:cursor-default`}
         checked={i <= Math.floor(rating)}
         disabled
@@ -56,24 +62,6 @@ function KusinaMenu() {
       setItemClassifications([...itemClassifications, classType]);
     }
   };
-
-  useEffect(() => {
-    fetch(`http://localhost:3001/kusina/${estab_id}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setFoodItems(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
-  }, []);
 
   // function to handle adding a new food item
   const handleAddFoodItem = (event) => {
@@ -141,7 +129,7 @@ function KusinaMenu() {
         <div className="flex justify-between p-12">
           <div className="flex flex-col text-kusinaprimary">
             <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
-              Food Establishment
+              {data.establishmentName}
             </h2>
             <p className="text-3xl mt-4">
               Place the address of the food establishment here.
@@ -161,7 +149,11 @@ function KusinaMenu() {
               >
                 <img src={edit_icon} className="h-10 pl-2 pt-2"></img>
               </button>
-              <button>
+              <button
+                onClick={() =>
+                  document.getElementById("delete_modal").showModal()
+                }
+              >
                 <img src={delete_icon} className="h-10 pl-2 pt-2"></img>
               </button>
             </div>
@@ -378,9 +370,8 @@ function KusinaMenu() {
                   </div>
                 </div>
               )}
-
               <div>
-                {foodItems.map((item) => (
+                {data.map((item) => (
                   <div key={item.id}>
                     <KusinaFoodBox
                       name={item.name}
@@ -564,7 +555,7 @@ function KusinaMenu() {
                 </button>
                 <button
                   type="button"
-                  className="ml-4 bg-neutral hover:bg-grn-i hover:text-neutral text-grn-i font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                  className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
                   onClick={() => document.getElementById("my_modal_1").close()}
                 >
                   Cancel
@@ -697,6 +688,31 @@ function KusinaMenu() {
                 </button>
               </div>
             </form>
+          </div>
+        </dialog>
+
+        <dialog id="delete_modal" className="modal">
+          <div className="modal-box bg-white text-kusinaprimary">
+            <h3 className="font-bold text-lg pb-5">
+              Are you sure you want to delete this establishment, including all
+              of its food items and reviews?
+            </h3>
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                //   onClick={}
+              >
+                I am sure.
+              </button>
+              <button
+                type="button"
+                className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                onClick={() => document.getElementById("delete_modal").close()}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </dialog>
       </div>

@@ -153,10 +153,11 @@ app.post("/item", (req, res) => {
 });
 
 // read all item from establishment
-app.get("/kusina/:estab_id", (req, res) => {
+app.get(`/:estab_id`, (req, res) => {
   const { estab_id } = req.params;
-  console.log("Received estab_id:", estab_id);
-  const sql = "SELECT * FROM item WHERE estab_id = ?";
+  console.log(estab_id);
+  const sql =
+    "SELECT i.*, e.estab_name AS establishmentName, e.address AS establishmentAddress FROM item i JOIN establishment e ON i.estab_id = e.estab_id WHERE i.estab_id = ?";
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
     console.log("Query results:", data);

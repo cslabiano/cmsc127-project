@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const KusinaBox = (props) => {
+  const navigate = useNavigate();
   const rating = Number(props.rating);
   const stars = [];
   for (let i = 1; i <= 5; i++) {
@@ -16,9 +18,13 @@ const KusinaBox = (props) => {
     );
   }
 
+  const handleClick = () => {
+    navigate(`/kusina/${props.id}`)
+  }
+
   return (
     <>
-      <div className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary">
+      <div className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary" onClick={handleClick}>
         <figure>
           <img src={props.image} alt={`Photo of  ${props.name}`} />
         </figure>
