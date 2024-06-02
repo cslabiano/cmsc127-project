@@ -13,6 +13,19 @@ module.exports = {
         kusinabg: "#FAF4F4",
         lightstar: "#EDD5D2",
       },
+      keyframes: {
+        transitionIn: {
+          "0%": { opacity: "0", transform: "translateY(-10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        transitionOut: {
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(-10px)" },
+        },
+      },
+      animation: {
+        transitionIn: "transitionIn 1.00s ease-in-out",
+      },
     },
     fontFamily: {
       sans: ["General Sans", "sans-serif"],
