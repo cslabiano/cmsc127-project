@@ -15,13 +15,13 @@ const KusinaFoodBox = (props) => {
     );
   }
 
-  const renderClassifications = props.classifications.map(
-    (classification, index) => (
-      <div key={index} className="badge badge-outline">
-        {classification}
-      </div>
-    )
-  );
+  const renderClassifications = props.classifications
+    ? props.classifications.map((classification, index) => (
+        <div key={index} className="badge badge-outline">
+          {classification}
+        </div>
+      ))
+    : null;
 
   return (
     <>
