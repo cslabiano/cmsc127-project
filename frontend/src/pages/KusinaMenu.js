@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 
 function KusinaMenu() {
   const [showPopup, setShowPopup] = useState(false);
-  const [showPricePopup, setShowPricePopup] = useState(false);
   const [classification, setClassification] = useState("NONE");
   const [price, setPrice] = useState("NONE");
   const [between, setBetween] = useState(false);
@@ -33,9 +32,9 @@ function KusinaMenu() {
         type="radio"
         name="rating-2"
         className={`mask mask-star-2 ${
-          i <= rating ? "bg-kusinaprimary" : "bg-red-200"
+          i <= rating ? "bg-kusinaprimary" : "bg-kusinaprimary"
         } hover:cursor-default`}
-        checked={i === Math.floor(rating)}
+        checked={i <= Math.floor(rating)}
         disabled
       />
     );
@@ -163,7 +162,6 @@ function KusinaMenu() {
             <div className="flex flex-col justify-center">
               <div className="flex justify-center">
                 {" "}
-                {/* Add this div to center the button */}
                 <div className="flex w-56 justify-center bg-kusinaprimary text-white rounded-3xl mt-10">
                   <button
                     className="text-kusinabg font-semibold px-8 py-3"
@@ -378,53 +376,56 @@ function KusinaMenu() {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-6"
           >
-            <div className="flex flex-col">
-              <h3 className="text-2xl font-bold text-kusinaprimary mb-4">
-                Reviews
-              </h3>
-              <div className="review mb-4">
-                <div className="flex items-center mb-2">
-                  <h4 className="text-xl font-semibold text-kusinaprimary">
-                    John Doe
-                  </h4>
-                  <div className="flex ml-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <input
-                        key={star}
-                        type="radio"
-                        name={`rating-${star}`}
-                        className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
-                        checked={star <= 4} // Assume the rating is 4
-                        disabled
-                      />
-                    ))}
+            <div className="flex justify-center mt-12 text-kusinaaccent">
+              <div className="flex flex-col mr-12 justify-center">
+                <h2 className="card-title text-4xl font-extrabold flex justify-end">
+                  Rate us:
+                </h2>
+                <div className="">
+                  <div className="rating rating-lg">
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-kusinaaccent"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-kusinaaccent"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-kusinaaccent"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-kusinaaccent"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-kusinaaccent"
+                    />
                   </div>
                 </div>
-                <p className="text-md text-kusinaprimary">
-                  Great food and excellent service. Highly recommend!
-                </p>
               </div>
-              <div className="review mb-4">
-                <div className="flex items-center mb-2">
-                  <h4 className="text-xl font-semibold text-kusinaprimary">
-                    Jane Smith
-                  </h4>
-                  <div className="flex ml-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <input
-                        key={star}
-                        type="radio"
-                        name={`rating-${star}`}
-                        className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
-                        checked={star <= 5} // Assume the rating is 5
-                        disabled
-                      />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-md text-kusinaprimary">
-                  Absolutely loved the ambiance and the food quality.
-                </p>
+              <textarea
+                placeholder="Add a comment here"
+                className="textarea textarea-bordered textarea-lg w-full max-w-xs"
+              ></textarea>
+            </div>
+            <div className="flex justify-center">
+              <div className="flex w-56 justify-center bg-kusinaaccent text-white rounded-3xl mt-10">
+                <button
+                  className="text-kusinabg font-semibold px-8 py-3"
+                  onClick={() =>
+                    document.getElementById("add_modal").showModal()
+                  }
+                >
+                  Sumit Review
+                </button>
               </div>
             </div>
           </div>
