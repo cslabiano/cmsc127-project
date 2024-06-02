@@ -13,7 +13,7 @@ function Kusina() {
   const [sortOrder, setSortOrder] = useState("desc");
 
   const fetchData = (order) => {
-    fetch(`http://localhost:3001/establishments?sort=${order}`)
+    fetch(`http://localhost:3001/establishment?sort=${order}`)
       .then((res) => res.json())
       .then((data) => setData(Array.isArray(data) ? data : []))
       .catch((err) => console.log(err));
