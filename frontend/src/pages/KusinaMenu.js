@@ -28,7 +28,7 @@ function KusinaMenu() {
         type="radio"
         name="rating-2"
         className={`mask mask-star-2 ${
-          i <= rating ? "bg-kusinaprimary" : "bg-red-200"
+          i <= rating ? "bg-kusinaprimary" : "bg-kusinaprimary"
         } hover:cursor-default`}
         checked={i <= Math.floor(rating)}
         disabled
@@ -106,7 +106,6 @@ function KusinaMenu() {
             <div className="flex flex-col justify-center">
               <div className="flex justify-center">
                 {" "}
-                {/* Add this div to center the button */}
                 <div className="flex w-56 justify-center bg-kusinaprimary text-white rounded-3xl mt-10">
                   <button
                     className="text-kusinabg font-semibold px-8 py-3"
@@ -321,9 +320,9 @@ function KusinaMenu() {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-6"
           >
-            <div className="flex justify-around">
-              <div className="flex flex-col">
-                <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
+            <div className="flex justify-center mt-12 text-kusinaaccent">
+              <div className="flex flex-col mr-12 justify-center">
+                <h2 className="card-title text-4xl font-extrabold flex justify-end">
                   Rate us:
                 </h2>
                 <div className="">
@@ -331,31 +330,46 @@ function KusinaMenu() {
                     <input
                       type="radio"
                       name="rating-8"
-                      className="mask mask-star-2 bg-orange-400"
+                      className="mask mask-star-2 bg-kusinaaccent"
                     />
                     <input
                       type="radio"
                       name="rating-8"
-                      className="mask mask-star-2 bg-orange-400"
-                      checked
+                      className="mask mask-star-2 bg-kusinaaccent"
                     />
                     <input
                       type="radio"
                       name="rating-8"
-                      className="mask mask-star-2 bg-orange-400"
+                      className="mask mask-star-2 bg-kusinaaccent"
                     />
                     <input
                       type="radio"
                       name="rating-8"
-                      className="mask mask-star-2 bg-orange-400"
+                      className="mask mask-star-2 bg-kusinaaccent"
                     />
                     <input
                       type="radio"
                       name="rating-8"
-                      className="mask mask-star-2 bg-orange-400"
+                      className="mask mask-star-2 bg-kusinaaccent"
                     />
                   </div>
                 </div>
+              </div>
+              <textarea
+                placeholder="Add a comment here"
+                className="textarea textarea-bordered textarea-lg w-full max-w-xs"
+              ></textarea>
+            </div>
+            <div className="flex justify-center">
+              <div className="flex w-56 justify-center bg-kusinaaccent text-white rounded-3xl mt-10">
+                <button
+                  className="text-kusinabg font-semibold px-8 py-3"
+                  onClick={() =>
+                    document.getElementById("add_modal").showModal()
+                  }
+                >
+                  Sumit Review
+                </button>
               </div>
             </div>
           </div>
