@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "1234",
+  password: "qwerty",
   database: "kusina",
 });
 
@@ -165,8 +165,9 @@ app.get(`/:estab_id`, (req, res) => {
 });
 
 app.get(`/:estab_id/estab`, (req, res) => {
-  const { estab_id} = req.params;
-  const sql = "SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating, ec.contact FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id LEFT JOIN estabcontact ec ON e.estab_id = ec.estab_id WHERE e.estab_id = ? GROUP BY e.estab_id";
+  const { estab_id } = req.params;
+  const sql =
+    "SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating, ec.contact FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id LEFT JOIN estabcontact ec ON e.estab_id = ec.estab_id WHERE e.estab_id = ? GROUP BY e.estab_id";
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
     // console.log(data);
