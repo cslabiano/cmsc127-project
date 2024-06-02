@@ -140,7 +140,11 @@ function KusinaMenu() {
               >
                 <img src={edit_icon} className="h-10 pl-2 pt-2"></img>
               </button>
-              <button>
+              <button
+                onClick={() =>
+                  document.getElementById("delete_modal").showModal()
+                }
+              >
                 <img src={delete_icon} className="h-10 pl-2 pt-2"></img>
               </button>
             </div>
@@ -540,7 +544,7 @@ function KusinaMenu() {
                 </button>
                 <button
                   type="button"
-                  className="ml-4 bg-neutral hover:bg-grn-i hover:text-neutral text-grn-i font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                  className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
                   onClick={() => document.getElementById("my_modal_1").close()}
                 >
                   Cancel
@@ -673,6 +677,31 @@ function KusinaMenu() {
                 </button>
               </div>
             </form>
+          </div>
+        </dialog>
+
+        <dialog id="delete_modal" className="modal">
+          <div className="modal-box bg-white text-kusinaprimary">
+            <h3 className="font-bold text-lg pb-5">
+              Are you sure you want to delete this establishment, including all
+              of its food items and reviews?
+            </h3>
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                //   onClick={}
+              >
+                I am sure.
+              </button>
+              <button
+                type="button"
+                className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                onClick={() => document.getElementById("delete_modal").close()}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </dialog>
       </div>
