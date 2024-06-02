@@ -214,7 +214,7 @@ function Kusina() {
               Product Page {currentPage}
             </div>
             <button
-              className="join-item btn bg-kusinaprimary border-kusinaprimary text-kusinabg hover:bg-kusinaprimary hover:border-kusinaprimary disabled:bg-kusinaprimary disabled:border-kusinaprimary disable:                text-kusinabg"
+              className="join-item btn bg-kusinaprimary border-kusinaprimary text-kusinabg hover:bg-kusinaprimary hover:border-kusinaprimary disabled:bg-kusinaprimary disabled:border-kusinaprimary disable:text-kusinabg"
               onClick={() => paginate(currentPage + 1)}
               disabled={
                 currentPage ===
