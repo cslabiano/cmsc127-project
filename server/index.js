@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "1234",
+  password: "mandyjenny",
   database: "kusina",
 });
 
@@ -159,11 +159,10 @@ app.post("/item", (req, res) => {
 app.get(`/:estab_id`, (req, res) => {
   const { estab_id } = req.params;
   const sql = `
-    SELECT i.name, i.price, i.description, COALESCE(AVG(ir.rating), 0) AS avg_rating, e.estab_id, i.item_id, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, GROUP_CONCAT(c.classification) AS classifications
+    SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, GROUP_CONCAT(c.classification) AS classifications
     FROM item i
     JOIN establishment e ON i.estab_id = e.estab_id
     LEFT JOIN itemclass c ON c.item_id = i.item_id
-    LEFT JOIN itemreview ir ON i.item_id = ir.item_id
     WHERE i.estab_id = ?
     GROUP BY i.item_id
   `;
@@ -231,13 +230,14 @@ app.delete("/items/:item_id", (req, res) => {
 });
 
 app.get(`/:estab_id/:item_id`, (req, res) => {
-  const { estab_id, item_id} = req.params;
-  const sql = "SELECT e.estab_id, i.name, i.description, i.price, COALESCE(AVG(ir.rating), 0) AS avg_rating, e.estab_name FROM item i LEFT JOIN establishment e on i.estab_id = e.estab_id LEFT JOIN itemreview ir ON i.item_id = ir.item_id WHERE e.estab_id = ? AND i.item_id = ? GROUP BY i.item_id";
+  const { estab_id, item_id } = req.params;
+  const sql =
+    "SELECT e.estab_id, i.name, i.description, i.price, COALESCE(AVG(ir.rating), 0) AS avg_rating, e.estab_name FROM item i LEFT JOIN establishment e on i.estab_id = e.estab_id LEFT JOIN itemreview ir ON i.item_id = ir.item_id WHERE e.estab_id = ? AND i.item_id = ? GROUP BY i.item_id";
   db.query(sql, [estab_id, item_id], (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
-  })
-})
+  });
+});
 
 /*************** ITEM REVIEW TABLE ***************/
 

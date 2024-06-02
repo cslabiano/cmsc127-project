@@ -460,7 +460,7 @@ function KusinaMenu(props) {
                         estab_id={item.estab_id}
                         description={item.description}
                         price={item.price}
-                        image={item.imageLink}
+                        image={item.image_link}
                         classifications={item.classifications}
                         rating={
                           item.avg_rating
