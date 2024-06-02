@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "qwerty",
+  password: "mandyjenny",
   database: "kusina",
 });
 
@@ -39,7 +39,7 @@ app.post("/login", (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    const user_id = results[0].user_id; // Extract the user_id from the results
+    const user_id = results[0].user_id; // extract the user_id from the results
 
     return res.status(200).json({ message: "Login successful", user_id });
   });
@@ -160,6 +160,24 @@ app.post("/establishmentSearch", (req, res) => {
       return res.status(200).json(results);
     }
   });
+});
+
+// create or add establishment review
+app.post("/:estab_id/review", (req, res) => {
+  const { user_id, estab_id, rating, comment } = req.body;
+
+  // insert item into the item table
+  const insertEstReviewSql =
+    "INSERT INTO estabreview(user_id, estab_id, rating, comment) VALUES (?, ?, ?, ?)";
+  db.query(
+    insertEstReviewSql,
+    [user_id, estab_id, rating, comment],
+    (err, results) => {
+      console.log(user_id, estab_id, rating, comment);
+      if (err) return res.status(500).json({ error: err });
+      return res.status(201).json({ message: "Review added successfully" });
+    }
+  );
 });
 
 /*************** ITEM TABLE ***************/

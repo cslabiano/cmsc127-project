@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 function KusinaMenu(props) {
+  const user_id = localStorage.getItem("user_id");
   let { establishment_id } = useParams();
   let { search_term } = useParams();
   const [showPopup, setShowPopup] = useState(false);
@@ -30,6 +31,7 @@ function KusinaMenu(props) {
   const [searchData, setSearchData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [reviewData, setReviewData] = useState([]);
+  const [estReview, setComment] = useState("");
 
   // const itemsToShow =
   //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
@@ -47,16 +49,6 @@ function KusinaMenu(props) {
       .then((estabData) => setEstabData(estabData))
       .catch((err) => console.log(err));
   };
-
-  //   const fetchReviewData = () => {
-  //     fetch(`http://localhost:3001/${establishment_id}/estreviews`)
-  //       .then((res) => res.json())
-  //       .then((reviewData) => {
-  //         console.log("Review Data:", reviewData);
-  //         setReviewData(reviewData);
-  //       })
-  //       .catch((err) => console.log(err));
-  //   };
 
   const fetchReviewData = () => {
     let endpoint;
@@ -134,7 +126,7 @@ function KusinaMenu(props) {
         price: event.target.price.value,
         name: event.target.name.value,
         description: event.target.desc.value,
-        estab_id: 1,
+        estab_id: establishment_id,
         classifications: itemClassifications,
         image_link: event.target.link.value,
       }),
@@ -150,6 +142,40 @@ function KusinaMenu(props) {
       })
       .then(() => {
         navigate("/kusina");
+      });
+  };
+
+  const handleChangeEstReview = (event) => {
+    setComment(event.target.value);
+  };
+
+  // function to handle adding a new food item
+  const handleAddEstReview = (event) => {
+    fetch(`http://localhost:3001/${establishment_id}/review`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        user_id: user_id,
+        estab_id: establishment_id,
+        rating: estRating,
+        comment: estReview,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((error) => {
+            throw new Error(error.error);
+          });
+        }
+      })
+      .then(() => {
+        fetchReviewData();
+        navigate(`/kusina/${establishment_id}`);
       });
   };
 
@@ -561,6 +587,8 @@ function KusinaMenu(props) {
               </div>
               <textarea
                 placeholder="Add a comment here"
+                value={estReview}
+                onChange={handleChangeEstReview}
                 className="textarea textarea-bordered textarea-lg w-full max-w-xs"
               ></textarea>
             </div>
@@ -568,9 +596,7 @@ function KusinaMenu(props) {
               <div className="flex w-56 justify-center bg-kusinaaccent text-white rounded-3xl mt-10">
                 <button
                   className="text-kusinabg font-semibold px-8 py-3"
-                  onClick={() =>
-                    document.getElementById("add_modal").showModal()
-                  }
+                  onClick={handleAddEstReview}
                 >
                   Submit Review
                 </button>
