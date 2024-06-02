@@ -164,7 +164,9 @@ function KusinaMenu(props) {
                   {estabData[0].estab_name}
                 </h2>
                 <p className="text-3xl mt-4">{estabData[0].address}</p>
-                <p className="text-xl mt-2">Contact Number: {estabData[0].contact}</p>
+                <p className="text-xl mt-2">
+                  Contact Number: {estabData[0].contact}
+                </p>
               </div>
             </>
           )}
@@ -422,10 +424,12 @@ function KusinaMenu(props) {
                     <div key={item.id}>
                       <KusinaFoodBox
                         name={item.name}
+                        id={item.item_id}
                         description={item.description}
                         price={item.price}
                         rating={2} // TODO: make this dynamic
                         image={item.imageLink}
+                        estab_id={item.estab_id}
                       />
                     </div>
                   ))}

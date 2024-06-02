@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const KusinaFoodBox = (props) => {
+  const navigate = useNavigate();
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     stars.push(
@@ -23,9 +25,16 @@ const KusinaFoodBox = (props) => {
       ))
     : null;
 
+  const handleClick = () => {
+    navigate(`/kusina/${props.estab_id}/${props.id}`);
+  };
+
   return (
     <>
-      <div className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary">
+      <div
+        className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary"
+        onClick={handleClick}
+      >
         <figure>
           <img src={props.image} alt={`Photo of ${props.name}`} />
         </figure>
