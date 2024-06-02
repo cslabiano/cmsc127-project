@@ -5,6 +5,7 @@ import KusinaBox from "../components/KusinaBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import KusinaSkeleton from "../components/KusinaSkeleton";
+import { useNavigate } from "react-router-dom";
 
 function Kusina() {
   const [sort, setSort] = useState("High");
@@ -15,6 +16,8 @@ function Kusina() {
   const [ratingFilter, setRatingFilter] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
+
   const itemsPerPage = 9;
 
   const fetchData = (order) => {
@@ -96,6 +99,50 @@ function Kusina() {
     const newContacts = [...contactNumbers];
     newContacts[index] = value;
     setContactNumbers(newContacts);
+  };
+
+  // function to handle adding a new establishment
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Prevent default form submission behavior
+
+    // Extract values from the form fields
+    const estabName = event.target.name.value;
+    const address = event.target.address.value;
+    const imageLink = event.target.link.value;
+
+    // Prepare the request body, including the contactNumbers array
+    const requestBody = {
+      estab_name: estabName,
+      address: address,
+      contacts: contactNumbers, // Pass contactNumbers array
+      image_link: imageLink,
+    };
+
+    // Send a POST request to the server
+    fetch("http://localhost:3001/establishments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody), // Convert the request body to JSON
+    })
+      .then((res) => {
+        if (res.ok) {
+          // If the response is successful, navigate to the "/kusina" route
+          fetchData(sortOrder);
+          // Close the modal dialog
+          document.getElementById("add_modal").close();
+          navigate("/kusina");
+        } else {
+          // If there's an error in the response, throw an error
+          return res.json().then((error) => {
+            throw new Error(error.error);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -232,7 +279,7 @@ function Kusina() {
           <form
             method="dialog"
             className="modal-content"
-            // onSubmit={handleAddEstab}
+            onSubmit={handleSubmit}
           >
             <div className="mb-2">
               <p className="mb-2">Establishment Name:</p>

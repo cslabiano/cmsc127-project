@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "qwerty",
+  password: "mandyjenny",
   database: "kusina",
 });
 
@@ -76,26 +76,52 @@ app.get("/establishment", (req, res) => {
 });
 
 app.post("/establishments", (req, res) => {
-  const { estab_name, address } = req.body;
-
+  const { estab_name, address, contacts, image_link } = req.body;
+  // Check if the establishment already exists
   const checkEstabSql =
-    "SELECT * FROM establishment where estab_name = ? and address = ?";
+    "SELECT * FROM establishment WHERE estab_name = ? AND address = ?";
   db.query(checkEstabSql, [estab_name, address], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) {
+      return res.status(500).json({ error: err });
+    }
+    console.log(estab_name, address, contacts, image_link);
     if (results.length > 0) {
-      return res
-        .status(400)
-        .json({ error: "Establishment in that address already exists" });
+      return res.status(400).json({ error: "Establishment already exists" });
     }
 
+    // insert the new establishment
     const insertEstabSql =
-      "INSERT INTO establishment(estab_name, address) VALUES (?, ?)";
-    db.query(insertEstabSql, [estab_name, address], (err, results) => {
-      if (err) return res.status(500).json({ error: err });
-      return res
-        .status(201)
-        .json({ message: "Establishment added successfully" });
-    });
+      "INSERT INTO establishment (estab_name, image_link, address) VALUES (?, ?, ?)";
+    db.query(
+      insertEstabSql,
+      [estab_name, image_link, address],
+      (err, results) => {
+        if (err) {
+          return res.status(500).json({ error: err });
+        }
+
+        const estab_id = results.insertId;
+
+        // Insert contact numbers if provided
+        if (contacts && contacts.length > 0) {
+          const contactValues = contacts.map((contact) => [estab_id, contact]);
+          const insertContactSql =
+            "INSERT INTO estabcontact (estab_id, contact) VALUES ?";
+          db.query(insertContactSql, [contactValues], (err, results) => {
+            if (err) {
+              return res.status(500).json({ error: err });
+            }
+            return res
+              .status(201)
+              .json({ message: "Establishment added successfully" });
+          });
+        } else {
+          return res
+            .status(201)
+            .json({ message: "Establishment added successfully" });
+        }
+      }
+    );
   });
 });
 
