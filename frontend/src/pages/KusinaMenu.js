@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import KusinaNavBar from "../components/KusinaNavBar";
 import KusinaSearchBar from "../components/KusinaSearchBar";
 import sort_icon from "../assets/Sort.png";
@@ -7,8 +7,10 @@ import edit_icon from "../assets/edit.png";
 import KusinaFoodBox from "../components/KusinaFoodBox";
 import KusinaComment from "../components/KusinaComment";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-function KusinaMenu() {
+function KusinaMenu(props) {
+  let { establishment_id } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [classification, setClassification] = useState("NONE");
   const [price, setPrice] = useState("NONE");
@@ -21,7 +23,15 @@ function KusinaMenu() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortReviews, setSortReviews] = useState("month");
   const [activeTab, setActiveTab] = useState("food");
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/${establishment_id}/items`)
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((error) => console.error("Error fetching food items:", error));
+  }, []);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -120,7 +130,7 @@ function KusinaMenu() {
         <div className="flex justify-between p-12">
           <div className="flex flex-col text-kusinaprimary">
             <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
-              Food Establishment
+              {data.establishmentName}
             </h2>
             <p className="text-3xl mt-4">
               Place the address of the food establishment here.

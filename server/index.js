@@ -152,9 +152,10 @@ app.post("/item", (req, res) => {
 });
 
 // read all item from establishment
-app.get("/:estab_id/items", (req, res) => {
+app.get(`/:estab_id/items`, (req, res) => {
   const { estab_id } = req.params;
-  const sql = "SELECT * FROM item WHERE estab_id = ?";
+  console.log(estab_id);
+  const sql = "SELECT i.*, e.estab_name AS establishmentName, e.address AS establishmentAddress FROM item i JOIN establishment e ON i.estab_id = e.estab_id WHERE i.estab_id = ?";
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
