@@ -399,17 +399,19 @@ function KusinaMenu(props) {
                   </div>
                 </div>
               )}
-              <div>
-                {foodItems.map((item) => (
-                  <div key={item.id}>
-                    <KusinaFoodBox
-                      name={item.name}
-                      description={item.description}
-                      price={item.price}
-                      rating={2} // TODO: make this dynamic
-                    />
-                  </div>
-                ))}
+              <div className="flex justify-center mt-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {foodItems.map((item) => (
+                    <div key={item.id}>
+                      <KusinaFoodBox
+                        name={item.name}
+                        description={item.description}
+                        price={item.price}
+                        rating={2} // TODO: make this dynamic
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
