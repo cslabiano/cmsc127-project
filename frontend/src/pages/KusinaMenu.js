@@ -49,19 +49,6 @@ function KusinaMenu(props) {
     fetchEstabData();
   }, []);
 
-  useEffect(() => {
-    if (searchTerm !== "") {
-      fetch(`http://localhost:3001/kusina/${establishment_id}/${searchTerm}`)
-        .then((res) => res.json())
-        .then((searchData) =>
-          setSearchData(Array.isArray(searchData) ? searchData : [])
-        )
-        .catch((err) => console.log(err));
-    } else {
-      setSearchData([]);
-    }
-  }, [establishment_id, searchTerm]);
-
   const togglePopup = () => {
     setShowPopup(!showPopup);
   };
@@ -428,18 +415,21 @@ function KusinaMenu(props) {
                   </div>
                 </div>
               )}
-              <div>
-                {foodItems.map((item) => (
-                  <div key={item.id}>
-                    <KusinaFoodBox
-                      name={item.name}
-                      description={item.description}
-                      price={item.price}
-                      rating={2} // TODO: make this dynamic
-                      image={item.imageLink}
-                    />
-                  </div>
-                ))}
+
+              <div className="flex justify-center mt-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {foodItems.map((item) => (
+                    <div key={item.id}>
+                      <KusinaFoodBox
+                        name={item.name}
+                        description={item.description}
+                        price={item.price}
+                        rating={2} // TODO: make this dynamic
+                        image={item.imageLink}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -600,6 +590,17 @@ function KusinaMenu(props) {
                   id="contact"
                   name="contact"
                   placeholder="Contact"
+                  //   value="09XXXXXXXXX"
+                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                />
+              </div>
+              <div className="mb-2">
+                <p className="mb-2">Image Link:</p>
+                <input
+                  type="text"
+                  id="contact"
+                  name="contact"
+                  placeholder="Link"
                   //   value="09XXXXXXXXX"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />

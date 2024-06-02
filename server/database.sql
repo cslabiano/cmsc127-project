@@ -40,7 +40,7 @@ CREATE OR REPLACE TABLE item(
 
 CREATE OR REPLACE TABLE estabcontact(
 	estab_id int(4) NOT NULL,
-	contact int(11) NOT NULL,
+	contact varchar(11) NOT NULL,
 	primary key(estab_id, contact),
 	constraint estabcontact_estab_id_fk foreign key(estab_id) references establishment(estab_id)	
 );
@@ -171,4 +171,14 @@ INSERT INTO itemreview(user_id, item_id, rating, comment) VALUES
 	(3, 18, 4, 'Sarap sarap'),
 	(3, 19, 4, 'Sarap naman ig');
 
--- INSERT INTO estabcontact(estab_id, contact) VALUES 
+INSERT INTO estabcontact(estab_id, contact) VALUES 
+	(1, '09121212121'),
+	(1, '09111111111'),
+	(2, '09222222222'),
+	(3, '09333333333'),
+	(4, '09444444444'),
+	(4, '09555555555'),
+	(5, '09666666666'),
+	(6, '09777777777'),
+	(7, '09888888888'),
+	(7, '09999999999');

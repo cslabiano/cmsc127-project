@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import estab_img from "../assets/estab.png";
 
 const KusinaBox = (props) => {
   const navigate = useNavigate();
