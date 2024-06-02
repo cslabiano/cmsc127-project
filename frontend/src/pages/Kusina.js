@@ -113,7 +113,7 @@ function Kusina() {
             </div>
           </div>
         </div>
-        <hr className="mt-10 border-gray-500"></hr>
+        <hr className="my-10 border-gray-500"></hr>
         <div className="flex justify-center">
           <div className="flex flex-wrap justify-center items-center space-x-5 space-y-3">
             {establishmentsToShow.map((establishment) => (
