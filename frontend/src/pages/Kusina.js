@@ -93,7 +93,19 @@ function Kusina() {
       </div>
       <div className="flex flex-col mt-36 mb-36">
         <div className="flex flex-col items-center justify-center">
-          <div className="pt-20 flex flex-row items-center animate-transitionIn">
+          <div className="flex justify-center animate-transitionIn">
+            {" "}
+            <div className="flex w-56 justify-center bg-kusinaprimary text-white rounded-3xl mt-10">
+              <button
+                className="text-kusinabg font-semibold px-8 py-3"
+                onClick={() => document.getElementById("add_modal").showModal()}
+              >
+                Add a <span className="italic">Kusina</span>
+              </button>
+            </div>
+          </div>
+          <p className="pt-10 text-center animate-transitionIn">or</p>
+          <div className="pt-10 flex flex-row items-center animate-transitionIn">
             <KusinaSearchBar
               placeholder="Search a kusina"
               value={searchTerm}
@@ -210,6 +222,80 @@ function Kusina() {
           </div>
         </div>
       </div>
+      <dialog id="add_modal" className="modal">
+        <div className="modal-box bg-white text-kusinaprimary">
+          <h3 className="font-bold text-lg pb-5">Add Establishment</h3>
+          <form
+            method="dialog"
+            className="modal-content"
+            // onSubmit={handleAddEstab}
+          >
+            <div className="mb-2">
+              <p className="mb-2">Establishment Name:</p>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Item Name"
+                //   value={editData.name || ""}
+                //   onChange={handleInfoChange}
+                className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+              />
+            </div>
+            <div className="mb-2">
+              <p className="mb-2">Address:</p>
+              <input
+                type="text"
+                id="address"
+                name="address"
+                placeholder="Description"
+                //   value={editData.name || ""}
+                //   onChange={handleInfoChange}
+                className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+              />
+            </div>
+            <div className="mb-2">
+              <p className="mb-2">Contact Number:</p>
+              <input
+                type="number"
+                id="contact"
+                name="contact"
+                placeholder="0"
+                className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+              />
+            </div>
+
+            <div className="mb-2">
+              <p className="mb-2">Image Link:</p>
+              <input
+                type="text"
+                id="link"
+                name="link"
+                placeholder="Link"
+                //   value="09XXXXXXXXX"
+                className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+              />
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                //   onClick={}
+              >
+                Add Establishment
+              </button>
+              <button
+                type="button"
+                className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                onClick={() => document.getElementById("add_modal").close()}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
     </div>
   );
 }
