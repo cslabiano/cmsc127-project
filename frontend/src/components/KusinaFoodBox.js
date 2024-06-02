@@ -15,6 +15,14 @@ const KusinaFoodBox = (props) => {
     );
   }
 
+  const renderClassifications = props.classifications.map(
+    (classification, index) => (
+      <div key={index} className="badge badge-outline">
+        {classification}
+      </div>
+    )
+  );
+
   return (
     <>
       <div className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary">
@@ -29,6 +37,9 @@ const KusinaFoodBox = (props) => {
           <h2 className="card-title font-sans text-xl font-extrabold">
             PHP {props.price}
           </h2>
+          <div className="card-actions justify-start">
+            {renderClassifications}
+          </div>
           <div className="flex justify-between">
             <h2 className="card-title text-xl font-extrabold">
               {props.rating}
