@@ -31,7 +31,7 @@ app.post("/login", (req, res) => {
   const { user_name, password } = req.body;
 
   const getUserSql =
-    "SELECT * FROM user WHERE user_name = ? AND password = PASSWORD(?)";
+    "SELECT user_id FROM user WHERE user_name = ? AND password = PASSWORD(?)";
   db.query(getUserSql, [user_name, password], (err, results) => {
     if (err) return res.status(500).json({ error: err });
 
@@ -39,7 +39,9 @@ app.post("/login", (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    return res.status(200).json({ message: "Login successful" });
+    const user_id = results[0].user_id; // Extract the user_id from the results
+
+    return res.status(200).json({ message: "Login successful", user_id });
   });
 });
 
@@ -76,7 +78,8 @@ app.get("/establishment", (req, res) => {
 });
 
 app.post("/establishments", (req, res) => {
-  const { estab_name, address, contacts, image_link } = req.body;
+  const { estab_name, address, contacts, image_link, user_id } = req.body;
+
   // Check if the establishment already exists
   const checkEstabSql =
     "SELECT * FROM establishment WHERE estab_name = ? AND address = ?";
@@ -89,7 +92,7 @@ app.post("/establishments", (req, res) => {
       return res.status(400).json({ error: "Establishment already exists" });
     }
 
-    // insert the new establishment
+    // Insert the new establishment
     const insertEstabSql =
       "INSERT INTO establishment (estab_name, image_link, address) VALUES (?, ?, ?)";
     db.query(
@@ -111,14 +114,35 @@ app.post("/establishments", (req, res) => {
             if (err) {
               return res.status(500).json({ error: err });
             }
+
+            // Insert user_id and estab_id into userestab table
+            const insertUserEstabSql =
+              "INSERT INTO userestab (user_id, estab_id) VALUES (?, ?)";
+            db.query(
+              insertUserEstabSql,
+              [user_id, estab_id],
+              (err, results) => {
+                if (err) {
+                  return res.status(500).json({ error: err });
+                }
+                return res
+                  .status(201)
+                  .json({ message: "Establishment added successfully" });
+              }
+            );
+          });
+        } else {
+          // Insert user_id and estab_id into userestab table if there are no contacts
+          const insertUserEstabSql =
+            "INSERT INTO userestab (user_id, estab_id) VALUES (?, ?)";
+          db.query(insertUserEstabSql, [user_id, estab_id], (err, results) => {
+            if (err) {
+              return res.status(500).json({ error: err });
+            }
             return res
               .status(201)
               .json({ message: "Establishment added successfully" });
           });
-        } else {
-          return res
-            .status(201)
-            .json({ message: "Establishment added successfully" });
         }
       }
     );

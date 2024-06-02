@@ -8,11 +8,8 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    if (inputUsername.trim() === "" || inputPassword.trim() === "") {
-      setError("Username and password cannot be empty");
-      return;
-    }
+  const handleLogin = (event) => {
+    // event.preventDefault();
 
     fetch("http://localhost:3001/login", {
       method: "POST",
@@ -24,20 +21,17 @@ function Login() {
         password: inputPassword,
       }),
     })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.error);
         } else {
-          return res.json().then((error) => {
-            throw new Error(error.error);
-          });
+          localStorage.setItem("user_id", data.user_id); // Save user_id to localStorage
+          navigate("/kusina"); // Navigate to /kusina
         }
       })
-      .then(() => {
-        navigate("/kusina");
-      })
       .catch((err) => {
-        setError(err.message);
+        setError("An error occurred. Please try again.");
       });
   };
 

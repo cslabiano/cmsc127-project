@@ -8,6 +8,7 @@ import KusinaSkeleton from "../components/KusinaSkeleton";
 import { useNavigate } from "react-router-dom";
 
 function Kusina() {
+  const user_id = localStorage.getItem("user_id");
   const [sort, setSort] = useState("High");
   const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
@@ -116,6 +117,7 @@ function Kusina() {
       address: address,
       contacts: contactNumbers, // Pass contactNumbers array
       image_link: imageLink,
+      user_id: user_id,
     };
 
     // Send a POST request to the server
