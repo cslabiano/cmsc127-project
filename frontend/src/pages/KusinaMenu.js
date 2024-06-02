@@ -5,6 +5,7 @@ import sort_icon from "../assets/Sort.png";
 import delete_icon from "../assets/delete.png";
 import edit_icon from "../assets/edit.png";
 import KusinaFoodBox from "../components/KusinaFoodBox";
+import { useNavigate } from "react-router-dom";
 
 function KusinaMenu() {
   const [showPopup, setShowPopup] = useState(false);
@@ -15,6 +16,9 @@ function KusinaMenu() {
   const [minprice, setMinPrice] = useState(0);
   const [maxprice, setMaxPrice] = useState(0);
   const [itemClassifications, setItemClassifications] = useState([]);
+  const [foodItems, setFoodItems] = useState([]);
+  const [editItem, setEditItem] = useState(null);
+  const navigate = useNavigate();
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -45,6 +49,58 @@ function KusinaMenu() {
     } else {
       setItemClassifications([...itemClassifications, classType]);
     }
+  };
+
+  // function to handle adding a new food item
+  const handleAddFoodItem = (event) => {
+    document.getElementById("add_modal").close();
+
+    fetch("http://localhost:3001/item", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        price: event.target.price.value,
+        name: event.target.name.value,
+        description: event.target.desc.value,
+        estab_id: 1,
+        classifications: itemClassifications,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((error) => {
+            throw new Error(error.error);
+          });
+        }
+      })
+      .then(() => {
+        navigate("/kusina");
+      });
+  };
+
+  // Function to handle deleting a food item
+  const handleDeleteFoodItem = (id) => {
+    setFoodItems(foodItems.filter((item) => item.id !== id));
+  };
+
+  // Function to handle updating a food item
+  const handleUpdateFoodItem = (event) => {
+    event.preventDefault();
+    const updatedItem = {
+      ...editItem,
+      name: event.target.name.value,
+      description: event.target.desc.value,
+      price: event.target.price.value,
+    };
+    setFoodItems(
+      foodItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+    );
+    setEditItem(null);
+    document.getElementById("edit_modal").close();
   };
 
   return (
@@ -444,7 +500,7 @@ function KusinaMenu() {
             <form
               method="dialog"
               className="modal-content"
-              //   onSubmit={handleSubmit}
+              onSubmit={handleAddFoodItem}
             >
               <div className="mb-2">
                 <p className="mb-2">Food Item Name:</p>

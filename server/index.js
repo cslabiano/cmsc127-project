@@ -9,7 +9,7 @@ app.use(express.json());
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "1234",
+  password: "mandyjenny",
   database: "kusina",
 });
 
@@ -26,17 +26,18 @@ db.connect((err) => {
 
 app.post("/login", (req, res) => {
   //getting all users
-  const { user_name, password} = req.body;
+  const { user_name, password } = req.body;
 
-  const getUserSql = "SELECT * FROM user WHERE user_name = ? AND password = PASSWORD(?)";
+  const getUserSql =
+    "SELECT * FROM user WHERE user_name = ? AND password = PASSWORD(?)";
   db.query(getUserSql, [user_name, password], (err, results) => {
-    if (err) return res.status(500).json({ error: err});
-    
+    if (err) return res.status(500).json({ error: err });
+
     if (results.length === 0) {
-      return res.status(401).json({ error: "Invalid username or password"});
+      return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    return res.status(200).json({ message: "Login successful"});
+    return res.status(200).json({ message: "Login successful" });
   });
 });
 
@@ -51,7 +52,8 @@ app.post("/signup", (req, res) => {
       return res.status(400).json({ error: "User already exists" });
     }
 
-    const insertUserSql = "INSERT INTO user(user_name, password) VALUES (?, PASSWORD(?))";
+    const insertUserSql =
+      "INSERT INTO user(user_name, password) VALUES (?, PASSWORD(?))";
     db.query(insertUserSql, [user_name, password], (err, results) => {
       if (err) return res.status(500).json({ error: err });
       return res.status(201).json({ message: "User registered successfully" });
@@ -66,7 +68,7 @@ app.get("/establishments", (req, res) => {
   db.query(sql, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
-  })
+  });
 });
 
 app.post("/establishments", (req, res) => {
@@ -109,7 +111,7 @@ app.post("/establishmentSearch", (req, res) => {
 /*************** ITEM TABLE ***************/
 
 // create or add item
-app.post("/items", (req, res) => {
+app.post("/item", (req, res) => {
   const { price, name, description, estab_id, classifications } = req.body;
 
   // insert item into the item table
@@ -274,8 +276,6 @@ app.delete("/:item_id/reviews/", (req, res) => {
     }
   );
 });
-
-
 
 app.listen(3001, () => {
   console.log("Listening to port 3001");
