@@ -194,11 +194,13 @@ app.get(`/:estab_id/estab`, (req, res) => {
 });
 
 // read or search items
-app.get("/kusina/:estab_id/:search_term", (req, res) => {
-  const { estab_id, search_term } = req.query;
-  console.log("Search term: ", estab_id, search_term);
-  const sql = "SELECT * FROM item WHERE LOWER(name) LIKE LOWER(?)";
-  db.query(sql, [`%${search_term}%`], (err, data) => {
+app.post("/:estab_id/search", (req, res) => {
+  const { name } = req.body;
+  const { estab_id } = req.params;
+  // console.log("Search term: ", estab_id, search_term);
+  const sql =
+    "SELECT i.name, i.price, i.description, i.image_link, COALESCE(AVG(ir.rating), 0) AS avg_rating, ic.classification FROM item i LEFT JOIN establishment e ON i.estab_id = e.estab_id LEFT JOIN itemreview ir ON i.item_id = ir.item_id LEFT JOIN itemclass ic ON ic.item_id = i.item_id WHERE LOWER(i.name) LIKE LOWER(?) AND i.estab_id = ? GROUP BY i.item_id";
+  db.query(sql, [`%${name}%`, estab_id], (err, data) => {
     if (err) return res.status(500).json({ error: err });
     console.log("Query results:", data);
     return res.json(data);
