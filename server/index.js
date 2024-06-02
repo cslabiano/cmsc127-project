@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "mandyjenny",
+  password: "qwerty",
   database: "kusina",
 });
 
@@ -300,9 +300,11 @@ app.post("/:item_id/reviews", (req, res) => {
 app.get("/:item_id/reviews", (req, res) => {
   const { item_id } = req.params;
 
-  const fetchReviewsSql = "SELECT * FROM itemreview WHERE item_id = ?";
+  const fetchReviewsSql =
+    "select user_name, date, time, rating, comment from itemreview natural join user where item_id = ?";
   db.query(fetchReviewsSql, [item_id], (err, results) => {
     if (err) return res.status(500).json({ error: err });
+    console.log(results);
     return res.json(results);
   });
 });
