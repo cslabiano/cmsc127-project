@@ -8,7 +8,6 @@ import KusinaFoodBox from "../components/KusinaFoodBox";
 
 function KusinaMenu() {
   const [showPopup, setShowPopup] = useState(false);
-  const [showPricePopup, setShowPricePopup] = useState(false);
   const [classification, setClassification] = useState("NONE");
   const [price, setPrice] = useState("NONE");
   const [between, setBetween] = useState(false);
@@ -31,7 +30,7 @@ function KusinaMenu() {
         className={`mask mask-star-2 ${
           i <= rating ? "bg-kusinaprimary" : "bg-red-200"
         } hover:cursor-default`}
-        checked={i === Math.floor(rating)}
+        checked={i <= Math.floor(rating)}
         disabled
       />
     );
@@ -322,53 +321,41 @@ function KusinaMenu() {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-6"
           >
-            <div className="flex flex-col">
-              <h3 className="text-2xl font-bold text-kusinaprimary mb-4">
-                Reviews
-              </h3>
-              <div className="review mb-4">
-                <div className="flex items-center mb-2">
-                  <h4 className="text-xl font-semibold text-kusinaprimary">
-                    John Doe
-                  </h4>
-                  <div className="flex ml-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <input
-                        key={star}
-                        type="radio"
-                        name={`rating-${star}`}
-                        className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
-                        checked={star <= 4} // Assume the rating is 4
-                        disabled
-                      />
-                    ))}
+            <div className="flex justify-around">
+              <div className="flex flex-col">
+                <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
+                  Rate us:
+                </h2>
+                <div className="">
+                  <div className="rating rating-lg">
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-orange-400"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-orange-400"
+                      checked
+                    />
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-orange-400"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-orange-400"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      className="mask mask-star-2 bg-orange-400"
+                    />
                   </div>
                 </div>
-                <p className="text-md text-kusinaprimary">
-                  Great food and excellent service. Highly recommend!
-                </p>
-              </div>
-              <div className="review mb-4">
-                <div className="flex items-center mb-2">
-                  <h4 className="text-xl font-semibold text-kusinaprimary">
-                    Jane Smith
-                  </h4>
-                  <div className="flex ml-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <input
-                        key={star}
-                        type="radio"
-                        name={`rating-${star}`}
-                        className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
-                        checked={star <= 5} // Assume the rating is 5
-                        disabled
-                      />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-md text-kusinaprimary">
-                  Absolutely loved the ambiance and the food quality.
-                </p>
               </div>
             </div>
           </div>

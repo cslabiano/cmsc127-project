@@ -7,7 +7,6 @@ import KusinaMenu from "./pages/KusinaMenu";
 import KusinaFood from "./pages/KusinaFood";
 
 function App() {
-
   return (
     <Router>
       <div>
@@ -21,6 +20,7 @@ function App() {
             path="/kusina/:establishment_id/:item_id"
             element={<KusinaFood />}
           />
+          <Route path="/kusina/estab/item" element={<KusinaFood />} />
         </Routes>
       </div>
     </Router>
