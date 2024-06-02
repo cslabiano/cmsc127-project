@@ -15,7 +15,7 @@ function Kusina() {
   const [ratingFilter, setRatingFilter] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 9;
 
   const fetchData = (order) => {
     setIsLoading(true);
