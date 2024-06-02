@@ -369,22 +369,24 @@ app.get(`/:estab_id/filterClass`, (req, res) => {
   const { classification } = req.query;
   const { estab_id } = req.params;
   if (!classification) {
-    return res.status(400).json({ error: 'Classification query parameter is required' });
+    return res
+      .status(400)
+      .json({ error: "Classification query parameter is required" });
   }
   console.log(classification);
-  const classificationsArray = classification.split(',');
-  const placeholders = classificationsArray.map(() => '?').join(',');
+  const classificationsArray = classification.split(",");
+  const placeholders = classificationsArray.map(() => "?").join(",");
   console.log(placeholders);
   const sql = `SELECT i.*, ic.classification FROM item i JOIN itemclass ic ON i.item_id = ic.item_id WHERE i.estab_id = ? AND ic.classification IN (${placeholders})`;
   const queryParams = [estab_id, ...classificationsArray];
   db.query(sql, queryParams, (err, results) => {
     if (err) {
-      console.error('Error fetching food items: ', err)
-      return res.status(500).json({ error: 'Internal server error' });
+      console.error("Error fetching food items: ", err);
+      return res.status(500).json({ error: "Internal server error" });
     }
-    return res.json(results)
-  })
-})
+    return res.json(results);
+  });
+});
 
 app.get(`/:estab_id/sortPrice`, (req, res) => {
   const { sort } = req.query;
@@ -402,14 +404,13 @@ app.get(`/:estab_id/sortPrice`, (req, res) => {
     if (err) return res.json(err);
     return res.json(data);
   });
-})
+});
 /*************** ITEM REVIEW TABLE ***************/
 
 // create or add food review
-app.post("/:item_id/reviews", (req, res) => {
+app.post("/:item_id", (req, res) => {
   const { user_id, rating, comment } = req.body;
   const { item_id } = req.params;
-
   const insertReviewSql =
     "INSERT INTO itemreview (user_id, item_id, rating, comment) VALUES (?, ?, ?, ?)";
   db.query(

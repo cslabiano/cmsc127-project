@@ -5,16 +5,20 @@ import sort_icon from "../assets/Sort.png";
 import delete_icon from "../assets/delete.png";
 import edit_icon from "../assets/edit.png";
 import KusinaComment from "../components/KusinaComment";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 function KusinaFood() {
-  let { establishment_id, item_id } = useParams();
+  const user_id = localStorage.getItem("user_id");
+  const { establishment_id, item_id } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [sortReviews, setSortReviews] = useState("month");
   const [sort, setSort] = useState("month");
   const [itemClassifications, setItemClassifications] = useState([]);
   const [itemData, setItemData] = useState([]);
   const [reviewData, setReviewData] = useState([]);
+  const [itemReview, setComment] = useState("");
+  const [itemRating, setItemRating] = useState(5);
+  const navigate = useNavigate();
 
   const fetchItemData = () => {
     fetch(`http://localhost:3001/${establishment_id}/${item_id}`)
@@ -81,6 +85,40 @@ function KusinaFood() {
     );
   }
 
+  const handleChangeItemReview = (event) => {
+    setComment(event.target.value);
+  };
+
+  // function to handle adding a new food item
+  const handleAddItemReview = (event) => {
+    fetch(`http://localhost:3001/${item_id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        user_id: user_id,
+        item_id: item_id,
+        rating: itemRating,
+        comment: itemReview,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((error) => {
+            throw new Error(error.error);
+          });
+        }
+      })
+      .then(() => {
+        fetchReviewData();
+        navigate(`/kusina/${establishment_id}/${item_id}`);
+      });
+  };
+
   return (
     <>
       <div className="z-10">
@@ -146,26 +184,31 @@ function KusinaFood() {
                     type="radio"
                     name="rating-8"
                     className="mask mask-star-2 bg-kusinaaccent"
+                    onClick={() => setItemRating(1)}
                   />
                   <input
                     type="radio"
                     name="rating-8"
                     className="mask mask-star-2 bg-kusinaaccent"
+                    onClick={() => setItemRating(2)}
                   />
                   <input
                     type="radio"
                     name="rating-8"
                     className="mask mask-star-2 bg-kusinaaccent"
+                    onClick={() => setItemRating(3)}
                   />
                   <input
                     type="radio"
                     name="rating-8"
                     className="mask mask-star-2 bg-kusinaaccent"
+                    onClick={() => setItemRating(4)}
                   />
                   <input
                     type="radio"
                     name="rating-8"
                     className="mask mask-star-2 bg-kusinaaccent"
+                    onClick={() => setItemRating(5)}
                   />
                 </div>
               </div>
@@ -173,12 +216,14 @@ function KusinaFood() {
             <textarea
               placeholder="Add a comment here"
               className="textarea textarea-bordered textarea-lg w-full max-w-xs"
+              onChange={handleChangeItemReview}
             ></textarea>
           </div>
           <div className="flex justify-center">
             <div className="flex w-56 justify-center bg-kusinaaccent text-white rounded-3xl mt-10">
               <button
                 className="text-kusinabg font-semibold px-8 py-3"
+                onClick={handleAddItemReview}
                 // onClick={() => document.getElementById("add_modal").showModal()}
               >
                 Submit Review
