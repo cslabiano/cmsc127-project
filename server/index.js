@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const app = express();
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -70,7 +71,6 @@ app.get("/establishment", (req, res) => {
   const sql = `SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id GROUP BY e.estab_id ORDER BY avg_rating ${sortOrder}`;
   db.query(sql, (err, data) => {
     if (err) return res.json(err);
-    console.log("api: establishment, error: failed to fetch data");
     return res.json(data);
   });
 });
@@ -155,12 +155,22 @@ app.post("/item", (req, res) => {
 // read all item from establishment
 app.get(`/:estab_id`, (req, res) => {
   const { estab_id } = req.params;
-  console.log(estab_id);
   const sql =
-    "SELECT i.*, e.estab_name AS establishmentName, e.address AS establishmentAddress FROM item i JOIN establishment e ON i.estab_id = e.estab_id WHERE i.estab_id = ?";
+    "SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress FROM item i JOIN establishment e ON i.estab_id = e.estab_id WHERE i.estab_id = ?";
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
     console.log("Query results:", data);
+    return res.json(data);
+  });
+});
+
+app.get(`/:estab_id/estab`, (req, res) => {
+  const { estab_id } = req.params;
+  const sql =
+    "SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id WHERE e.estab_id = ? GROUP BY e.estab_id ";
+  db.query(sql, [estab_id], (err, data) => {
+    if (err) return res.json(err);
+    // console.log(data);
     return res.json(data);
   });
 });

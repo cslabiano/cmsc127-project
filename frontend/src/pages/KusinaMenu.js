@@ -22,19 +22,31 @@ function KusinaMenu(props) {
   const [editItem, setEditItem] = useState(null);
   const [sortReviews, setSortReviews] = useState("month");
   const [activeTab, setActiveTab] = useState("food");
-  const [data, setData] = useState([]);
+  const [estabData, setEstabData] = useState([]);
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const itemsToShow =
-    searchTerm !== "" && searchData.length > 0 ? searchData : data;
+  // const itemsToShow =
+  //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
 
-  useEffect(() => {
+  const fetchItemData = () => {
     fetch(`http://localhost:3001/${establishment_id}`)
       .then((res) => res.json())
-      .then((data) => setData(data))
+      .then((foodItems) => setFoodItems(foodItems))
       .catch((error) => console.error("Error fetching food items:", error));
+  };
+
+  const fetchEstabData = () => {
+    fetch(`http://localhost:3001/${establishment_id}/estab`)
+      .then((res) => res.json())
+      .then((estabData) => setEstabData(estabData))
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    fetchItemData();
+    fetchEstabData();
   }, []);
 
   useEffect(() => {
@@ -55,7 +67,14 @@ function KusinaMenu(props) {
   };
 
   const stars = [];
-  const rating = 4.5;
+  let rating = 0;
+  if (
+    estabData &&
+    estabData.length > 0 &&
+    estabData[0].avg_rating !== undefined
+  ) {
+    rating = estabData[0].avg_rating;
+  }
   for (let i = 1; i <= 5; i++) {
     stars.push(
       <input
@@ -125,6 +144,7 @@ function KusinaMenu(props) {
       name: event.target.name.value,
       description: event.target.desc.value,
       price: event.target.price.value,
+      image: event.target.image.value,
     };
     setFoodItems(
       foodItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
@@ -150,24 +170,30 @@ function KusinaMenu(props) {
           style={{ width: "100%", maxHeight: "36rem" }}
         ></img>
         <div className="flex justify-between p-12">
-          <div className="flex flex-col text-kusinaprimary">
-            <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
-              {data.length > 0
-                ? data[0].establishmentName
-                : "Establishment Name"}
-            </h2>
-            <p className="text-3xl mt-4">
-              {data.length > 0
-                ? data[0].establishmentAddress
-                : "Establishment Name"}
-            </p>
-            <p className="text-xl mt-2">Contact Number: 09XXXXXXXXX</p>
-          </div>
+          {estabData.length > 0 && (
+            <>
+              <div className="flex flex-col text-kusinaprimary">
+                <h2 className="card-title text-5xl font-extrabold text-kusinaprimary">
+                  {estabData[0].estab_name}
+                </h2>
+                <p className="text-3xl mt-4">{estabData[0].address}</p>
+                <p className="text-xl mt-2">Contact Number: 09XXXXXXXXX</p>
+              </div>
+            </>
+          )}
+
           <div className="flex flex-col">
-            <h2 className="card-title text-5xl font-extrabold text-kusinaprimary justify-end">
-              4.5
-            </h2>
-            <div className="rating rating-lg mt-4">{stars}</div>
+            {estabData.length > 0 && (
+              <>
+                <h2 className="card-title text-5xl font-extrabold text-kusinaprimary justify-end">
+                  {estabData[0].avg_rating
+                    ? Number(estabData[0].avg_rating).toFixed(1)
+                    : "0"}
+                </h2>
+                <div className="rating rating-lg mt-4">{stars}</div>
+              </>
+            )}
+
             <div className="flex justify-end mt-4">
               <button
                 onClick={() =>
@@ -402,15 +428,17 @@ function KusinaMenu(props) {
                   </div>
                 </div>
               )}
-              <div className="flex flex-wrap justify-center items-center space-x-5 space-y-3">
-                {itemsToShow.map((item) => (
-                  <KusinaFoodBox
-                    key={item.id}
-                    name={item.name}
-                    description={item.description}
-                    price={item.price}
-                    rating={2} // TODO: make this dynamic
-                  />
+              <div>
+                {foodItems.map((item) => (
+                  <div key={item.id}>
+                    <KusinaFoodBox
+                      name={item.name}
+                      description={item.description}
+                      price={item.price}
+                      rating={2} // TODO: make this dynamic
+                      image={item.imageLink}
+                    />
+                  </div>
                 ))}
               </div>
             </div>

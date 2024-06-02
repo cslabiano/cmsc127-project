@@ -13,7 +13,7 @@ function Kusina() {
   const [sortOrder, setSortOrder] = useState("desc");
 
   const fetchData = (order) => {
-    fetch(`http://localhost:3001/establishments?sort=${order}`)
+    fetch(`http://localhost:3001/establishment?sort=${order}`)
       .then((res) => res.json())
       .then((data) => setData(Array.isArray(data) ? data : []))
       .catch((err) => console.log(err));
@@ -110,12 +110,26 @@ function Kusina() {
               >
                 Lowest Rating to Highest
               </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleSortChange(sort === "greater" ? "NONE" : "greater")
+                }
+                className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
+                  sort === "greater"
+                    ? "bg-kusinaaccent text-white"
+                    : "bg-kusinabg text-kusinaaccent"
+                }`}
+              >
+                Rating {">="} 4
+              </button>
             </div>
           </div>
         </div>
-        <hr className="mt-10 border-gray-500"></hr>
+        <hr className="my-10 border-gray-500"></hr>
         <div className="flex justify-center">
-          <div className="flex flex-wrap justify-center items-center space-x-5 space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {establishmentsToShow.map((establishment) => (
               <KusinaBox
                 key={establishment.estab_id}

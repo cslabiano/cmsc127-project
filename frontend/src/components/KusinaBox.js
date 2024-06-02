@@ -19,12 +19,15 @@ const KusinaBox = (props) => {
   }
 
   const handleClick = () => {
-    navigate(`/kusina/${props.id}`)
-  }
+    navigate(`/kusina/${props.id}`);
+  };
 
   return (
     <>
-      <div className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary" onClick={handleClick}>
+      <div
+        className="card w-96 shadow-xl bg-kusinasecondary text-kusinaprimary hover:cursor-pointer"
+        onClick={handleClick}
+      >
         <figure>
           <img src={props.image} alt={`Photo of  ${props.name}`} />
         </figure>
