@@ -14,17 +14,38 @@ function KusinaFood() {
   const [sort, setSort] = useState("month");
   const [itemClassifications, setItemClassifications] = useState([]);
   const [itemData, setItemData] = useState([]);
+  const [reviewData, setReviewData] = useState([]);
 
   const fetchItemData = () => {
     fetch(`http://localhost:3001/${establishment_id}/${item_id}`)
       .then((res) => res.json())
       .then((itemData) => setItemData(itemData))
       .catch((err) => console.log(err));
-  }
+  };
+
+  const fetchReviewData = () => {
+    let endpoint;
+    if (sortReviews === "month") {
+      endpoint = `http://localhost:3001/${item_id}/itemmonthreviews`;
+    } else {
+      // Determine sorting order based on the sort state
+      const sortOrder = sort === "new" ? "DESC" : "ASC";
+      endpoint = `http://localhost:3001/${item_id}/itemreviews?sort=${sortOrder}`;
+    }
+
+    fetch(endpoint)
+      .then((res) => res.json())
+      .then((reviewData) => {
+        console.log("Review Data:", reviewData);
+        setReviewData(reviewData);
+      })
+      .catch((err) => console.log(err));
+  };
 
   useEffect(() => {
     fetchItemData();
-  }, [])
+    fetchReviewData();
+  }, []);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -42,11 +63,7 @@ function KusinaFood() {
 
   const stars = [];
   let rating = 0;
-  if (
-    itemData &&
-    itemData.length > 0 &&
-    itemData[0].avg_rating !== undefined
-  ) {
+  if (itemData && itemData.length > 0 && itemData[0].avg_rating !== undefined) {
     rating = itemData[0].avg_rating;
   }
   for (let i = 1; i <= 5; i++) {
@@ -83,15 +100,20 @@ function KusinaFood() {
             <p className="text-3xl mt-4 font-semibold">
               {itemData.length > 0 ? itemData[0].estab_name : "NONE"}
             </p>
-            <p className="text-xl mt-2">{itemData.length > 0 ? itemData[0].description : "NONE"}</p>
-            <p className="text-3xl mt-2 font-semibold">PHP {itemData.length > 0 ? itemData[0].price : "NONE"}</p>
+            <p className="text-xl mt-2">
+              {itemData.length > 0 ? itemData[0].description : "NONE"}
+            </p>
+            <p className="text-3xl mt-2 font-semibold">
+              PHP {itemData.length > 0 ? itemData[0].price : "NONE"}
+            </p>
           </div>
           <div className="flex flex-col">
             {itemData.length > 0 && (
               <>
                 <h2 className="card-title text-5xl font-extrabold text-kusinaprimary justify-end">
-                  {itemData[0].avg_rating? Number(itemData[0].avg_rating).toFixed(1)
-                        : "0"}
+                  {itemData[0].avg_rating
+                    ? Number(itemData[0].avg_rating).toFixed(1)
+                    : "0"}
                 </h2>
               </>
             )}
@@ -203,14 +225,21 @@ function KusinaFood() {
           </div>
           <hr className="my-10 border-kusinaprimary"></hr>
 
-          <KusinaComment
-            name={"Juan Dela Cruz"}
-            rating={4.2}
-            comment={
-              "Masarap naman, budget meal talaga siya. Medyo maliit lang serving pero ok lang kasi mura naman. May free delivery din sila pag tinatamad ka lumabas."
-            }
-            date={"May 20, 2021"}
-          />
+          <div className="">
+            <div className="">
+              {reviewData.map((review) => (
+                <div key={review.id}>
+                  <KusinaComment
+                    name={review.user_name}
+                    rating={review.rating}
+                    comment={review.comment}
+                    date={review.date}
+                    time={review.time}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
         <dialog id="edit_food" className="modal">
           <div className="modal-box bg-white text-kusinaprimary">

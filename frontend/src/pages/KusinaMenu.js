@@ -48,8 +48,26 @@ function KusinaMenu(props) {
       .catch((err) => console.log(err));
   };
 
+  //   const fetchReviewData = () => {
+  //     fetch(`http://localhost:3001/${establishment_id}/estreviews`)
+  //       .then((res) => res.json())
+  //       .then((reviewData) => {
+  //         console.log("Review Data:", reviewData);
+  //         setReviewData(reviewData);
+  //       })
+  //       .catch((err) => console.log(err));
+  //   };
+
   const fetchReviewData = () => {
-    fetch(`http://localhost:3001/${establishment_id}/estreviews`)
+    let endpoint;
+    if (sortReviews === "month") {
+      endpoint = `http://localhost:3001/${establishment_id}/estmonthreviews`;
+    } else {
+      const sort = sortReviews === "new" ? "DESC" : "ASC";
+      endpoint = `http://localhost:3001/${establishment_id}/estreviews?sort=${sort}`;
+    }
+
+    fetch(endpoint)
       .then((res) => res.json())
       .then((reviewData) => {
         console.log("Review Data:", reviewData);
