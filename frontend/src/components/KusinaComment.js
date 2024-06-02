@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
+import edit_icon from "../assets/edit.png";
+import delete_icon from "../assets/delete.png";
 
 const KusinaComment = (props) => {
+  const [estRating, setEstRating] = useState(0);
+  const user_id = localStorage.getItem("user_id");
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     stars.push(
@@ -15,29 +19,141 @@ const KusinaComment = (props) => {
     );
   }
 
-  // Format date and time
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(); // Adjust the format as needed
+    return date.toLocaleDateString();
+  };
+
+  const handleEditClick = () => {
+    if (user_id === props.userid) {
+      document.getElementById("edit_comment_modal").showModal();
+    } else {
+      document.getElementById("unauthorized_modal").showModal();
+    }
+  };
+
+  const handleDeleteClick = () => {
+    if (user_id === props.userid) {
+      document.getElementById("delete_modal").showModal();
+    } else {
+      document.getElementById("unauthorized_modal").showModal();
+    }
   };
 
   return (
     <>
-      <div className="mt-10 flex flex-col">
-        <div className="flex items-center mb-4">
-          <p className="mr-4 text-2xl text-kusinaprimary font-semibold">
-            {props.name}
+      <div className="mt-10 flex justify-between">
+        <div className="flex flex-col">
+          <div className="flex items-center mb-4">
+            <p className="mr-4 text-2xl text-kusinaprimary font-semibold">
+              {props.name}
+            </p>
+            <div className="rating">{stars}</div>
+          </div>
+          <p className="text-slate-600 text-lg">{props.comment}</p>
+          <p className="mt-4 text-md text-kusinaprimary font-semibold">
+            {formatDate(props.date)}, {props.time}
           </p>
-          <div className="rating">{stars}</div>
         </div>
-        <p className="text-slate-600 text-lg">{props.comment}</p>
-
-        <p className="mt-4 text-md text-kusinaprimary font-semibold">
-          {formatDate(props.date)}, {props.time}
-        </p>
-
-        <hr className="mt-10 border-kusinaprimary"></hr>
+        <div className="flex flex-col items-end justify-start">
+          <button className="mb-2" onClick={handleEditClick}>
+            <img src={edit_icon} className="h-10" alt="Edit" />
+          </button>
+          <button onClick={handleDeleteClick}>
+            <img src={delete_icon} className="h-10" alt="Delete" />
+          </button>
+        </div>
       </div>
+      <hr className="mt-10 border-kusinaprimary" />
+
+      <dialog id="edit_comment_modal" className="modal">
+        <div className="modal-box bg-white text-kusinaprimary">
+          <h3 className="font-bold text-lg pb-5">Edit Comment</h3>
+          <form method="dialog" className="modal-content">
+            <div className="mb-2">
+              <p className="mb-2">New Rating:</p>
+              <div className="rating rating-lg mb-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <input
+                    key={i}
+                    type="radio"
+                    name="rating-8"
+                    className="mask mask-star-2 bg-kusinaprimary"
+                    onClick={() => setEstRating(i)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="mb-2">
+              <p className="mb-2">New Comment:</p>
+              <textarea
+                placeholder="Type your comment here"
+                className="mb-4 textarea textarea-bordered textarea-lg w-full"
+              ></textarea>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+              >
+                Apply Changes
+              </button>
+              <button
+                type="button"
+                className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                onClick={() =>
+                  document.getElementById("edit_comment_modal").close()
+                }
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+
+      <dialog id="delete_modal" className="modal">
+        <div className="modal-box bg-white text-kusinaprimary">
+          <h3 className="font-bold text-lg pb-5">
+            Are you sure you want to delete this comment?
+          </h3>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+              //   onClick={}
+            >
+              I am sure.
+            </button>
+            <button
+              type="button"
+              className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+              onClick={() => document.getElementById("delete_modal").close()}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="unauthorized_modal" className="modal">
+        <div className="modal-box bg-white text-kusinaprimary">
+          <h3 className="font-bold text-lg pb-5">Unauthorized</h3>
+          <p>You cannot edit/delete a comment that wasn't written by you.</p>
+          <div className="flex justify-end mt-4">
+            <button
+              type="button"
+              className="bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+              onClick={() =>
+                document.getElementById("unauthorized_modal").close()
+              }
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </dialog>
     </>
   );
 };

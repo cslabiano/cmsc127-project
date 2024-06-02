@@ -18,7 +18,7 @@ function KusinaMenu(props) {
   const [classification, setClassification] = useState("NONE");
   const [price, setPrice] = useState("NONE");
   const [between, setBetween] = useState(false);
-  const [estRating, setEstRating] = useState(0);
+  const [estRating, setEstRating] = useState(5);
   const [minprice, setMinPrice] = useState(0);
   const [maxprice, setMaxPrice] = useState(0);
   const [itemClassifications, setItemClassifications] = useState([]);
@@ -641,13 +641,14 @@ function KusinaMenu(props) {
               </div>
             </div>
 
-            <hr className="my-10 border-kusinaprimary"></hr>
+            <hr className="mt-10 border-kusinaprimary"></hr>
 
             <div className="">
               <div className="">
                 {reviewData.map((review) => (
                   <div key={review.id}>
                     <KusinaComment
+                      userid={review.user_id}
                       name={review.user_name}
                       rating={review.rating}
                       comment={review.comment}

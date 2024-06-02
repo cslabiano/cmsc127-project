@@ -265,7 +265,7 @@ app.get(`/:estab_id/estab`, (req, res) => {
 app.get(`/:estab_id/estreviews`, (req, res) => {
   const { estab_id } = req.params;
   const sql =
-    "select user_name, date, time, rating, comment from estabreview natural join user where estab_id= ?";
+    "select user_id, user_name, date, time, rating, comment from estabreview natural join user where estab_id= ?";
 
   if (req.query.sort === "DESC") {
     sql += " ORDER BY date DESC, time DESC";
@@ -282,7 +282,7 @@ app.get(`/:estab_id/estreviews`, (req, res) => {
 app.get(`/:estab_id/estmonthreviews`, (req, res) => {
   const { estab_id } = req.params;
   const sql =
-    "select user_name, date, time, rating, comment from estabreview natural join user where estab_id= ? and date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
+    "select user_id, user_name, date, time, rating, comment from estabreview natural join user where estab_id= ? and date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
     console.log(data);
@@ -293,7 +293,7 @@ app.get(`/:estab_id/estmonthreviews`, (req, res) => {
 app.get("/:item_id/itemreviews", (req, res) => {
   const { item_id } = req.params;
   let sql =
-    "SELECT user_name, date, time, rating, comment FROM itemreview natural join user WHERE item_id = ?";
+    "SELECT user_id, user_name, date, time, rating, comment FROM itemreview natural join user WHERE item_id = ?";
 
   if (req.query.sort === "DESC") {
     sql += " ORDER BY date DESC, time DESC";
@@ -311,7 +311,7 @@ app.get("/:item_id/itemreviews", (req, res) => {
 app.get(`/:item_id/itemmonthreviews`, (req, res) => {
   const { item_id } = req.params;
   const sql =
-    "select user_name, date, time, rating, comment from itemreview natural join user where item_id= ? and date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
+    "select user_id, user_name, date, time, rating, comment from itemreview natural join user where item_id= ? and date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
   db.query(sql, [item_id], (err, data) => {
     if (err) return res.json(err);
     console.log(data);
@@ -389,7 +389,7 @@ app.get("/:item_id/reviews", (req, res) => {
   const { item_id } = req.params;
 
   const fetchReviewsSql =
-    "select user_name, date, time, rating, comment from itemreview natural join user where item_id = ?";
+    "select user_id, user_name, date, time, rating, comment from itemreview natural join user where item_id = ?";
   db.query(fetchReviewsSql, [item_id], (err, results) => {
     if (err) return res.status(500).json({ error: err });
     console.log(results);
