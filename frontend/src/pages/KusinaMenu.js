@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import KusinaNavBar from "../components/KusinaNavBar";
 import KusinaSearchBar from "../components/KusinaSearchBar";
 import sort_icon from "../assets/Sort.png";
@@ -6,7 +6,7 @@ import delete_icon from "../assets/delete.png";
 import edit_icon from "../assets/edit.png";
 import KusinaFoodBox from "../components/KusinaFoodBox";
 import KusinaComment from "../components/KusinaComment";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function KusinaMenu() {
   const [showPopup, setShowPopup] = useState(false);
@@ -22,6 +22,9 @@ function KusinaMenu() {
   const [sortReviews, setSortReviews] = useState("month");
   const [activeTab, setActiveTab] = useState("food");
   const navigate = useNavigate();
+  const { estab_id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -54,6 +57,24 @@ function KusinaMenu() {
     }
   };
 
+  useEffect(() => {
+    fetch(`http://localhost:3001/kusina/${estab_id}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setFoodItems(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
+
   // function to handle adding a new food item
   const handleAddFoodItem = (event) => {
     document.getElementById("add_modal").close();
@@ -85,12 +106,12 @@ function KusinaMenu() {
       });
   };
 
-  // Function to handle deleting a food item
+  // function to handle deleting a food item
   const handleDeleteFoodItem = (id) => {
     setFoodItems(foodItems.filter((item) => item.id !== id));
   };
 
-  // Function to handle updating a food item
+  // function to handle updating a food item
   const handleUpdateFoodItem = (event) => {
     event.preventDefault();
     const updatedItem = {
@@ -358,15 +379,18 @@ function KusinaMenu() {
                 </div>
               )}
 
-              <KusinaFoodBox
-                name={"Food Item"}
-                image={
-                  "https://cdn.vox-cdn.com/thumbor/5d_RtADj8ncnVqh-afV3mU-XQv0=/0x0:1600x1067/1200x900/filters:focal(672x406:928x662)/cdn.vox-cdn.com/uploads/chorus_image/image/57698831/51951042270_78ea1e8590_h.7.jpg"
-                }
-                description={"Description of the food item"}
-                price={"100"}
-                rating={2}
-              />
+              <div>
+                {foodItems.map((item) => (
+                  <div key={item.id}>
+                    <KusinaFoodBox
+                      name={item.name}
+                      description={item.description}
+                      price={item.price}
+                      rating={2} // TODO: make this dynamic
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
