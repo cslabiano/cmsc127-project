@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "mandyjenny",
+  password: "1234",
   database: "kusina",
 });
 
@@ -159,11 +159,12 @@ app.post("/item", (req, res) => {
 app.get(`/:estab_id`, (req, res) => {
   const { estab_id } = req.params;
   const sql = `
-    SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, GROUP_CONCAT(c.classification) AS classifications
+    SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, COALESCE(AVG(ir.rating), 0) AS avg_rating, GROUP_CONCAT(DISTINCT c.classification) AS classifications
     FROM item i
     JOIN establishment e ON i.estab_id = e.estab_id
     LEFT JOIN itemclass c ON c.item_id = i.item_id
-    WHERE i.estab_id = ?
+    LEFT JOIN itemreview ir ON i.item_id = ir.item_id
+    WHERE i.estab_id = 1
     GROUP BY i.item_id
   `;
   db.query(sql, [estab_id], (err, data) => {
