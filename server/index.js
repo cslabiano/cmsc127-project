@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "qwerty",
+  password: "1234",
   database: "kusina",
 });
 
@@ -103,7 +103,7 @@ app.post("/establishmentSearch", (req, res) => {
   const { estab_name } = req.body;
 
   const findEstabSql =
-    "SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id WHERE LOWER(e.estab_name) LIKE LOWER(?) GROUP BY e.estab_id";
+    "SELECT e.estab_id, e.estab_name, e.address, COALESCE(AVG(er.rating), 0) AS avg_rating, e.image_link FROM establishment e LEFT JOIN estabreview er ON e.estab_id = er.estab_id WHERE LOWER(e.estab_name) LIKE LOWER(?) GROUP BY e.estab_id";
   db.query(findEstabSql, [`%${estab_name}%`], (err, results) => {
     if (err) return res.status(500).json({ error: err });
     if (results.length > 0) {
