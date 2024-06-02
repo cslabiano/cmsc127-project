@@ -11,6 +11,7 @@ function Kusina() {
   const [searchData, setSearchData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
+  const [ratingFilter, setRatingFilter] = useState(false);
 
   const fetchData = (order) => {
     fetch(`http://localhost:3001/establishment?sort=${order}`)
@@ -37,8 +38,8 @@ function Kusina() {
       .catch((err) => console.log(err));
   };
 
-  const establishmentsToShow =
-    searchTerm !== "" && searchData.length > 0 ? searchData : data;
+  // const establishmentsToShow =
+  //   searchTerm !== "" && searchData.length > 0 ? searchData : ratingFilter ? data.filter((estab) => estab.avg_rating >= 4) : data;
 
   const handleArrowClick = () => {
     setSearchData([]);
@@ -48,6 +49,26 @@ function Kusina() {
     setSort(order);
     setSortOrder(order === "High" ? "desc" : "asc");
   };
+
+  const handleRatingFilterToggle = () => {
+    setRatingFilter(!ratingFilter);
+  };
+
+  const applyFiltersAndSorting = (data) => {
+    let filteredData = data;
+    if (ratingFilter) {
+      filteredData = filteredData.filter((estab) => estab.avg_rating >= 4);
+    }
+    return filteredData.sort((a, b) =>
+      sortOrder === "desc"
+        ? b.avg_rating - a.avg_rating
+        : a.avg_rating - b.avg_rating
+    );
+  };
+
+  const establishmentsToShow = applyFiltersAndSorting(
+    searchTerm !== "" && searchData.length > 0 ? searchData : data
+  );
 
   return (
     <div className="bg-kusinabg min-h-screen min-w-screen z-0">
@@ -113,11 +134,9 @@ function Kusina() {
 
               <button
                 type="button"
-                onClick={() =>
-                  handleSortChange(sort === "greater" ? "NONE" : "greater")
-                }
+                onClick={handleRatingFilterToggle}
                 className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                  sort === "greater"
+                  ratingFilter
                     ? "bg-kusinaaccent text-white"
                     : "bg-kusinabg text-kusinaaccent"
                 }`}
