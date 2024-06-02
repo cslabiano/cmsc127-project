@@ -5,6 +5,7 @@ import sort_icon from "../assets/Sort.png";
 import delete_icon from "../assets/delete.png";
 import edit_icon from "../assets/edit.png";
 import KusinaFoodBox from "../components/KusinaFoodBox";
+import KusinaComment from "../components/KusinaComment";
 import { useNavigate } from "react-router-dom";
 
 function KusinaMenu() {
@@ -17,6 +18,9 @@ function KusinaMenu() {
   const [itemClassifications, setItemClassifications] = useState([]);
   const [foodItems, setFoodItems] = useState([]);
   const [editItem, setEditItem] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortReviews, setSortReviews] = useState("month");
+  const [activeTab, setActiveTab] = useState("food");
   const navigate = useNavigate();
 
   const togglePopup = () => {
@@ -153,7 +157,8 @@ function KusinaMenu() {
             role="tab"
             className="tab text-xl h-10 w-full font-semibold"
             aria-label="Foods"
-            checked
+            checked={activeTab === "food"}
+            onClick={() => setActiveTab("food")}
           />
           <div
             role="tabpanel"
@@ -371,10 +376,12 @@ function KusinaMenu() {
             role="tab"
             className="tab text-xl h-10 font-semibold"
             aria-label="Reviews"
+            checked={activeTab === "reviews"}
+            onClick={() => setActiveTab("reviews")}
           />
           <div
             role="tabpanel"
-            className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+            className="tab-content bg-base-100 border-base-300 rounded-box p-12"
           >
             <div className="flex justify-center mt-12 text-kusinaaccent">
               <div className="flex flex-col mr-12 justify-center">
@@ -424,10 +431,58 @@ function KusinaMenu() {
                     document.getElementById("add_modal").showModal()
                   }
                 >
-                  Sumit Review
+                  Submit Review
                 </button>
               </div>
             </div>
+            <div className="Category mt-12 flex justify-center align-middle">
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setSortReviews("month")}
+                  className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
+                    sortReviews === "month"
+                      ? "bg-kusinaaccent text-white"
+                      : "bg-kusinabg text-kusinaaccent"
+                  }`}
+                >
+                  Submitted the past month
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortReviews("new")}
+                  className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
+                    sortReviews === "new"
+                      ? "bg-kusinaaccent text-white"
+                      : "bg-kusinabg text-kusinaaccent"
+                  }`}
+                >
+                  Newest to Oldest
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSortReviews("old")}
+                  className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
+                    sortReviews === "old"
+                      ? "bg-kusinaaccent text-white"
+                      : "bg-kusinabg text-kusinaaccent"
+                  }`}
+                >
+                  Oldest to Newest
+                </button>
+              </div>
+            </div>
+
+            <hr className="my-10 border-kusinaprimary"></hr>
+
+            <KusinaComment
+              name={"Juan Dela Cruz"}
+              rating={4.2}
+              comment={
+                "Masarap naman, budget meal talaga siya. Medyo maliit lang serving pero ok lang kasi mura naman. May free delivery din sila pag tinatamad ka lumabas."
+              }
+            />
           </div>
         </div>
         <dialog id="my_modal_1" className="modal">
