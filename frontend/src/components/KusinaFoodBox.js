@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 const KusinaFoodBox = (props) => {
   const navigate = useNavigate();
   const stars = [];
+  const rating = Number(props.rating)
   for (let i = 1; i <= 5; i++) {
     stars.push(
       <input
@@ -11,7 +12,7 @@ const KusinaFoodBox = (props) => {
         type="radio"
         name={`rating-${props.name}`}
         className="mask mask-star-2 bg-kusinaprimary hover:cursor-default"
-        checked={i <= props.rating}
+        checked={i <= rating}
         disabled
       />
     );

@@ -7,6 +7,8 @@ import edit_icon from "../assets/edit.png";
 import KusinaFoodBox from "../components/KusinaFoodBox";
 import KusinaComment from "../components/KusinaComment";
 import { useNavigate, useParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 function KusinaMenu(props) {
   let { establishment_id } = useParams();
@@ -141,9 +143,25 @@ function KusinaMenu(props) {
   };
 
   const handleSearch = () => {
-    // Triggered on search button click
-    setSearchTerm(searchTerm.trim()); // Remove leading/trailing whitespace
+    fetch(`http://localhost:3001/${establishment_id}/search`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name: searchTerm})
+    })
+    .then((res) => res.json())
+      .then((searchData) =>
+        setSearchData(Array.isArray(searchData) ? searchData : [])
+      )
+      .catch((err) => console.log(err));
   };
+
+  const handleArrowClick = () => {
+    setSearchData([]);
+  };
+
+  const foodToShow = searchTerm !== '' && searchData.length > 0 ? searchData : foodItems
 
   return (
     <>
@@ -234,13 +252,24 @@ function KusinaMenu(props) {
                 </div>
               </div>
               <p className="pt-10 text-center">or</p>
-              <div className="py-10 flex justify-center">
+              <div className="py-10 flex justify-center items-center">
                 <KusinaSearchBar
                   placeholder="Search for a food item..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onSearch={handleSearch}
                 />
+                {searchData.length > 0 && (
+                  <button
+                    className="btn btn-square btn-ghost"
+                    onClick={handleArrowClick}
+                  >
+                    <FontAwesomeIcon
+                      icon={faArrowLeft}
+                      className="text-kusinaprimary hover:text-kusinaprimarylight size-7"
+                    />
+                  </button>
+                )}
               </div>
               <button onClick={togglePopup}>
                 <div className="flex">
@@ -420,16 +449,17 @@ function KusinaMenu(props) {
 
               <div className="flex justify-center mt-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {foodItems.map((item) => (
+                  {foodToShow.map((item) => (
                     <div key={item.id}>
                       <KusinaFoodBox
                         name={item.name}
                         id={item.item_id}
                         description={item.description}
                         price={item.price}
-                        rating={2} // TODO: make this dynamic
-                        image={item.imageLink}
-                        estab_id={item.estab_id}
+                        rating={item.avg_rating
+                          ? Number(item.avg_rating).toFixed(1)
+                          : "0"} // TODO: make this dynamic
+                        image={item.image_link}
                       />
                     </div>
                   ))}
