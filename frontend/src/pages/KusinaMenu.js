@@ -182,6 +182,24 @@ function KusinaMenu(props) {
       });
   };
 
+  const handleDeleteEstablishment = () => {
+    fetch(`http://localhost:3001/deleteEstablishment/${establishment_id}`, {
+      method: "POST",
+    })
+      .then((res) => {
+        if (res.ok) {
+          navigate("/kusina");
+        } else {
+          return res.json().then((error) => {
+            throw new Error(error.error);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting establishment:", error);
+      });
+  };
+
   const handleChangeEstReview = (event) => {
     setComment(event.target.value);
   };
@@ -315,7 +333,7 @@ function KusinaMenu(props) {
               </button>
               <button
                 onClick={() =>
-                  document.getElementById("delete_modal").showModal()
+                  document.getElementById("delete_est_modal").showModal()
                 }
               >
                 <img src={delete_icon} className="h-10 pl-2 pt-2"></img>
@@ -692,14 +710,6 @@ function KusinaMenu(props) {
                 ))}
               </div>
             </div>
-
-            {/* <KusinaComment
-              name={"Juan Dela Cruz"}
-              rating={4.2}
-              comment={
-                "Masarap naman, budget meal talaga siya. Medyo maliit lang serving pero ok lang kasi mura naman. May free delivery din sila pag tinatamad ka lumabas."
-              }
-            /> */}
           </div>
         </div>
         <dialog id="my_modal_1" className="modal">
@@ -916,24 +926,27 @@ function KusinaMenu(props) {
           </div>
         </dialog>
 
-        <dialog id="delete_modal" className="modal">
+        <dialog id="delete_est_modal" className="modal">
           <div className="modal-box bg-white text-kusinaprimary">
             <h3 className="font-bold text-lg pb-5">
               Are you sure you want to delete this establishment, including all
-              of its food items and reviews?
+              of its items and reviews?
             </h3>
             <div className="flex justify-end">
               <button
-                type="submit"
+                id="confirm_delete_button"
+                type="button"
                 className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
-                //   onClick={}
+                onClick={handleDeleteEstablishment}
               >
                 I am sure.
               </button>
               <button
                 type="button"
-                className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
-                onClick={() => document.getElementById("delete_modal").close()}
+                className="ml-4 bg-kusinabg hover:bg-              kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                onClick={() =>
+                  document.getElementById("delete_est_modal").close()
+                }
               >
                 Cancel
               </button>

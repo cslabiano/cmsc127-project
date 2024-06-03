@@ -376,6 +376,49 @@ app.post("/deleteItemReview/:user_id/:item_id", (req, res) => {
   });
 });
 
+// delete establishment
+app.post("/deleteEstablishment/:estab_id", (req, res) => {
+  const { estab_id } = req.params;
+
+  // SQL queries
+  const deleteEstabContactSql = "DELETE FROM estabcontact WHERE estab_id = ?";
+  const deleteItemReviewSql =
+    "DELETE FROM itemreview WHERE item_id IN (SELECT item_id FROM item WHERE estab_id = ?)";
+  const deleteItemClassSql =
+    "DELETE FROM itemclass WHERE item_id IN (SELECT item_id FROM item WHERE estab_id = ?)";
+  const deleteItemSql = "DELETE FROM item WHERE estab_id = ?";
+  const deleteEstabReviewSql = "DELETE FROM estabreview WHERE estab_id = ?";
+  const deleteEstabSql = "DELETE FROM establishment WHERE estab_id = ?";
+
+  db.query(deleteEstabContactSql, [estab_id], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+
+    db.query(deleteItemReviewSql, [estab_id], (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+
+      db.query(deleteItemClassSql, [estab_id], (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+
+        db.query(deleteItemSql, [estab_id], (err, results) => {
+          if (err) return res.status(500).json({ error: err });
+
+          db.query(deleteEstabReviewSql, [estab_id], (err, results) => {
+            if (err) return res.status(500).json({ error: err });
+
+            db.query(deleteEstabSql, [estab_id], (err, results) => {
+              if (err) return res.status(500).json({ error: err });
+
+              return res.json({
+                message: "Establishment deleted successfully",
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+});
+
 // delete item
 app.delete("/items/:item_id", (req, res) => {
   const { item_id } = req.params;
