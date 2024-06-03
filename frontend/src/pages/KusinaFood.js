@@ -11,8 +11,7 @@ function KusinaFood() {
   const user_id = localStorage.getItem("user_id");
   const { establishment_id, item_id } = useParams();
   const [showPopup, setShowPopup] = useState(false);
-  const [sortReviews, setSortReviews] = useState("month");
-  const [sort, setSort] = useState("month");
+  const [sort, setSort] = useState("desc");
   const [itemClassifications, setItemClassifications] = useState([]);
   const [itemData, setItemData] = useState([]);
   const [reviewData, setReviewData] = useState([]);
@@ -29,11 +28,10 @@ function KusinaFood() {
 
   const fetchReviewData = () => {
     let endpoint;
-    if (sortReviews === "month") {
+    if (sort === "month") {
       endpoint = `http://localhost:3001/${item_id}/itemmonthreviews`;
     } else {
-      // Determine sorting order based on the sort state
-      const sortOrder = sort === "new" ? "DESC" : "ASC";
+      const sortOrder = sort;
       endpoint = `http://localhost:3001/${item_id}/itemreviews?sort=${sortOrder}`;
     }
 
@@ -234,9 +232,13 @@ function KusinaFood() {
             <div className="flex gap-2 flex-wrap">
               <button
                 type="button"
-                onClick={() => setSortReviews("month")}
+                onClick={() => {
+                  console.log("Filtering by month");
+                  setSort("month");
+                  fetchReviewData();
+                }}
                 className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                  sortReviews === "month"
+                  sort === "month"
                     ? "bg-kusinaaccent text-white"
                     : "bg-kusinabg text-kusinaaccent"
                 }`}
@@ -245,9 +247,13 @@ function KusinaFood() {
               </button>
               <button
                 type="button"
-                onClick={() => setSortReviews("new")}
+                onClick={() => {
+                  console.log("Filtering by month");
+                  setSort("desc");
+                  fetchReviewData(); // Call fetchReviewData after setting the sort state
+                }}
                 className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                  sortReviews === "new"
+                  sort === "desc"
                     ? "bg-kusinaaccent text-white"
                     : "bg-kusinabg text-kusinaaccent"
                 }`}
@@ -257,9 +263,13 @@ function KusinaFood() {
 
               <button
                 type="button"
-                onClick={() => setSortReviews("old")}
+                onClick={() => {
+                  console.log("Filtering by month");
+                  setSort("asc");
+                  fetchReviewData(); // Call fetchReviewData after setting the sort state
+                }}
                 className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                  sortReviews === "old"
+                  sort === "asc"
                     ? "bg-kusinaaccent text-white"
                     : "bg-kusinabg text-kusinaaccent"
                 }`}

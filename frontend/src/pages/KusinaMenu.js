@@ -56,32 +56,38 @@ function KusinaMenu(props) {
   // }, []);
 
   const fetchFilteredItems = () => {
-    const classificationQuery = itemClassifications.map(cls => `'${cls}'`).join(',')
+    const classificationQuery = itemClassifications
+      .map((cls) => `'${cls}'`)
+      .join(",");
     // const classificationsArray = classificationQuery.split(',');
     // const placeholders = classificationsArray.map(() => '?').join(',');
     console.log(classificationQuery);
-    fetch(`http://localhost:3001/${establishment_id}/filterClass?classification=${classificationQuery}`)
+    fetch(
+      `http://localhost:3001/${establishment_id}/filterClass?classification=${classificationQuery}`
+    )
       .then((res) => res.json())
       .then((foodItems) => setFoodItems(foodItems))
-      .catch((error) => console.error("Error fetching filtered food items:", error));
-  }
+      .catch((error) =>
+        console.error("Error fetching filtered food items:", error)
+      );
+  };
 
   const fetchSortedData = (order) => {
     fetch(`http://localhost:3001/${establishment_id}/sortPrice?sort=${order}`)
-    .then((res) => res.json())
-    .then((foodItems) => {
-      console.log(foodItems);
-      setFoodItems(foodItems)})
-    .catch((err) => console.log(err))
-    
-  }
+      .then((res) => res.json())
+      .then((foodItems) => {
+        console.log(foodItems);
+        setFoodItems(foodItems);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const fetchReviewData = () => {
     let endpoint;
     if (sortReviews === "month") {
       endpoint = `http://localhost:3001/${establishment_id}/estmonthreviews`;
     } else {
-      const sort = sortReviews === "new" ? "DESC" : "ASC";
+      const sort = sortReviews;
       endpoint = `http://localhost:3001/${establishment_id}/estreviews?sort=${sort}`;
     }
 
@@ -96,7 +102,7 @@ function KusinaMenu(props) {
 
   useEffect(() => {
     fetchEstabData();
-    if(itemClassifications.length > 0) {
+    if (itemClassifications.length > 0) {
       fetchFilteredItems();
     } else {
       fetchItemData();
@@ -134,9 +140,9 @@ function KusinaMenu(props) {
   }
 
   const toggleClassification = (classType) => {
-    setItemClassifications(prevClassifications => {
+    setItemClassifications((prevClassifications) => {
       if (prevClassifications.includes(classType)) {
-        return prevClassifications.filter(cls => cls !== classType);
+        return prevClassifications.filter((cls) => cls !== classType);
       } else {
         return [...prevClassifications, classType];
       }
@@ -252,10 +258,10 @@ function KusinaMenu(props) {
   };
 
   const handleSortPrice = (order) => {
-    console.log(order)
-    setPrice(order === "asc" ? "low" : "high")
-    fetchSortedData(order)
-  }
+    console.log(order);
+    setPrice(order === "asc" ? "low" : "high");
+    fetchSortedData(order);
+  };
 
   const foodToShow =
     searchTerm !== "" && searchData.length > 0 ? searchData : foodItems;
@@ -384,9 +390,7 @@ function KusinaMenu(props) {
                     <div className="flex gap-2 flex-wrap">
                       <button
                         type="button"
-                        onClick={() =>
-                          toggleClassification("meat")
-                        }
+                        onClick={() => toggleClassification("meat")}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
                           itemClassifications.includes("meat")
                             ? "bg-kusinaprimary text-white"
@@ -397,9 +401,7 @@ function KusinaMenu(props) {
                       </button>
                       <button
                         type="button"
-                        onClick={() =>
-                          toggleClassification('vegetable')
-                        }
+                        onClick={() => toggleClassification("vegetable")}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
                           itemClassifications.includes("vegetable")
                             ? "bg-kusinaprimary text-white"
@@ -411,9 +413,7 @@ function KusinaMenu(props) {
 
                       <button
                         type="button"
-                        onClick={() =>
-                          toggleClassification('dairy')
-                        }
+                        onClick={() => toggleClassification("dairy")}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
                           itemClassifications.includes("dairy")
                             ? "bg-kusinaprimary text-white"
@@ -425,9 +425,7 @@ function KusinaMenu(props) {
 
                       <button
                         type="button"
-                        onClick={() =>
-                          toggleClassification('pastry')
-                        }
+                        onClick={() => toggleClassification("pastry")}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
                           itemClassifications.includes("pastry")
                             ? "bg-kusinaprimary text-white"
@@ -439,9 +437,7 @@ function KusinaMenu(props) {
 
                       <button
                         type="button"
-                        onClick={() =>
-                          toggleClassification('beverage')
-                        }
+                        onClick={() => toggleClassification("beverage")}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
                           itemClassifications.includes("beverage")
                             ? "bg-kusinaprimary text-white"
@@ -458,9 +454,7 @@ function KusinaMenu(props) {
                     <div className="flex gap-2 flex-wrap">
                       <button
                         type="button"
-                        onClick={() =>
-                          handleSortPrice("desc")
-                        }
+                        onClick={() => handleSortPrice("desc")}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
                           price === "high"
                             ? "bg-kusinaprimary text-white"
@@ -472,9 +466,7 @@ function KusinaMenu(props) {
 
                       <button
                         type="button"
-                        onClick={() =>
-                          handleSortPrice("asc")
-                        }
+                        onClick={() => handleSortPrice("asc")}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
                           price === "low"
                             ? "bg-kusinaprimary text-white"
@@ -632,7 +624,11 @@ function KusinaMenu(props) {
               <div className="flex gap-2 flex-wrap">
                 <button
                   type="button"
-                  onClick={() => setSortReviews("month")}
+                  onClick={() => {
+                    console.log("Filtering by month");
+                    setSortReviews("month");
+                    fetchReviewData(); // Call fetchReviewData after setting the sort state
+                  }}
                   className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
                     sortReviews === "month"
                       ? "bg-kusinaaccent text-white"
@@ -643,9 +639,13 @@ function KusinaMenu(props) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setSortReviews("new")}
+                  onClick={() => {
+                    console.log("Filtering by month");
+                    setSortReviews("desc");
+                    fetchReviewData(); // Call fetchReviewData after setting the sort state
+                  }}
                   className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                    sortReviews === "new"
+                    sortReviews === "desc"
                       ? "bg-kusinaaccent text-white"
                       : "bg-kusinabg text-kusinaaccent"
                   }`}
@@ -655,9 +655,13 @@ function KusinaMenu(props) {
 
                 <button
                   type="button"
-                  onClick={() => setSortReviews("old")}
+                  onClick={() => {
+                    console.log("Filtering by month");
+                    setSortReviews("asc");
+                    fetchReviewData(); // Call fetchReviewData after setting the sort state
+                  }}
                   className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                    sortReviews === "old"
+                    sortReviews === "asc"
                       ? "bg-kusinaaccent text-white"
                       : "bg-kusinabg text-kusinaaccent"
                   }`}

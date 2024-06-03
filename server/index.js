@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "mandyjenny",
+  password: "qwerty",
   database: "kusina",
 });
 
@@ -264,14 +264,14 @@ app.get(`/:estab_id/estab`, (req, res) => {
 
 app.get(`/:estab_id/estreviews`, (req, res) => {
   const { estab_id } = req.params;
-  const sql =
-    "select user_id, user_name, date, time, rating, comment from estabreview natural join user where estab_id= ?";
+  const { sort } = req.query;
+  const sql = `select user_id, user_name, date, time, rating, comment from estabreview natural join user where estab_id= ? order by date ${sort}, time ${sort}`;
 
-  if (req.query.sort === "DESC") {
-    sql += " ORDER BY date DESC, time DESC";
-  } else {
-    sql += " ORDER BY date ASC, time ASC";
-  }
+  // if (req.query.sort === "DESC") {
+  //   sql += " ORDER BY date DESC, time DESC";
+  // } else {
+  //   sql += " ORDER BY date ASC, time ASC";
+  // }
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
     console.log(data);
@@ -292,14 +292,14 @@ app.get(`/:estab_id/estmonthreviews`, (req, res) => {
 
 app.get("/:item_id/itemreviews", (req, res) => {
   const { item_id } = req.params;
-  let sql =
-    "SELECT user_id, user_name, date, time, rating, comment FROM itemreview natural join user WHERE item_id = ?";
+  const { sort } = req.query;
+  let sql = `SELECT user_id, user_name, date, time, rating, comment FROM itemreview natural join user WHERE item_id = ? order by date ${sort}, time ${sort}`;
 
-  if (req.query.sort === "DESC") {
-    sql += " ORDER BY date DESC, time DESC";
-  } else {
-    sql += " ORDER BY date ASC, time ASC";
-  }
+  // if (sort === "DESC") {
+  //   sql += " ORDER BY date DESC, time DESC";
+  // } else {
+  //   sql += " ORDER BY date ASC, time ASC";
+  // }
 
   db.query(sql, [item_id], (err, data) => {
     if (err) return res.json(err);
