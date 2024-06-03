@@ -346,7 +346,7 @@ app.get(`/:estab_id/estreviews`, (req, res) => {
   // }
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
-    // console.log(data);
+    console.log(data);
     return res.json(data);
   });
 });
@@ -375,7 +375,7 @@ app.get("/:item_id/itemreviews", (req, res) => {
 
   db.query(sql, [item_id], (err, data) => {
     if (err) return res.json(err);
-    // console.log(data);
+    console.log(data);
     return res.json(data);
   });
 });

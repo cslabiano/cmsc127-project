@@ -468,7 +468,9 @@ function KusinaMenu() {
                     <div className="flex gap-2 flex-wrap">
                       <button
                         type="button"
-                        onClick={() => handleSortPrice("desc")}
+                        onClick={() =>
+                          setPrice(price === "high" ? "NONE" : "high")
+                        }
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
                           price === "high"
                             ? "bg-kusinaprimary text-white"
@@ -480,7 +482,9 @@ function KusinaMenu() {
 
                       <button
                         type="button"
-                        onClick={() => handleSortPrice("asc")}
+                        onClick={() =>
+                          setPrice(price === "low" ? "NONE" : "low")
+                        }
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
                           price === "low"
                             ? "bg-kusinaprimary text-white"
