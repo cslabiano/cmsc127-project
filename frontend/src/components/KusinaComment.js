@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import edit_icon from "../assets/edit.png";
 import delete_icon from "../assets/delete.png";
 
@@ -9,6 +9,11 @@ const KusinaComment = (props) => {
 
   // console.log("user_id:", user_id);
   // console.log("props.userid:", props.userid);
+  console.log("Initial props.comment:", props.comment);
+
+  useEffect(() => {
+    setNewComment(props.comment);
+  }, [props.comment]);
 
   const stars = [];
   for (let i = 1; i <= 5; i++) {
@@ -39,7 +44,7 @@ const KusinaComment = (props) => {
 
   const handleUpdateComment = () => {
     document.getElementById("edit_comment_modal").close();
-    console.log("prop.comment: ", props.comment, props.id);
+    console.log("Initial props.comment in update:", props.comment);
     fetch(`http://localhost:3001/${props.id}/${user_id}/editestreview`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -142,11 +147,7 @@ const KusinaComment = (props) => {
       <dialog id="edit_comment_modal" className="modal">
         <div className="modal-box bg-white text-kusinaprimary">
           <h3 className="font-bold text-lg pb-5">Edit Comment</h3>
-          <form
-            method="dialog"
-            className="modal-content"
-            onSubmit={handleUpdateComment}
-          >
+          <form method="dialog" className="modal-content">
             <div className="mb-2">
               <p className="mb-2">New Rating:</p>
               <div className="rating rating-lg mb-4">
@@ -174,6 +175,7 @@ const KusinaComment = (props) => {
               <button
                 type="submit"
                 className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                onClick={handleUpdateComment}
               >
                 Apply Changes
               </button>
