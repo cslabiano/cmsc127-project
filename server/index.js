@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "1234",
+  password: "qwerty",
   database: "kusina",
 });
 
@@ -407,7 +407,7 @@ app.get("/:estab_id/itemsort", (req, res) => {
 
 app.get("/:estab_id/filterClass", (req, res) => {
   const { estab_id } = req.params;
-  const { classification } = req.query;
+  const { classification, min, max } = req.query;
   let sql = `SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, COALESCE(AVG(ir.rating), 0) AS avg_rating, GROUP_CONCAT(DISTINCT c.classification) AS classifications
   FROM item i
   JOIN establishment e ON i.estab_id = e.estab_id
@@ -415,6 +415,7 @@ app.get("/:estab_id/filterClass", (req, res) => {
   LEFT JOIN itemreview ir ON i.item_id = ir.item_id
   WHERE i.estab_id = ?
   and c.classification in (${classification})
+  and i.price between ${min} and ${max}
   GROUP BY i.item_id`;
 
   // if (sort === "DESC") {
@@ -423,7 +424,9 @@ app.get("/:estab_id/filterClass", (req, res) => {
   //   sql += " ORDER BY date ASC, time ASC";
   // }
 
-  db.query(sql, [estab_id], (err, data) => {
+  // and i.price between ${min} and ${max}
+
+  db.query(sql, [estab_id, min, max], (err, data) => {
     if (err) return res.json(err);
     console.log(data);
     return res.json(data);
@@ -662,7 +665,10 @@ app.put("/:item_id/updateitem", (req, res) => {
           if (err) return res.status(500).json({ error: err });
 
           // insert classifications into the item_class table
-          const classificationValues = classifications.map((classification) => [item_id, classification]);
+          const classificationValues = classifications.map((classification) => [
+            item_id,
+            classification,
+          ]);
           const insertClassificationSql = `INSERT INTO itemclass (item_id, classification) VALUES ?`;
           // console.log(item_id);
           // const classificationValues = [];
