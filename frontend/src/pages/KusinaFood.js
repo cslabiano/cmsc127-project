@@ -148,7 +148,7 @@ function KusinaFood() {
       description,
       price,
       image_link,
-      classifications,
+      classifications: itemClassifications,
     };
 
     fetch(`http://localhost:3001/${item_id}/updateitem`, {
