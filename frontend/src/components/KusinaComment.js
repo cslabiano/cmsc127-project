@@ -5,6 +5,9 @@ import delete_icon from "../assets/delete.png";
 const KusinaComment = (props) => {
   const [estRating, setEstRating] = useState(0);
   const user_id = localStorage.getItem("user_id");
+  console.log("user_id:", user_id);
+  console.log("props.userid:", props.userid);
+  console.log(user_id - props.userid);
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     stars.push(
@@ -25,7 +28,7 @@ const KusinaComment = (props) => {
   };
 
   const handleEditClick = () => {
-    if (user_id === props.userid) {
+    if (user_id - props.userid === 0) {
       document.getElementById("edit_comment_modal").showModal();
     } else {
       document.getElementById("unauthorized_modal").showModal();
@@ -33,7 +36,7 @@ const KusinaComment = (props) => {
   };
 
   const handleDeleteClick = () => {
-    if (user_id === props.userid) {
+    if (user_id - props.userid === 0) {
       document.getElementById("delete_modal").showModal();
     } else {
       document.getElementById("unauthorized_modal").showModal();
