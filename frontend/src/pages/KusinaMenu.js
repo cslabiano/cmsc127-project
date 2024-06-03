@@ -11,13 +11,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import KusinaSkeleton from "../components/KusinaSkeleton";
 
-function KusinaMenu(props) {
+function KusinaMenu() {
   const user_id = localStorage.getItem("user_id");
   let { establishment_id } = useParams();
   let { search_term } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [classification, setClassification] = useState("NONE");
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState("NONE");
   const [sortPrice, setSortPrice] = useState([]);
   const [between, setBetween] = useState(false);
   const [estRating, setEstRating] = useState(5);
@@ -35,6 +35,7 @@ function KusinaMenu(props) {
   const [reviewData, setReviewData] = useState([]);
   const [estReview, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [contactNumbers, setContactNumbers] = useState([""]);
 
   // const itemsToShow =
   //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
@@ -65,11 +66,15 @@ function KusinaMenu(props) {
     // const classificationsArray = classificationQuery.split(',');
     // const placeholders = classificationsArray.map(() => '?').join(',');
     console.log(classificationQuery);
+    console.log("Before query: ", foodItems);
     fetch(
       `http://localhost:3001/${establishment_id}/filterClass?classification=${classificationQuery}`
     )
       .then((res) => res.json())
-      .then((foodItems) => setFoodItems(foodItems))
+      .then((foodItems) => {
+        console.log("Filter food items: ", foodItems);
+        setFoodItems(foodItems);
+      })
       .catch((error) =>
         console.error("Error fetching filtered food items:", error)
       );
@@ -78,6 +83,14 @@ function KusinaMenu(props) {
   const fetchSortedData = (orderQuery) => {
     // console.log("Price: ", price)
     console.log("OrderQuery: ", orderQuery);
+
+    if (orderQuery === "none") {
+      setSortPrice([]); // Reset to no sorting
+      fetchItemData();
+      setIsLoading(false);
+      return;
+    }
+
     const order = orderQuery === "asc" ? "ASC" : "DESC";
     console.log("Order: ", order);
 
@@ -243,21 +256,49 @@ function KusinaMenu(props) {
       });
   };
 
-  // function to handle updating a food item
-  const handleUpdateFoodItem = (event) => {
-    event.preventDefault();
-    const updatedItem = {
-      ...editItem,
-      name: event.target.name.value,
-      description: event.target.desc.value,
-      price: event.target.price.value,
-      image: event.target.image.value,
+  const handleAddContactField = () => {
+    setContactNumbers([...contactNumbers, ""]);
+  };
+
+  const handleContactChange = (index, value) => {
+    const newContacts = [...contactNumbers];
+    newContacts[index] = value;
+    setContactNumbers(newContacts);
+  };
+
+  const handleUpdateEstab = (e) => {
+    e.preventDefault();
+
+    const estabName = e.target.name.value;
+    const address = e.target.address.value;
+    const imageLink = e.target.link.value;
+
+    const updatedEstab = {
+      estab_name: estabName,
+      address: address,
+      image_link: imageLink,
+      contacts: contactNumbers,
     };
-    setFoodItems(
-      foodItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-    );
-    setEditItem(null);
-    document.getElementById("edit_modal").close();
+
+    fetch(`http://localhost:3001/${establishment_id}/updateestab`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedEstab),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          console.error("Error updating item:", data.error);
+        } else {
+          console.log("Item updated successfully:", data);
+          window.location.reload();
+        }
+      })
+      .catch((error) => console.error("Network error:", error));
+  };
+
+  const handleArrowClick = () => {
+    setSearchData([]);
   };
 
   const handleSearch = () => {
@@ -276,16 +317,22 @@ function KusinaMenu(props) {
       .catch((err) => console.log(err));
   };
 
-  const handleArrowClick = () => {
-    setSearchData([]);
-  };
-
   const handleSortPrice = (order) => {
     console.log("handleSortPrice: ", order);
-    setPrice(order === "asc" ? "low" : "high");
-    // console.log("Price after handle: ",price);
-    setIsLoading(true);
-    fetchSortedData(order);
+
+    setPrice((prevPrice) => {
+      let newPrice;
+      if (order === "asc") {
+        newPrice = prevPrice === "low" ? "NONE" : "low";
+      } else {
+        newPrice = prevPrice === "high" ? "NONE" : "high";
+      }
+      setIsLoading(true);
+      fetchSortedData(
+        newPrice === "low" ? "asc" : newPrice === "high" ? "desc" : "none"
+      );
+      return newPrice;
+    });
   };
 
   const foodToShow =
@@ -416,72 +463,6 @@ function KusinaMenu(props) {
               </button>
               {showPopup && (
                 <div className="popup flex justify-between flex-wrap animate-transitionIn">
-                  <div className="Category mt-8 flex align-middle">
-                    <p className="px-4 py-2 text-grn-i font-bold">
-                      Classification:
-                    </p>
-                    <div className="flex gap-2 flex-wrap">
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("meat")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("meat")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Meat
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("vegetable")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("vegetable")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Vegetable
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("dairy")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("dairy")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Dairy
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("pastry")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("pastry")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Pastry
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("beverage")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("beverage")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Beverage
-                      </button>
-                    </div>
-                  </div>
-
                   <div className="mt-8 flex align-middle">
                     <p className="px-4 py-2 text-grn-i font-bold">Price:</p>
                     <div className="flex gap-2 flex-wrap">
@@ -509,7 +490,7 @@ function KusinaMenu(props) {
                         Ascending
                       </button>
 
-                      <button
+                      {/* <button
                         type="button"
                         onClick={() => setBetween(!between)}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
@@ -519,11 +500,11 @@ function KusinaMenu(props) {
                         }`}
                       >
                         Between...
-                      </button>
+                      </button> */}
                     </div>
                   </div>
 
-                  {between && (
+                  {/* {between && (
                     <div className="mt-8 flex align-middle">
                       <p className="px-4 py-2 text-grn-i font-bold">
                         Min Price:
@@ -544,9 +525,9 @@ function KusinaMenu(props) {
                         className="border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 bg-kusinabg text-kusinaprimary"
                       />
                     </div>
-                  )}
+                  )} */}
 
-                  <div className="sortbutton mt-8">
+                  {/* <div className="sortbutton mt-8">
                     <button
                       type="button"
                       //   onClick={() => }
@@ -554,7 +535,7 @@ function KusinaMenu(props) {
                     >
                       Apply changes
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               )}
 
@@ -737,7 +718,7 @@ function KusinaMenu(props) {
             <form
               method="dialog"
               className="modal-content"
-              //   onSubmit={handleSubmit}
+              onSubmit={handleUpdateEstab}
             >
               <div className="mb-2">
                 <p className="mb-2">Name:</p>
@@ -746,9 +727,6 @@ function KusinaMenu(props) {
                   id="name"
                   name="name"
                   placeholder="Name"
-                  //   value={editData.name || ""}
-                  //   onChange={handleInfoChange}
-                  //   value="Food Establishment"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
@@ -759,20 +737,30 @@ function KusinaMenu(props) {
                   id="address"
                   name="address"
                   placeholder="Address"
-                  //   value="Address of the food establishment"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
               <div className="mb-2">
-                <p className="mb-2">Contact No:</p>
-                <input
-                  type="text"
-                  id="contact"
-                  name="contact"
-                  placeholder="Contact"
-                  //   value="09XXXXXXXXX"
-                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
-                />
+                <p className="mb-2">Contact Numbers:</p>
+                {contactNumbers.map((contact, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    value={contact}
+                    onChange={(e) => handleContactChange(index, e.target.value)}
+                    placeholder={`Contact Number ${index + 1}`}
+                    className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                  />
+                ))}
+              </div>
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleAddContactField}
+                  className="flex justify-end items-end text-kusinaprimary py-2 underline rounded-3xl focus:outline-none focus:shadow-outline"
+                >
+                  <p>Add Another Contact Number</p>
+                </button>
               </div>
               <div className="mb-2">
                 <p className="mb-2">Image Link:</p>
@@ -781,7 +769,6 @@ function KusinaMenu(props) {
                   id="link"
                   name="link"
                   placeholder="Link"
-                  //   value="09XXXXXXXXX"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
@@ -789,7 +776,6 @@ function KusinaMenu(props) {
                 <button
                   type="submit"
                   className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
-                  //   onClick={}
                 >
                   Apply Changes
                 </button>
