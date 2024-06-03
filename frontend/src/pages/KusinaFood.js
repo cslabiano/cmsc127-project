@@ -87,6 +87,24 @@ function KusinaFood() {
     setComment(event.target.value);
   };
 
+  const handleDeleteFoodItem = () => {
+    fetch(`http://localhost:3001/deleteItem/${item_id}`, {
+      method: "POST",
+    })
+      .then((res) => {
+        if (res.ok) {
+          navigate(`/kusina/${establishment_id}`);
+        } else {
+          return res.json().then((error) => {
+            throw new Error(error.error);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   // function to handle adding a new food item
   const handleAddItemReview = (event) => {
     fetch(`http://localhost:3001/${item_id}`, {
@@ -162,7 +180,7 @@ function KusinaFood() {
               </button>
               <button
                 onClick={() =>
-                  document.getElementById("delete_modal").showModal()
+                  document.getElementById("delete_food_modal").showModal()
                 }
               >
                 <img src={delete_icon} className="h-10 pl-2 pt-2"></img>
@@ -438,7 +456,7 @@ function KusinaFood() {
           </div>
         </dialog>
 
-        <dialog id="delete_modal" className="modal">
+        <dialog id="delete_food_modal" className="modal">
           <div className="modal-box bg-white text-kusinaprimary">
             <h3 className="font-bold text-lg pb-5">
               Are you sure you want to delete this food item, including all of
@@ -448,14 +466,16 @@ function KusinaFood() {
               <button
                 type="submit"
                 className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
-                //   onClick={}
+                onClick={handleDeleteFoodItem}
               >
                 I am sure.
               </button>
               <button
                 type="button"
                 className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
-                onClick={() => document.getElementById("delete_modal").close()}
+                onClick={() =>
+                  document.getElementById("delete_food_modal").close()
+                }
               >
                 Cancel
               </button>

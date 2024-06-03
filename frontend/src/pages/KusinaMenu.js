@@ -234,11 +234,6 @@ function KusinaMenu(props) {
       });
   };
 
-  // function to handle deleting a food item
-  const handleDeleteFoodItem = (id) => {
-    setFoodItems(foodItems.filter((item) => item.id !== id));
-  };
-
   // function to handle updating a food item
   const handleUpdateFoodItem = (event) => {
     event.preventDefault();

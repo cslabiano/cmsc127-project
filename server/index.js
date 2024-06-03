@@ -376,6 +376,29 @@ app.post("/deleteItemReview/:user_id/:item_id", (req, res) => {
   });
 });
 
+// delete food item
+app.post("/deleteItem/:item_id", (req, res) => {
+  const { item_id } = req.params;
+
+  const deleteItemReviewSql = "DELETE FROM itemreview WHERE item_id = ?";
+  const deleteItemClassSql = "DELETE FROM itemclass WHERE item_id = ?";
+  const deleteItemSql = "DELETE FROM item WHERE item_id = ?";
+
+  db.query(deleteItemReviewSql, [item_id], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+
+    db.query(deleteItemClassSql, [item_id], (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+
+      db.query(deleteItemSql, [item_id], (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+
+        return res.json({ message: "Item deleted successfully" });
+      });
+    });
+  });
+});
+
 // delete establishment
 app.post("/deleteEstablishment/:estab_id", (req, res) => {
   const { estab_id } = req.params;
