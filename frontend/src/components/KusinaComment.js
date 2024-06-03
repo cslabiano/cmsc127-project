@@ -6,8 +6,8 @@ const KusinaComment = (props) => {
   const [estRating, setEstRating] = useState(0);
   const user_id = localStorage.getItem("user_id");
 
-  console.log("user_id:", user_id);
-  console.log("props.userid:", props.userid);
+  // console.log("user_id:", user_id);
+  // console.log("props.userid:", props.userid);
 
   const stars = [];
   for (let i = 1; i <= 5; i++) {

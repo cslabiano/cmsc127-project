@@ -17,6 +17,11 @@ function KusinaFood() {
   const [reviewData, setReviewData] = useState([]);
   const [itemReview, setComment] = useState("");
   const [itemRating, setItemRating] = useState(5);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [image_link, setImage_Link] = useState("");
+  const [classifications, setClassifications] = useState(itemClassifications);
   const navigate = useNavigate();
 
   const fetchItemData = () => {
@@ -134,6 +139,34 @@ function KusinaFood() {
         navigate(`/kusina/${establishment_id}/${item_id}`);
       });
   };
+
+  const handleUpdateFoodItem = (e) => {
+    e.preventDefault();
+
+    const updatedItem = {
+      name,
+      description,
+      price,
+      image_link,
+      classifications
+    }
+
+    fetch(`http://localhost:3001/${item_id}/updateitem`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(updatedItem)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error('Error updating item:', data.error);
+      } else {
+        console.log('Item updated successfully:', data);
+        window.location.reload();
+      }
+    })
+    .catch(error => console.error('Network error:', error));
+  }
 
   return (
     <>
@@ -324,7 +357,7 @@ function KusinaFood() {
             <form
               method="dialog"
               className="modal-content"
-              //   onSubmit={handleSubmit}
+                onSubmit={handleUpdateFoodItem}
             >
               <div className="mb-2">
                 <p className="mb-2">Item Name:</p>
@@ -333,7 +366,8 @@ function KusinaFood() {
                   id="name"
                   name="name"
                   placeholder="Item Name"
-                  //   value={editData.name || ""}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   //   onChange={handleInfoChange}
                   //   value="Food Establishment"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
@@ -346,7 +380,8 @@ function KusinaFood() {
                   id="desc"
                   name="desc"
                   placeholder="Description"
-                  //   value="Address of the food establishment"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
@@ -356,8 +391,9 @@ function KusinaFood() {
                   type="number"
                   id="price"
                   name="price"
-                  placeholder="Contact"
-                  //   value="09XXXXXXXXX"
+                  placeholder="Price"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
@@ -369,7 +405,8 @@ function KusinaFood() {
                   id="link"
                   name="link"
                   placeholder="Link"
-                  //   value="09XXXXXXXXX"
+                  value={image_link}
+                  onChange={(e) => setImage_Link(e.target.value)}
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
