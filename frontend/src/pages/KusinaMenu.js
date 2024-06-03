@@ -37,8 +37,6 @@ function KusinaMenu() {
   const [isLoading, setIsLoading] = useState(false);
   const [contactNumbers, setContactNumbers] = useState([""]);
   const [iclass, setIclass] = useState("");
-  const [firstNumber, setFirstNumber] = useState(0);
-  const [secondNumber, setSecondNumber] = useState(0);
 
   // const itemsToShow =
   //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
@@ -53,8 +51,8 @@ function KusinaMenu() {
       endpoint = `http://localhost:3001/${establishment_id}/itemsort?sort=${sortOrder}`;
     }
 
-    if (iclass !== "") {
-      endpoint = `http://localhost:3001/${establishment_id}/filterClass?classification=${iclass}?min=${firstNumber}?max=${secondNumber}`;
+    if (iclass !== "" || minprice && maxprice ) {
+      endpoint = `http://localhost:3001/${establishment_id}/filterClass?classification=${iclass}&min=${minprice}&max=${maxprice}`;
     }
 
     fetch(endpoint)
@@ -80,14 +78,6 @@ function KusinaMenu() {
 
   const handleInputChange = (event) => {
     setIclass(event.target.value);
-  };
-
-  const handleFirstNumberChange = (event) => {
-    setFirstNumber(event.target.value);
-  };
-
-  const handleSecondNumberChange = (event) => {
-    setSecondNumber(event.target.value);
   };
 
   const fetchFilteredItems = () => {
@@ -527,7 +517,7 @@ function KusinaMenu() {
                         Ascending
                       </button>
 
-                      {/* <button
+                      <button
                         type="button"
                         onClick={() => setBetween(!between)}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
@@ -537,27 +527,8 @@ function KusinaMenu() {
                         }`}
                       >
                         Between...
-                      </button> */}
+                      </button>
                     </div>
-                  </div>
-
-                  <div className="mt-8 flex align-middle">
-                    <p className="px-4 py-2 text-grn-i font-bold">Between:</p>
-                    <input
-                      type="number"
-                      placeholder="Min"
-                      className="input w-full max-w-xs"
-                      value={firstNumber}
-                      onChange={handleFirstNumberChange}
-                    />
-
-                    <input
-                      type="number"
-                      placeholder="Max"
-                      className="input w-full max-w-xs"
-                      value={secondNumber}
-                      onChange={handleSecondNumberChange}
-                    />
                   </div>
 
                   <div className="mt-8 flex align-middle">
@@ -571,6 +542,29 @@ function KusinaMenu() {
                     />
                   </div>
 
+                  {between && (
+                    <div className="mt-8 flex align-middle">
+                      <p className="px-4 py-2 text-grn-i font-bold">
+                        Min Price:
+                      </p>
+                      <input
+                        type="number"
+                        value={minprice}
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        className="border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 bg-kusinabg text-kusinaprimary"
+                      />
+                      <p className="px-4 py-2 text-grn-i font-bold">
+                        Max Price:
+                      </p>
+                      <input
+                        type="number"
+                        value={maxprice}
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        className="border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 bg-kusinabg text-kusinaprimary"
+                      />
+                    </div>
+                  )}
+
                   <div className="sortbutton mt-8">
                     <button
                       type="button"
@@ -580,7 +574,7 @@ function KusinaMenu() {
                       }}
                       className={`bg-kusinaprimary border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 bg-grn-i text-white`}
                     >
-                      Apply category sort
+                      Apply filter
                     </button>
                   </div>
                 </div>

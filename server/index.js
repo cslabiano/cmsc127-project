@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "qwerty",
+  password: "1234",
   database: "kusina",
 });
 
@@ -413,20 +413,23 @@ app.get("/:estab_id/filterClass", (req, res) => {
   JOIN establishment e ON i.estab_id = e.estab_id
   LEFT JOIN itemclass c ON c.item_id = i.item_id
   LEFT JOIN itemreview ir ON i.item_id = ir.item_id
-  WHERE i.estab_id = ?
-  and c.classification in (${classification})
-  and i.price between ${min} and ${max}
-  GROUP BY i.item_id`;
+  WHERE i.estab_id = ?`;
 
-  // if (sort === "DESC") {
-  //   sql += " ORDER BY date DESC, time DESC";
-  // } else {
-  //   sql += " ORDER BY date ASC, time ASC";
-  // }
+  const queryParams = [estab_id];
 
-  // and i.price between ${min} and ${max}
+  if (classification != "") {
+    sql += `AND c.classification IN (${classification})`;
+    // queryParams.push(classification);
+  }
 
-  db.query(sql, [estab_id, min, max], (err, data) => {
+  if(min != 0 && max != 0) {
+    sql += `AND i.price BETWEEN ? AND ?`;
+    queryParams.push(min, max);
+  }
+
+  sql += `GROUP BY i.item_id`;
+
+  db.query(sql, queryParams, (err, data) => {
     if (err) return res.json(err);
     console.log(data);
     return res.json(data);
@@ -697,7 +700,7 @@ app.put("/:item_id/updateitem", (req, res) => {
 /*************** ITEM REVIEW TABLE ***************/
 
 // create or add food review
-app.post("/:item_id", (req, res) => {
+app.post("/:item_id/reviews", (req, res) => {
   const { user_id, rating, comment } = req.body;
   const { item_id } = req.params;
   const insertReviewSql =
