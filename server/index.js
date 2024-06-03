@@ -345,6 +345,27 @@ app.put("/items/:item_id", (req, res) => {
   });
 });
 
+// app.delete("/deleteEstabReview/:user_id/:estab_id", (req, res) => {
+//   const { comment } = req.query;
+//   const { user_id, estab_id } = req.params;
+//   const sql =
+//     "DELETE FROM estabreview WHERE user_id = ? AND estab_id = ? AND comment = ?";
+
+//   db.query(sql, [user_id, estab_id, comment], (err, results) => {
+//     if (err) return res.status(500).json({ error: err });
+//     return res.json({ message: "Comment deleted successfully" });
+//   });
+// });
+app.post("/deleteEstabReview/:user_id/:estab_id", (req, res) => {
+  const { comment } = req.body; // Change this to req.body to handle POST request
+  const { user_id, estab_id } = req.params;
+  const sql = `DELETE FROM estabreview WHERE user_id = ? AND estab_id = ? AND comment = "${comment}"`;
+  db.query(sql, [user_id, estab_id, comment], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    return res.json({ message: { comment } });
+  });
+});
+
 // delete item
 app.delete("/items/:item_id", (req, res) => {
   const { item_id } = req.params;

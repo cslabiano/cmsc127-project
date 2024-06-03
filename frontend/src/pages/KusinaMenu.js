@@ -684,6 +684,9 @@ function KusinaMenu(props) {
                       comment={review.comment}
                       date={review.date}
                       time={review.time}
+                      id={establishment_id}
+                      estab={true}
+                      onCommentDelete={fetchReviewData}
                     />
                   </div>
                 ))}

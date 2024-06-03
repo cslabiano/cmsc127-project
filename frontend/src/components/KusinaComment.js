@@ -5,9 +5,10 @@ import delete_icon from "../assets/delete.png";
 const KusinaComment = (props) => {
   const [estRating, setEstRating] = useState(0);
   const user_id = localStorage.getItem("user_id");
+
   console.log("user_id:", user_id);
   console.log("props.userid:", props.userid);
-  console.log(user_id - props.userid);
+
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     stars.push(
@@ -28,7 +29,7 @@ const KusinaComment = (props) => {
   };
 
   const handleEditClick = () => {
-    if (user_id - props.userid === 0) {
+    if (user_id === props.userid) {
       document.getElementById("edit_comment_modal").showModal();
     } else {
       document.getElementById("unauthorized_modal").showModal();
@@ -37,9 +38,55 @@ const KusinaComment = (props) => {
 
   const handleDeleteClick = () => {
     if (user_id - props.userid === 0) {
+      const comm = props.comment;
+      console.log("Comment to delete:", comm);
       document.getElementById("delete_modal").showModal();
+      // Add a listener for the delete button to call handleDeleteComment
+      document.getElementById("confirm_delete_button").onclick = () => {
+        handleDeleteComment(comm);
+        if (props.onCommentDelete) {
+          props.onCommentDelete(); // Call the callback function
+        }
+      };
     } else {
       document.getElementById("unauthorized_modal").showModal();
+    }
+  };
+
+  const handleDeleteComment = (comm) => {
+    console.log("Deleting comment:", comm);
+    const estab_id = props.id;
+    document.getElementById("delete_modal").close();
+    const requestOptions = {
+      method: "POST", // Changed from DELETE to POST
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ comment: comm }),
+    };
+
+    if (props.estab === true) {
+      fetch(
+        `http://localhost:3001/deleteEstabReview/${user_id}/${estab_id}`,
+        requestOptions
+      )
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .then(() => {
+          if (props.onCommentDelete) {
+            props.onCommentDelete(); // Call the callback function after deletion
+          }
+        });
+    } else {
+      fetch(
+        `http://localhost:3001/deleteItemReview/${user_id}/${props.id}`,
+        requestOptions
+      )
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .then(() => {
+          if (props.onCommentDelete) {
+            props.onCommentDelete(); // Call the callback function after deletion
+          }
+        });
     }
   };
 
@@ -123,15 +170,15 @@ const KusinaComment = (props) => {
           </h3>
           <div className="flex justify-end">
             <button
-              type="submit"
+              id="confirm_delete_button"
+              type="button"
               className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
-              //   onClick={}
             >
               I am sure.
             </button>
             <button
               type="button"
-              className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+              className="ml-4 bg-kusinabg hover:bg-              kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
               onClick={() => document.getElementById("delete_modal").close()}
             >
               Cancel
