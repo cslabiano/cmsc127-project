@@ -36,14 +36,31 @@ function KusinaMenu() {
   const [estReview, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [contactNumbers, setContactNumbers] = useState([""]);
+  const [iclass, setIclass] = useState("");
 
   // const itemsToShow =
   //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
 
   const fetchItemData = () => {
-    fetch(`http://localhost:3001/${establishment_id}`)
+    let endpoint;
+
+    if (price === "NONE") {
+      endpoint = `http://localhost:3001/${establishment_id}`;
+    } else {
+      const sortOrder = price;
+      endpoint = `http://localhost:3001/${establishment_id}/itemsort?sort=${sortOrder}`;
+    }
+
+    if (iclass !== "") {
+      endpoint = `http://localhost:3001/${establishment_id}/filterClass?classification=${iclass}`;
+    }
+
+    fetch(endpoint)
       .then((res) => res.json())
-      .then((foodItems) => setFoodItems(foodItems))
+      .then((foodItems) => {
+        setFoodItems(foodItems);
+        console.log("Item Data:", foodItems);
+      })
       .catch((error) => console.error("Error fetching food items:", error));
   };
 
@@ -58,6 +75,10 @@ function KusinaMenu() {
   //   fetchItemData();
   //   fetchEstabData();
   // }, []);
+
+  const handleInputChange = (event) => {
+    setIclass(event.target.value);
+  };
 
   const fetchFilteredItems = () => {
     const classificationQuery = itemClassifications
@@ -468,11 +489,12 @@ function KusinaMenu() {
                     <div className="flex gap-2 flex-wrap">
                       <button
                         type="button"
-                        onClick={() =>
-                          setPrice(price === "high" ? "NONE" : "high")
-                        }
+                        onClick={() => {
+                          setPrice(price === "asc" ? "NONE" : "asc");
+                          fetchItemData();
+                        }}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          price === "high"
+                          price === "asc"
                             ? "bg-kusinaprimary text-white"
                             : "bg-kusinabg text-kusinaprimary"
                         }`}
@@ -482,11 +504,12 @@ function KusinaMenu() {
 
                       <button
                         type="button"
-                        onClick={() =>
-                          setPrice(price === "low" ? "NONE" : "low")
-                        }
+                        onClick={() => {
+                          setPrice(price === "desc" ? "NONE" : "desc");
+                          fetchItemData();
+                        }}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          price === "low"
+                          price === "desc"
                             ? "bg-kusinaprimary text-white"
                             : "bg-kusinabg text-kusinaprimary"
                         }`}
@@ -506,6 +529,17 @@ function KusinaMenu() {
                         Between...
                       </button> */}
                     </div>
+                  </div>
+
+                  <div className="mt-8 flex align-middle">
+                    <p className="px-4 py-2 text-grn-i font-bold">Category:</p>
+                    <input
+                      type="text"
+                      placeholder="'meat', 'vegetable'"
+                      className="input w-full max-w-xs"
+                      value={iclass}
+                      onChange={handleInputChange}
+                    />
                   </div>
 
                   {/* {between && (
@@ -531,15 +565,18 @@ function KusinaMenu() {
                     </div>
                   )} */}
 
-                  {/* <div className="sortbutton mt-8">
+                  <div className="sortbutton mt-8">
                     <button
                       type="button"
-                      //   onClick={() => }
+                      onClick={() => {
+                        setPrice("NONE");
+                        fetchItemData();
+                      }}
                       className={`bg-kusinaprimary border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 bg-grn-i text-white`}
                     >
-                      Apply changes
+                      Apply category sort
                     </button>
-                  </div> */}
+                  </div>
                 </div>
               )}
 

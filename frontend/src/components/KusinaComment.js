@@ -36,6 +36,8 @@ const KusinaComment = (props) => {
 
   const handleEditClick = () => {
     if (user_id - props.userid === 0) {
+      const comm = props.comment;
+      console.log("Comment to update:", comm);
       document.getElementById("edit_comment_modal").showModal();
     } else {
       document.getElementById("unauthorized_modal").showModal();
