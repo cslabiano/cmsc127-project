@@ -289,14 +289,14 @@ app.get(`/:estab_id/estab`, (req, res) => {
 
 app.get(`/:estab_id/estreviews`, (req, res) => {
   const { estab_id } = req.params;
-  const { sort } = req.query;
-  const sql = `select user_id, user_name, date, time, rating, comment from estabreview natural join user where estab_id= ? order by date ${sort}, time ${sort}`;
+  const sql =
+    "select user_id, user_name, date, time, rating, comment from estabreview natural join user where estab_id= ?";
 
-  // if (req.query.sort === "DESC") {
-  //   sql += " ORDER BY date DESC, time DESC";
-  // } else {
-  //   sql += " ORDER BY date ASC, time ASC";
-  // }
+  if (req.query.sort === "DESC") {
+    sql += " ORDER BY date DESC, time DESC";
+  } else {
+    sql += " ORDER BY date ASC, time ASC";
+  }
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
     // console.log(data);
@@ -317,14 +317,14 @@ app.get(`/:estab_id/estmonthreviews`, (req, res) => {
 
 app.get("/:item_id/itemreviews", (req, res) => {
   const { item_id } = req.params;
-  const { sort } = req.query;
-  let sql = `SELECT user_id, user_name, date, time, rating, comment FROM itemreview natural join user WHERE item_id = ? order by date ${sort}, time ${sort}`;
+  let sql =
+    "SELECT user_id, user_name, date, time, rating, comment FROM itemreview natural join user WHERE item_id = ?";
 
-  // if (sort === "DESC") {
-  //   sql += " ORDER BY date DESC, time DESC";
-  // } else {
-  //   sql += " ORDER BY date ASC, time ASC";
-  // }
+  if (req.query.sort === "DESC") {
+    sql += " ORDER BY date DESC, time DESC";
+  } else {
+    sql += " ORDER BY date ASC, time ASC";
+  }
 
   db.query(sql, [item_id], (err, data) => {
     if (err) return res.json(err);
@@ -359,112 +359,56 @@ app.post("/:estab_id/search", (req, res) => {
 });
 
 // update item
-app.put("/items/:item_id", (req, res) => {
+app.put("/:item_id/updateitem", (req, res) => {
   const { item_id } = req.params;
-  const { price, name, description } = req.body;
+  const { name, description, price, image_link, classifications } = req.body;
+
+  if (!name || !description || !price || !image_link || !classifications) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
   const sql =
-    "UPDATE item SET price = ?, name = ?, description = ? WHERE item_id = ?";
-  db.query(sql, [price, name, description, item_id], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    return res.json({ message: "Item updated successfully" });
-  });
-});
-
-// app.delete("/deleteEstabReview/:user_id/:estab_id", (req, res) => {
-//   const { comment } = req.query;
-//   const { user_id, estab_id } = req.params;
-//   const sql =
-//     "DELETE FROM estabreview WHERE user_id = ? AND estab_id = ? AND comment = ?";
-
-//   db.query(sql, [user_id, estab_id, comment], (err, results) => {
-//     if (err) return res.status(500).json({ error: err });
-//     return res.json({ message: "Comment deleted successfully" });
-//   });
-// });
-app.post("/deleteEstabReview/:user_id/:estab_id", (req, res) => {
-  const { comment } = req.body; // Change this to req.body to handle POST request
-  const { user_id, estab_id } = req.params;
-  const sql = `DELETE FROM estabreview WHERE user_id = ? AND estab_id = ? AND comment = "${comment}"`;
-  db.query(sql, [user_id, estab_id, comment], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    return res.json({ message: { comment } });
-  });
-});
-
-app.post("/deleteItemReview/:user_id/:item_id", (req, res) => {
-  const { comment } = req.body; // Change this to req.body to handle POST request
-  const { user_id, item_id } = req.params;
-  const sql = `DELETE FROM itemreview WHERE user_id = ? AND item_id = ? AND comment = "${comment}"`;
-  db.query(sql, [user_id, item_id, comment], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    return res.json({ message: { comment } });
-  });
-});
-
-// delete food item
-app.post("/deleteItem/:item_id", (req, res) => {
-  const { item_id } = req.params;
-
-  const deleteItemReviewSql = "DELETE FROM itemreview WHERE item_id = ?";
-  const deleteItemClassSql = "DELETE FROM itemclass WHERE item_id = ?";
-  const deleteItemSql = "DELETE FROM item WHERE item_id = ?";
-
-  db.query(deleteItemReviewSql, [item_id], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-
-    db.query(deleteItemClassSql, [item_id], (err, results) => {
+    "UPDATE item SET name = ?, description = ?, price = ?, image_link = ? WHERE item_id = ?";
+  db.query(
+    sql,
+    [name, description, price, image_link, item_id],
+    (err, results) => {
       if (err) return res.status(500).json({ error: err });
+      // return res.json({ message: "Item updated successfully" });
 
-      db.query(deleteItemSql, [item_id], (err, results) => {
+      // const classificationArray = classifications.split(',');
+      const deleteOldClassifications = `DELETE FROM itemclass WHERE item_id = ?`;
+      db.query(deleteOldClassifications, [item_id], (err, result) => {
         if (err) return res.status(500).json({ error: err });
 
-        return res.json({ message: "Item deleted successfully" });
-      });
-    });
-  });
-});
-
-// delete establishment
-app.post("/deleteEstablishment/:estab_id", (req, res) => {
-  const { estab_id } = req.params;
-
-  // SQL queries
-  const deleteEstabContactSql = "DELETE FROM estabcontact WHERE estab_id = ?";
-  const deleteItemReviewSql =
-    "DELETE FROM itemreview WHERE item_id IN (SELECT item_id FROM item WHERE estab_id = ?)";
-  const deleteItemClassSql =
-    "DELETE FROM itemclass WHERE item_id IN (SELECT item_id FROM item WHERE estab_id = ?)";
-  const deleteItemSql = "DELETE FROM item WHERE estab_id = ?";
-  const deleteEstabReviewSql = "DELETE FROM estabreview WHERE estab_id = ?";
-  const deleteEstabSql = "DELETE FROM establishment WHERE estab_id = ?";
-
-  db.query(deleteEstabContactSql, [estab_id], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-
-    db.query(deleteItemReviewSql, [estab_id], (err, results) => {
-      if (err) return res.status(500).json({ error: err });
-
-      db.query(deleteItemClassSql, [estab_id], (err, results) => {
-        if (err) return res.status(500).json({ error: err });
-
-        db.query(deleteItemSql, [estab_id], (err, results) => {
-          if (err) return res.status(500).json({ error: err });
-
-          db.query(deleteEstabReviewSql, [estab_id], (err, results) => {
-            if (err) return res.status(500).json({ error: err });
-
-            db.query(deleteEstabSql, [estab_id], (err, results) => {
-              if (err) return res.status(500).json({ error: err });
-
-              return res.json({
-                message: "Establishment deleted successfully",
-              });
-            });
+        // insert classifications into the item_class table
+        if (classifications && classifications.length > 0) {
+          const insertClassificationSql = `INSERT INTO itemclass (item_id, classification) VALUES ${classifications
+            .map(() => "(?, ?)")
+            .join(", ")}`;
+          // console.log(item_id);
+          const classificationValues = [];
+          classifications.forEach((classification) => {
+            classificationValues.push(item_id, classification);
           });
-        });
+          db.query(
+            insertClassificationSql,
+            classificationValues,
+            (err, results) => {
+              if (err) {
+                return res.status(500).json({ error: err });
+              }
+              return res
+                .status(201)
+                .json({ message: "Item added successfully" });
+            }
+          );
+        } else {
+          return res.status(201).json({ message: "Item added successfully" });
+        }
       });
-    });
-  });
+    }
+  );
 });
 
 // delete item
@@ -490,6 +434,7 @@ app.get(`/:estab_id/:item_id`, (req, res) => {
 app.get(`/:estab_id/filterClass`, (req, res) => {
   const { classification } = req.query;
   const { estab_id } = req.params;
+  console.log("Classification: ", classification);
   if (!classification) {
     return res
       .status(400)
@@ -498,7 +443,7 @@ app.get(`/:estab_id/filterClass`, (req, res) => {
   // console.log(classification);
   const classificationsArray = classification.split(",");
   const placeholders = classificationsArray.map(() => "?").join(",");
-  // console.log(placeholders);
+  console.log(placeholders);
   const sql = `SELECT i.*, ic.classification FROM item i JOIN itemclass ic ON i.item_id = ic.item_id WHERE i.estab_id = ? AND ic.classification IN (${placeholders})`;
   const queryParams = [estab_id, ...classificationsArray];
   db.query(sql, queryParams, (err, results) => {
@@ -543,9 +488,10 @@ app.get(`/:estab_id/sortprice`, (req, res) => {
 /*************** ITEM REVIEW TABLE ***************/
 
 // create or add food review
-app.post("/:item_id", (req, res) => {
+app.post("/:item_id/reviews", (req, res) => {
   const { user_id, rating, comment } = req.body;
   const { item_id } = req.params;
+
   const insertReviewSql =
     "INSERT INTO itemreview (user_id, item_id, rating, comment) VALUES (?, ?, ?, ?)";
   db.query(

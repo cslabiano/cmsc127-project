@@ -11,13 +11,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import KusinaSkeleton from "../components/KusinaSkeleton";
 
-function KusinaMenu(props) {
+function KusinaMenu() {
   const user_id = localStorage.getItem("user_id");
   let { establishment_id } = useParams();
   let { search_term } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [classification, setClassification] = useState("NONE");
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState("NONE");
   const [sortPrice, setSortPrice] = useState([]);
   const [between, setBetween] = useState(false);
   const [estRating, setEstRating] = useState(5);
@@ -65,11 +65,15 @@ function KusinaMenu(props) {
     // const classificationsArray = classificationQuery.split(',');
     // const placeholders = classificationsArray.map(() => '?').join(',');
     console.log(classificationQuery);
+    console.log("Before query: ", foodItems);
     fetch(
       `http://localhost:3001/${establishment_id}/filterClass?classification=${classificationQuery}`
     )
       .then((res) => res.json())
-      .then((foodItems) => setFoodItems(foodItems))
+      .then((foodItems) => {
+        console.log("Filter food items: ", foodItems);
+        setFoodItems(foodItems);
+      })
       .catch((error) =>
         console.error("Error fetching filtered food items:", error)
       );
@@ -78,6 +82,14 @@ function KusinaMenu(props) {
   const fetchSortedData = (orderQuery) => {
     // console.log("Price: ", price)
     console.log("OrderQuery: ", orderQuery);
+
+    if (orderQuery === "none") {
+      setSortPrice([]); // Reset to no sorting
+      fetchItemData();
+      setIsLoading(false);
+      return;
+    }
+
     const order = orderQuery === "asc" ? "ASC" : "DESC";
     console.log("Order: ", order);
 
@@ -282,10 +294,20 @@ function KusinaMenu(props) {
 
   const handleSortPrice = (order) => {
     console.log("handleSortPrice: ", order);
-    setPrice(order === "asc" ? "low" : "high");
-    // console.log("Price after handle: ",price);
-    setIsLoading(true);
-    fetchSortedData(order);
+
+    setPrice((prevPrice) => {
+      let newPrice;
+      if (order === "asc") {
+        newPrice = prevPrice === "low" ? "NONE" : "low";
+      } else {
+        newPrice = prevPrice === "high" ? "NONE" : "high";
+      }
+      setIsLoading(true);
+      fetchSortedData(
+        newPrice === "low" ? "asc" : newPrice === "high" ? "desc" : "none"
+      );
+      return newPrice;
+    });
   };
 
   const foodToShow =

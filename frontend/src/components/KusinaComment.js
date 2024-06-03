@@ -7,16 +7,6 @@ const KusinaComment = (props) => {
   const [newComment, setNewComment] = useState("");
   const user_id = localStorage.getItem("user_id");
 
-  // console.log("Rendering page...");
-
-  useEffect(() => {
-    console.log(props.comment);
-  });
-
-  useEffect(() => {
-    console.log(newComment);
-  });
-
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     stars.push(
