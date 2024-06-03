@@ -41,9 +41,21 @@ function KusinaMenu() {
   //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
 
   const fetchItemData = () => {
-    fetch(`http://localhost:3001/${establishment_id}`)
+    let endpoint;
+
+    if (price === "NONE") {
+      endpoint = `http://localhost:3001/${establishment_id}`;
+    } else {
+      const sortOrder = price;
+      endpoint = `http://localhost:3001/${establishment_id}/itemsort?sort=${sortOrder}`;
+    }
+
+    fetch(endpoint)
       .then((res) => res.json())
-      .then((foodItems) => setFoodItems(foodItems))
+      .then((foodItems) => {
+        setFoodItems(foodItems);
+        console.log("Item Data:", foodItems);
+      })
       .catch((error) => console.error("Error fetching food items:", error));
   };
 
@@ -468,11 +480,12 @@ function KusinaMenu() {
                     <div className="flex gap-2 flex-wrap">
                       <button
                         type="button"
-                        onClick={() =>
-                          setPrice(price === "high" ? "NONE" : "high")
-                        }
+                        onClick={() => {
+                          setPrice(price === "asc" ? "NONE" : "asc");
+                          fetchItemData();
+                        }}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          price === "high"
+                          price === "asc"
                             ? "bg-kusinaprimary text-white"
                             : "bg-kusinabg text-kusinaprimary"
                         }`}
@@ -482,11 +495,12 @@ function KusinaMenu() {
 
                       <button
                         type="button"
-                        onClick={() =>
-                          setPrice(price === "low" ? "NONE" : "low")
-                        }
+                        onClick={() => {
+                          setPrice(price === "desc" ? "NONE" : "desc");
+                          fetchItemData();
+                        }}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          price === "low"
+                          price === "desc"
                             ? "bg-kusinaprimary text-white"
                             : "bg-kusinabg text-kusinaprimary"
                         }`}

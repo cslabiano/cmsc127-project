@@ -380,6 +380,31 @@ app.get("/:item_id/itemreviews", (req, res) => {
   });
 });
 
+app.get("/:estab_id/itemsort", (req, res) => {
+  const { estab_id } = req.params;
+  const { sort } = req.query;
+  let sql = `SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, COALESCE(AVG(ir.rating), 0) AS avg_rating, GROUP_CONCAT(DISTINCT c.classification) AS classifications
+  FROM item i
+  JOIN establishment e ON i.estab_id = e.estab_id
+  LEFT JOIN itemclass c ON c.item_id = i.item_id
+  LEFT JOIN itemreview ir ON i.item_id = ir.item_id
+  WHERE i.estab_id = ?
+  GROUP BY i.item_id
+  ORDER by i.price ${sort}`;
+
+  // if (sort === "DESC") {
+  //   sql += " ORDER BY date DESC, time DESC";
+  // } else {
+  //   sql += " ORDER BY date ASC, time ASC";
+  // }
+
+  db.query(sql, [estab_id], (err, data) => {
+    if (err) return res.json(err);
+    console.log(data);
+    return res.json(data);
+  });
+});
+
 app.get(`/:item_id/itemmonthreviews`, (req, res) => {
   const { item_id } = req.params;
   const sql =
