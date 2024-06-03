@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "mandyjenny",
+  password: "qwerty",
   database: "kusina",
 });
 
@@ -183,6 +183,42 @@ app.post("/:estab_id/review", (req, res) => {
       return res.status(201).json({ message: "Review added successfully" });
     }
   );
+});
+
+app.put("/:estab_id/updateestab", (req, res) => {
+  const { estab_id } = req.params;
+  const { estab_name, address, image_link, contacts } = req.body;
+
+  if (!estab_name || !address || !image_link) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  const sql =
+    "UPDATE establishment SET estab_name = ?, address = ?, image_link = ? WHERE estab_id = ?";
+  db.query(sql, [estab_name, address, image_link, estab_id], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    // return res.json({ message: "Item updated successfully" });
+
+    if (contacts && contacts.length > 0) {
+      const deleteOldContacts = `DELETE FROM estabcontact WHERE estab_id = ?`;
+      db.query(deleteOldContacts, [estab_id], (err, result) => {
+        if (err) return res.status(500).json({ error: err });
+
+        // insert classifications into the item_class table
+        const contactValues = contacts.map((contact) => [estab_id, contact]);
+        const insertContactsSql = `INSERT INTO estabcontact (estab_id, contact) VALUES ?`;
+        // console.log(item_id);
+        db.query(insertContactsSql, [contactValues], (err, results) => {
+          if (err) {
+            return res.status(500).json({ error: err });
+          }
+          return res.status(201).json({ message: "Item added successfully" });
+        });
+      });
+    } else {
+      return res.status(201).json({ message: "Item added successfully" });
+    }
+  });
 });
 
 app.post("/:estab_id/:user_id/editestreview", (req, res) => {
@@ -637,6 +673,86 @@ app.delete("/:item_id/reviews/", (req, res) => {
       return res.json({ message: "Review deleted successfully" });
     }
   );
+});
+
+app.post("/deleteEstabReview/:user_id/:estab_id", (req, res) => {
+  const { comment } = req.body; // Change this to req.body to handle POST request
+  const { user_id, estab_id } = req.params;
+  const sql = `DELETE FROM estabreview WHERE user_id = ? AND estab_id = ? AND comment = "${comment}"`;
+  db.query(sql, [user_id, estab_id, comment], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    return res.json({ message: { comment } });
+  });
+});
+
+app.post("/deleteItemReview/:user_id/:item_id", (req, res) => {
+  const { comment } = req.body; // Change this to req.body to handle POST request
+  const { user_id, item_id } = req.params;
+  const sql = `DELETE FROM itemreview WHERE user_id = ? AND item_id = ? AND comment = "${comment}"`;
+  db.query(sql, [user_id, item_id, comment], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    return res.json({ message: { comment } });
+  });
+});
+
+app.post("/deleteItem/:item_id", (req, res) => {
+  const { item_id } = req.params;
+
+  const deleteItemReviewSql = "DELETE FROM itemreview WHERE item_id = ?";
+  const deleteItemClassSql = "DELETE FROM itemclass WHERE item_id = ?";
+  const deleteItemSql = "DELETE FROM item WHERE item_id = ?";
+
+  db.query(deleteItemReviewSql, [item_id], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+
+    db.query(deleteItemClassSql, [item_id], (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+
+      db.query(deleteItemSql, [item_id], (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+
+        return res.json({ message: "Item deleted successfully" });
+      });
+    });
+  });
+});
+
+// delete establishment
+app.post("/deleteEstablishment/:estab_id", (req, res) => {
+  const { estab_id } = req.params;
+  const deleteEstabContactSql = "DELETE FROM estabcontact WHERE estab_id = ?";
+  const deleteItemReviewSql =
+    "DELETE FROM itemreview WHERE item_id IN (SELECT item_id FROM item WHERE estab_id = ?)";
+  const deleteItemClassSql =
+    "DELETE FROM itemclass WHERE item_id IN (SELECT item_id FROM item WHERE estab_id = ?)";
+  const deleteItemSql = "DELETE FROM item WHERE estab_id = ?";
+  const deleteEstabReviewSql = "DELETE FROM estabreview WHERE estab_id = ?";
+  const deleteEstabSql = "DELETE FROM establishment WHERE estab_id = ?";
+
+  db.query(deleteEstabContactSql, [estab_id], (err, results) => {
+    db.query(deleteItemReviewSql, [estab_id], (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+
+      db.query(deleteItemClassSql, [estab_id], (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+
+        db.query(deleteItemSql, [estab_id], (err, results) => {
+          if (err) return res.status(500).json({ error: err });
+
+          db.query(deleteEstabReviewSql, [estab_id], (err, results) => {
+            if (err) return res.status(500).json({ error: err });
+
+            db.query(deleteEstabSql, [estab_id], (err, results) => {
+              if (err) return res.status(500).json({ error: err });
+              return res.json({
+                message: "Establishment deleted successfully",
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });
 
 app.listen(3001, () => {

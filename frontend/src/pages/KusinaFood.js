@@ -112,7 +112,7 @@ function KusinaFood() {
 
   // function to handle adding a new food item
   const handleAddItemReview = (event) => {
-    fetch(`http://localhost:3001/${item_id}`, {
+    fetch(`http://localhost:3001/${item_id}/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -148,25 +148,25 @@ function KusinaFood() {
       description,
       price,
       image_link,
-      classifications
-    }
+      classifications,
+    };
 
     fetch(`http://localhost:3001/${item_id}/updateitem`, {
-      method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(updatedItem)
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedItem),
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        console.error('Error updating item:', data.error);
-      } else {
-        console.log('Item updated successfully:', data);
-        window.location.reload();
-      }
-    })
-    .catch(error => console.error('Network error:', error));
-  }
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          console.error("Error updating item:", data.error);
+        } else {
+          console.log("Item updated successfully:", data);
+          window.location.reload();
+        }
+      })
+      .catch((error) => console.error("Network error:", error));
+  };
 
   return (
     <>
@@ -357,7 +357,7 @@ function KusinaFood() {
             <form
               method="dialog"
               className="modal-content"
-                onSubmit={handleUpdateFoodItem}
+              onSubmit={handleUpdateFoodItem}
             >
               <div className="mb-2">
                 <p className="mb-2">Item Name:</p>
