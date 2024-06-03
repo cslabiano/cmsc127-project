@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import edit_icon from "../assets/edit.png";
 import delete_icon from "../assets/delete.png";
 
@@ -6,6 +6,9 @@ const KusinaComment = (props) => {
   const [estRating, setEstRating] = useState(props.rating);
   const [newComment, setNewComment] = useState("");
   const user_id = localStorage.getItem("user_id");
+
+  // console.log("user_id:", user_id);
+  // console.log("props.userid:", props.userid);
 
   const stars = [];
   for (let i = 1; i <= 5; i++) {
@@ -26,53 +29,35 @@ const KusinaComment = (props) => {
     return date.toLocaleDateString();
   };
 
-  const handleEditClick = (newComment) => {
+  const handleEditClick = () => {
     if (user_id - props.userid === 0) {
-      const comm = props.comment;
-
-      console.log("Comment to edit:", props.comment);
       document.getElementById("edit_comment_modal").showModal();
-      document.getElementById("confirm_edit_button").onclick = () => {
-        console.log("New Comment (handleEditClick): ", newComment);
-        handleEditComment(comm, newComment);
-        if (props.onCommentDelete) {
-          props.onCommentDelete(); // Call the callback function
-        }
-      };
     } else {
       document.getElementById("unauthorized_modal").showModal();
     }
   };
 
-  const handleEditComment = (comm, newComment) => {
-    console.log("Comment to edit:", comm);
-    console.log("New Comment (handleEditComment): ", newComment);
+  const handleUpdateComment = () => {
     document.getElementById("edit_comment_modal").close();
-    const requestOptions = {
-      method: "POST", // Changed from DELETE to POST
+    console.log("prop.comment: ", props.comment);
+    fetch(`http://localhost:3001/${props.id}/${user_id}/editestreview`, {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         rating: estRating,
-        comment: comm,
+        comment: props.comment,
+        user_id: user_id,
+        estab_id: props.id,
         new_comment: newComment,
       }),
-    };
-
-    if (props.estab === true) {
-      fetch(
-        `http://localhost:3001/${props.id}/${user_id}/editestreview`,
-        requestOptions
-      )
-        .then((response) => response.json())
-        .then((data) => console.log(data));
-    } else {
-      fetch(
-        `http://localhost:3001/${props.id}/${user_id}/edititemreview`,
-        requestOptions
-      )
-        .then((response) => response.json())
-        .then((data) => console.log(data));
-    }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (props.onCommentUpdate) {
+          props.onCommentDelete(); // Call the callback function after update
+        }
+      });
   };
 
   const handleDeleteClick = () => {
@@ -144,7 +129,7 @@ const KusinaComment = (props) => {
           </p>
         </div>
         <div className="flex flex-col items-end justify-start">
-          <button className="mb-2" onClick={() => handleEditClick(newComment)}>
+          <button className="mb-2" onClick={handleEditClick}>
             <img src={edit_icon} className="h-10" alt="Edit" />
           </button>
           <button onClick={handleDeleteClick}>
@@ -157,7 +142,11 @@ const KusinaComment = (props) => {
       <dialog id="edit_comment_modal" className="modal">
         <div className="modal-box bg-white text-kusinaprimary">
           <h3 className="font-bold text-lg pb-5">Edit Comment</h3>
-          <form method="dialog" className="modal-content">
+          <form
+            method="dialog"
+            className="modal-content"
+            onSubmit={handleUpdateComment}
+          >
             <div className="mb-2">
               <p className="mb-2">New Rating:</p>
               <div className="rating rating-lg mb-4">
@@ -178,19 +167,11 @@ const KusinaComment = (props) => {
                 placeholder="Type your comment here"
                 className="mb-4 textarea textarea-bordered textarea-lg w-full"
                 value={newComment}
-                onChange={(e) => {
-                  setNewComment(e.target.value);
-                  console.log("Textarea value:", newComment); // Add this line
-                }}
-                // onChange={(e) => (
-                //   setNewComment(e.target.value), console.log(newComment)
-                // )}
+                onChange={(e) => setNewComment(e.target.value)}
               ></textarea>
             </div>
-
             <div className="flex justify-end">
               <button
-                id="confirm_edit_button"
                 type="submit"
                 className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
               >
@@ -225,7 +206,7 @@ const KusinaComment = (props) => {
             </button>
             <button
               type="button"
-              className="ml-4 bg-kusinabg hover:bg-              kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+              className="ml-4 bg-kusinabg hover:bg-kusinaprimarylight hover:text-kusinabg font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
               onClick={() => document.getElementById("delete_modal").close()}
             >
               Cancel
