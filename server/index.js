@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "1234",
+  password: "mandyjenny",
   database: "kusina",
 });
 
@@ -181,6 +181,26 @@ app.post("/:estab_id/review", (req, res) => {
       console.log(user_id, estab_id, rating, comment);
       if (err) return res.status(500).json({ error: err });
       return res.status(201).json({ message: "Review added successfully" });
+    }
+  );
+});
+
+app.post("/:estab_id/:user_id/editestreview", (req, res) => {
+  const { rating, comment, new_comment } = req.body;
+  const { estab_id, user_id } = req.params;
+
+  const editEstReviewQuery = `
+    UPDATE estabreview SET rating = ?, comment = ?, date = CURDATE(), time = CURTIME()
+    WHERE user_id = ? AND estab_id = ? 
+    AND comment = ?`;
+  db.query(
+    editEstReviewQuery,
+    [rating, new_comment, user_id, estab_id, comment],
+    (err, result) => {
+      console.log(user_id, estab_id, rating, comment);
+      return res
+        .status(201)
+        .json({ message: "Updated establishment review succesfully" });
     }
   );
 });
@@ -476,8 +496,8 @@ app.get(`/:estab_id/filterClass`, (req, res) => {
       .json({ error: "Classification query parameter is required" });
   }
   // console.log(classification);
-  const classificationsArray = classification.split(',');
-  const placeholders = classificationsArray.map(() => '?').join(',');
+  const classificationsArray = classification.split(",");
+  const placeholders = classificationsArray.map(() => "?").join(",");
   // console.log(placeholders);
   const sql = `SELECT i.*, ic.classification FROM item i JOIN itemclass ic ON i.item_id = ic.item_id WHERE i.estab_id = ? AND ic.classification IN (${placeholders})`;
   const queryParams = [estab_id, ...classificationsArray];
@@ -491,8 +511,8 @@ app.get(`/:estab_id/filterClass`, (req, res) => {
 });
 
 app.get(`/:estab_id/sortprice`, (req, res) => {
-  console.log("I m here")
-  process.stdout.write("Im here")
+  console.log("I m here");
+  process.stdout.write("Im here");
   const { estab_id } = req.params;
   const { order } = req.query;
   console.log("Received a request to /:estab_id/sortprice endpoint"); // Log at the start of the request
@@ -507,16 +527,16 @@ app.get(`/:estab_id/sortprice`, (req, res) => {
     WHERE i.estab_id = ?
     GROUP BY i.item_id`;
 
-    if (order === "DESC") {
-      sortsql += " ORDER BY i.price DESC";
-    } else {
-      sortsql += " ORDER BY i.price ASC";
-    }
+  if (order === "DESC") {
+    sortsql += " ORDER BY i.price DESC";
+  } else {
+    sortsql += " ORDER BY i.price ASC";
+  }
 
-    console.log("SQL: ", sortsql)
+  console.log("SQL: ", sortsql);
   db.query(sortsql, [estab_id], (err, results) => {
     if (err) return res.json(err);
-    console.log("Sort Price: ", results)
+    console.log("Sort Price: ", results);
     return res.status(200).json(results);
   });
 });

@@ -1,13 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import edit_icon from "../assets/edit.png";
 import delete_icon from "../assets/delete.png";
 
 const KusinaComment = (props) => {
-  const [estRating, setEstRating] = useState(0);
+  const [estRating, setEstRating] = useState(props.rating);
+  const [newComment, setNewComment] = useState("");
   const user_id = localStorage.getItem("user_id");
 
-  console.log("user_id:", user_id);
-  console.log("props.userid:", props.userid);
+  // console.log("Rendering page...");
+
+  useEffect(() => {
+    console.log(props.comment);
+  });
+
+  useEffect(() => {
+    console.log(newComment);
+  });
 
   const stars = [];
   for (let i = 1; i <= 5; i++) {
@@ -28,11 +36,52 @@ const KusinaComment = (props) => {
     return date.toLocaleDateString();
   };
 
-  const handleEditClick = () => {
-    if (user_id === props.userid) {
+  const handleEditClick = (newComment) => {
+    if (user_id - props.userid === 0) {
+      const comm = props.comment;
+
+      console.log("Comment to edit:", props.comment);
       document.getElementById("edit_comment_modal").showModal();
+      document.getElementById("confirm_edit_button").onclick = () => {
+        console.log("New Comment (handleEditClick): ", newComment);
+        handleEditComment(comm, newComment);
+        if (props.onCommentDelete) {
+          props.onCommentDelete(); // Call the callback function
+        }
+      };
     } else {
       document.getElementById("unauthorized_modal").showModal();
+    }
+  };
+
+  const handleEditComment = (comm, newComment) => {
+    console.log("Comment to edit:", comm);
+    console.log("New Comment (handleEditComment): ", newComment);
+    document.getElementById("edit_comment_modal").close();
+    const requestOptions = {
+      method: "POST", // Changed from DELETE to POST
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        rating: estRating,
+        comment: comm,
+        new_comment: newComment,
+      }),
+    };
+
+    if (props.estab === true) {
+      fetch(
+        `http://localhost:3001/${props.id}/${user_id}/editestreview`,
+        requestOptions
+      )
+        .then((response) => response.json())
+        .then((data) => console.log(data));
+    } else {
+      fetch(
+        `http://localhost:3001/${props.id}/${user_id}/edititemreview`,
+        requestOptions
+      )
+        .then((response) => response.json())
+        .then((data) => console.log(data));
     }
   };
 
@@ -105,7 +154,7 @@ const KusinaComment = (props) => {
           </p>
         </div>
         <div className="flex flex-col items-end justify-start">
-          <button className="mb-2" onClick={handleEditClick}>
+          <button className="mb-2" onClick={() => handleEditClick(newComment)}>
             <img src={edit_icon} className="h-10" alt="Edit" />
           </button>
           <button onClick={handleDeleteClick}>
@@ -138,11 +187,20 @@ const KusinaComment = (props) => {
               <textarea
                 placeholder="Type your comment here"
                 className="mb-4 textarea textarea-bordered textarea-lg w-full"
+                value={newComment}
+                onChange={(e) => {
+                  setNewComment(e.target.value);
+                  console.log("Textarea value:", newComment); // Add this line
+                }}
+                // onChange={(e) => (
+                //   setNewComment(e.target.value), console.log(newComment)
+                // )}
               ></textarea>
             </div>
 
             <div className="flex justify-end">
               <button
+                id="confirm_edit_button"
                 type="submit"
                 className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
               >

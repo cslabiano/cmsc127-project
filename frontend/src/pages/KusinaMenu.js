@@ -77,20 +77,19 @@ function KusinaMenu(props) {
 
   const fetchSortedData = (orderQuery) => {
     // console.log("Price: ", price)
-    console.log("OrderQuery: ", orderQuery)
-    const order = orderQuery=== "asc" ? "ASC" : "DESC";
-    console.log("Order: ", order)
-    
+    console.log("OrderQuery: ", orderQuery);
+    const order = orderQuery === "asc" ? "ASC" : "DESC";
+    console.log("Order: ", order);
+
     fetch(`http://localhost:3001/${establishment_id}/sortprice?order=${order}`)
-    .then((res) => res.json())
-    .then((sortPrice) => {
-      console.log("Sorted Price: ", sortPrice);
-      setSortPrice(Array.isArray(sortPrice) ? sortPrice : []);
-      setIsLoading(false)
-    })
-    .catch((err) => console.log(err))
-    
-  }
+      .then((res) => res.json())
+      .then((sortPrice) => {
+        console.log("Sorted Price: ", sortPrice);
+        setSortPrice(Array.isArray(sortPrice) ? sortPrice : []);
+        setIsLoading(false);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const fetchReviewData = () => {
     let endpoint;
@@ -271,12 +270,10 @@ function KusinaMenu(props) {
     })
       .then((res) => res.json())
       .then((searchData) => {
-        console.log("Search data: ", searchData)
-        setSearchData(Array.isArray(searchData) ? searchData : [])
-      }
-      )
+        console.log("Search data: ", searchData);
+        setSearchData(Array.isArray(searchData) ? searchData : []);
+      })
       .catch((err) => console.log(err));
-      
   };
 
   const handleArrowClick = () => {
@@ -284,15 +281,23 @@ function KusinaMenu(props) {
   };
 
   const handleSortPrice = (order) => {
-    console.log("handleSortPrice: ",order)
-    setPrice(order === "asc" ? "low" : "high")
+    console.log("handleSortPrice: ", order);
+    setPrice(order === "asc" ? "low" : "high");
     // console.log("Price after handle: ",price);
     setIsLoading(true);
-    fetchSortedData(order)
-  }
+    fetchSortedData(order);
+  };
 
   const foodToShow =
-  (searchTerm !== "" && searchData.length > 0) ? searchData : isLoading ? <KusinaSkeleton /> : (sortPrice.length > 0 ? sortPrice : foodItems);
+    searchTerm !== "" && searchData.length > 0 ? (
+      searchData
+    ) : isLoading ? (
+      <KusinaSkeleton />
+    ) : sortPrice.length > 0 ? (
+      sortPrice
+    ) : (
+      foodItems
+    );
   // const foodToShow = foodItems;
 
   return (
@@ -556,24 +561,25 @@ function KusinaMenu(props) {
               <div className="flex justify-center mt-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {isLoading && <KusinaSkeleton />}
-                  {!isLoading && foodToShow.map((item) => (
-                    <div key={item.id}>
-                      <KusinaFoodBox
-                        name={item.name}
-                        item_id={item.item_id}
-                        estab_id={item.estab_id}
-                        description={item.description}
-                        price={item.price}
-                        image={item.image_link}
-                        classifications={item.classifications}
-                        rating={
-                          item.avg_rating
-                            ? Number(item.avg_rating).toFixed(1)
-                            : "0"
-                        }
-                      />
-                    </div>
-                  ))}
+                  {!isLoading &&
+                    foodToShow.map((item) => (
+                      <div key={item.id}>
+                        <KusinaFoodBox
+                          name={item.name}
+                          item_id={item.item_id}
+                          estab_id={item.estab_id}
+                          description={item.description}
+                          price={item.price}
+                          image={item.image_link}
+                          classifications={item.classifications}
+                          rating={
+                            item.avg_rating
+                              ? Number(item.avg_rating).toFixed(1)
+                              : "0"
+                          }
+                        />
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
