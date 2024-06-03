@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "qwerty",
+  password: "1234",
   database: "kusina",
 });
 
@@ -636,6 +636,57 @@ app.get(`/:estab_id/sortprice`, (req, res) => {
     console.log("Sort Price: ", results);
     return res.status(200).json(results);
   });
+});
+
+// update item
+app.put("/:item_id/updateitem", (req, res) => {
+  const { item_id } = req.params;
+  const { name, description, price, image_link, classifications } = req.body;
+
+  if (!name || !description || !price || !image_link || !classifications) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  const sql =
+    "UPDATE item SET name = ?, description = ?, price = ?, image_link = ? WHERE item_id = ?";
+  db.query(
+    sql,
+    [name, description, price, image_link, item_id],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      // return res.json({ message: "Item updated successfully" });
+
+      if (classifications && classifications.length > 0) {
+        const deleteOldClassifications = `DELETE FROM itemclass WHERE item_id = ?`;
+        db.query(deleteOldClassifications, [item_id], (err, result) => {
+          if (err) return res.status(500).json({ error: err });
+
+          // insert classifications into the item_class table
+          const classificationValues = classifications.map((classification) => [item_id, classification]);
+          const insertClassificationSql = `INSERT INTO itemclass (item_id, classification) VALUES ?`;
+          // console.log(item_id);
+          // const classificationValues = [];
+          // classifications.forEach((classification) => {
+          //   classificationValues.push(item_id, classification);
+          // });
+          db.query(
+            insertClassificationSql,
+            [classificationValues],
+            (err, results) => {
+              if (err) {
+                return res.status(500).json({ error: err });
+              }
+              return res
+                .status(201)
+                .json({ message: "Item added successfully" });
+            }
+          );
+        });
+      } else {
+        return res.status(201).json({ message: "Item added successfully" });
+      }
+    }
+  );
 });
 /*************** ITEM REVIEW TABLE ***************/
 
