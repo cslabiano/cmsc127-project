@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "1234",
+  password: "qwerty",
   database: "kusina",
 });
 
@@ -190,7 +190,7 @@ app.put("/:estab_id/updateestab", (req, res) => {
   const { estab_name, address, image_link, contacts } = req.body;
 
   if (!estab_name || !address || !image_link) {
-    return res.status(400).json({ error: 'All fields are required' });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   const sql =
@@ -199,31 +199,25 @@ app.put("/:estab_id/updateestab", (req, res) => {
     if (err) return res.status(500).json({ error: err });
     // return res.json({ message: "Item updated successfully" });
 
-    if(contacts && contacts.length > 0) {
+    if (contacts && contacts.length > 0) {
       const deleteOldContacts = `DELETE FROM estabcontact WHERE estab_id = ?`;
       db.query(deleteOldContacts, [estab_id], (err, result) => {
-        if(err) return res.status(500).json({ error: err})
+        if (err) return res.status(500).json({ error: err });
 
         // insert classifications into the item_class table
-          const contactValues = contacts.map((contact) => [estab_id, contact]);
-          const insertContactsSql =
-            `INSERT INTO estabcontact (estab_id, contact) VALUES ?`;
-          // console.log(item_id);
-          db.query(
-            insertContactsSql,
-            [contactValues],
-            (err, results) => {
-              if (err) {
-                return res.status(500).json({ error: err });
-              }
-              return res.status(201).json({ message: "Item added successfully" });
-            }
-          );
-      })
+        const contactValues = contacts.map((contact) => [estab_id, contact]);
+        const insertContactsSql = `INSERT INTO estabcontact (estab_id, contact) VALUES ?`;
+        // console.log(item_id);
+        db.query(insertContactsSql, [contactValues], (err, results) => {
+          if (err) {
+            return res.status(500).json({ error: err });
+          }
+          return res.status(201).json({ message: "Item added successfully" });
+        });
+      });
     } else {
       return res.status(201).json({ message: "Item added successfully" });
     }
-    
   });
 });
 
@@ -418,19 +412,20 @@ app.put("/:item_id/updateitem", (req, res) => {
       if (err) return res.status(500).json({ error: err });
       // return res.json({ message: "Item updated successfully" });
 
-    if (classifications && classifications.length > 0) {
-      const deleteOldClassifications = `DELETE FROM itemclass WHERE item_id = ?`;
-      db.query(deleteOldClassifications, [item_id], (err, result) => {
-        if(err) return res.status(500).json({ error: err})
+      if (classifications && classifications.length > 0) {
+        const deleteOldClassifications = `DELETE FROM itemclass WHERE item_id = ?`;
+        db.query(deleteOldClassifications, [item_id], (err, result) => {
+          if (err) return res.status(500).json({ error: err });
 
-        // insert classifications into the item_class table
-          const insertClassificationSql =
-            `INSERT INTO itemclass (item_id, classification) VALUES ${classifications.map(() => '(?, ?)').join(', ')}`;
+          // insert classifications into the item_class table
+          const insertClassificationSql = `INSERT INTO itemclass (item_id, classification) VALUES ${classifications
+            .map(() => "(?, ?)")
+            .join(", ")}`;
           // console.log(item_id);
-          const classificationValues = []
+          const classificationValues = [];
           classifications.forEach((classification) => {
-            classificationValues.push(item_id, classification)
-          })
+            classificationValues.push(item_id, classification);
+          });
           db.query(
             insertClassificationSql,
             classificationValues,
@@ -438,15 +433,17 @@ app.put("/:item_id/updateitem", (req, res) => {
               if (err) {
                 return res.status(500).json({ error: err });
               }
-              return res.status(201).json({ message: "Item added successfully" });
+              return res
+                .status(201)
+                .json({ message: "Item added successfully" });
             }
           );
-      })
-    } else {
+        });
+      } else {
         return res.status(201).json({ message: "Item added successfully" });
+      }
     }
-    
-  });
+  );
 });
 
 // delete item
