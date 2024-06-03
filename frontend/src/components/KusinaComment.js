@@ -39,7 +39,7 @@ const KusinaComment = (props) => {
 
   const handleUpdateComment = () => {
     document.getElementById("edit_comment_modal").close();
-    console.log("prop.comment: ", props.comment);
+    console.log("prop.comment: ", props.comment, props.id);
     fetch(`http://localhost:3001/${props.id}/${user_id}/editestreview`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
