@@ -641,11 +641,11 @@ function KusinaMenu(props) {
                   type="button"
                   onClick={() => {
                     console.log("Filtering by month");
-                    setSortReviews("desc");
+                    setSortReviews("asc");
                     fetchReviewData(); // Call fetchReviewData after setting the sort state
                   }}
                   className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                    sortReviews === "desc"
+                    sortReviews === "asc"
                       ? "bg-kusinaaccent text-white"
                       : "bg-kusinabg text-kusinaaccent"
                   }`}
@@ -657,11 +657,11 @@ function KusinaMenu(props) {
                   type="button"
                   onClick={() => {
                     console.log("Filtering by month");
-                    setSortReviews("asc");
+                    setSortReviews("desc");
                     fetchReviewData(); // Call fetchReviewData after setting the sort state
                   }}
                   className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                    sortReviews === "asc"
+                    sortReviews === "desc"
                       ? "bg-kusinaaccent text-white"
                       : "bg-kusinabg text-kusinaaccent"
                   }`}

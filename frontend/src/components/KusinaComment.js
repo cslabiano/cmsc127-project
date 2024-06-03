@@ -55,7 +55,6 @@ const KusinaComment = (props) => {
 
   const handleDeleteComment = (comm) => {
     console.log("Deleting comment:", comm);
-    const estab_id = props.id;
     document.getElementById("delete_modal").close();
     const requestOptions = {
       method: "POST", // Changed from DELETE to POST
@@ -65,7 +64,7 @@ const KusinaComment = (props) => {
 
     if (props.estab === true) {
       fetch(
-        `http://localhost:3001/deleteEstabReview/${user_id}/${estab_id}`,
+        `http://localhost:3001/deleteEstabReview/${user_id}/${props.id}`,
         requestOptions
       )
         .then((response) => response.json())

@@ -249,11 +249,11 @@ function KusinaFood() {
                 type="button"
                 onClick={() => {
                   console.log("Filtering by month");
-                  setSort("desc");
+                  setSort("asc");
                   fetchReviewData(); // Call fetchReviewData after setting the sort state
                 }}
                 className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                  sort === "desc"
+                  sort === "asc"
                     ? "bg-kusinaaccent text-white"
                     : "bg-kusinabg text-kusinaaccent"
                 }`}
@@ -265,11 +265,11 @@ function KusinaFood() {
                 type="button"
                 onClick={() => {
                   console.log("Filtering by month");
-                  setSort("asc");
+                  setSort("desc");
                   fetchReviewData(); // Call fetchReviewData after setting the sort state
                 }}
                 className={`border-2 border-kusinaaccent font-semibold rounded-full px-4 py-2 ${
-                  sort === "asc"
+                  sort === "desc"
                     ? "bg-kusinaaccent text-white"
                     : "bg-kusinabg text-kusinaaccent"
                 }`}
@@ -285,11 +285,15 @@ function KusinaFood() {
               {reviewData.map((review) => (
                 <div key={review.id}>
                   <KusinaComment
+                    userid={review.user_id}
                     name={review.user_name}
                     rating={review.rating}
                     comment={review.comment}
                     date={review.date}
                     time={review.time}
+                    id={item_id}
+                    estab={false}
+                    onCommentDelete={fetchReviewData}
                   />
                 </div>
               ))}

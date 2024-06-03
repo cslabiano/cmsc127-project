@@ -366,6 +366,16 @@ app.post("/deleteEstabReview/:user_id/:estab_id", (req, res) => {
   });
 });
 
+app.post("/deleteItemReview/:user_id/:item_id", (req, res) => {
+  const { comment } = req.body; // Change this to req.body to handle POST request
+  const { user_id, item_id } = req.params;
+  const sql = `DELETE FROM itemreview WHERE user_id = ? AND item_id = ? AND comment = "${comment}"`;
+  db.query(sql, [user_id, item_id, comment], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    return res.json({ message: { comment } });
+  });
+});
+
 // delete item
 app.delete("/items/:item_id", (req, res) => {
   const { item_id } = req.params;
