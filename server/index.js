@@ -185,6 +185,48 @@ app.post("/:estab_id/review", (req, res) => {
   );
 });
 
+app.put("/:estab_id/updateestab", (req, res) => {
+  const { estab_id } = req.params;
+  const { estab_name, address, image_link, contacts } = req.body;
+
+  if (!estab_name || !address || !image_link) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  const sql =
+    "UPDATE establishment SET estab_name = ?, address = ?, image_link = ? WHERE estab_id = ?";
+  db.query(sql, [estab_name, address, image_link, estab_id], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    // return res.json({ message: "Item updated successfully" });
+
+    if(contacts && contacts.length > 0) {
+      const deleteOldContacts = `DELETE FROM estabcontact WHERE estab_id = ?`;
+      db.query(deleteOldContacts, [estab_id], (err, result) => {
+        if(err) return res.status(500).json({ error: err})
+
+        // insert classifications into the item_class table
+          const contactValues = contacts.map((contact) => [estab_id, contact]);
+          const insertContactsSql =
+            `INSERT INTO estabcontact (estab_id, contact) VALUES ?`;
+          // console.log(item_id);
+          db.query(
+            insertContactsSql,
+            [contactValues],
+            (err, results) => {
+              if (err) {
+                return res.status(500).json({ error: err });
+              }
+              return res.status(201).json({ message: "Item added successfully" });
+            }
+          );
+      })
+    } else {
+      return res.status(201).json({ message: "Item added successfully" });
+    }
+    
+  });
+});
+
 app.post("/:estab_id/:user_id/editestreview", (req, res) => {
   const { rating, comment, new_comment } = req.body;
   const { estab_id, user_id } = req.params;
@@ -376,21 +418,19 @@ app.put("/:item_id/updateitem", (req, res) => {
       if (err) return res.status(500).json({ error: err });
       // return res.json({ message: "Item updated successfully" });
 
-      // const classificationArray = classifications.split(',');
+    if (classifications && classifications.length > 0) {
       const deleteOldClassifications = `DELETE FROM itemclass WHERE item_id = ?`;
       db.query(deleteOldClassifications, [item_id], (err, result) => {
-        if (err) return res.status(500).json({ error: err });
+        if(err) return res.status(500).json({ error: err})
 
         // insert classifications into the item_class table
-        if (classifications && classifications.length > 0) {
-          const insertClassificationSql = `INSERT INTO itemclass (item_id, classification) VALUES ${classifications
-            .map(() => "(?, ?)")
-            .join(", ")}`;
+          const insertClassificationSql =
+            `INSERT INTO itemclass (item_id, classification) VALUES ${classifications.map(() => '(?, ?)').join(', ')}`;
           // console.log(item_id);
-          const classificationValues = [];
+          const classificationValues = []
           classifications.forEach((classification) => {
-            classificationValues.push(item_id, classification);
-          });
+            classificationValues.push(item_id, classification)
+          })
           db.query(
             insertClassificationSql,
             classificationValues,
@@ -398,17 +438,15 @@ app.put("/:item_id/updateitem", (req, res) => {
               if (err) {
                 return res.status(500).json({ error: err });
               }
-              return res
-                .status(201)
-                .json({ message: "Item added successfully" });
+              return res.status(201).json({ message: "Item added successfully" });
             }
           );
-        } else {
-          return res.status(201).json({ message: "Item added successfully" });
-        }
-      });
+      })
+    } else {
+        return res.status(201).json({ message: "Item added successfully" });
     }
-  );
+    
+  });
 });
 
 // delete item

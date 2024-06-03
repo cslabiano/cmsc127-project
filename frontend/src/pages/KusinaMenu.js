@@ -35,6 +35,7 @@ function KusinaMenu() {
   const [reviewData, setReviewData] = useState([]);
   const [estReview, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [contactNumbers, setContactNumbers] = useState([""])
 
   // const itemsToShow =
   //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
@@ -255,21 +256,49 @@ function KusinaMenu() {
       });
   };
 
-  // function to handle updating a food item
-  const handleUpdateFoodItem = (event) => {
-    event.preventDefault();
-    const updatedItem = {
-      ...editItem,
-      name: event.target.name.value,
-      description: event.target.desc.value,
-      price: event.target.price.value,
-      image: event.target.image.value,
-    };
-    setFoodItems(
-      foodItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-    );
-    setEditItem(null);
-    document.getElementById("edit_modal").close();
+  const handleAddContactField = () => {
+    setContactNumbers([...contactNumbers, ""]);
+  };
+
+  const handleContactChange = (index, value) => {
+    const newContacts = [...contactNumbers];
+    newContacts[index] = value;
+    setContactNumbers(newContacts);
+  };
+
+  const handleUpdateEstab = (e) => {
+    e.preventDefault();
+
+    const estabName = e.target.name.value;
+    const address = e.target.address.value;
+    const imageLink = e.target.link.value;
+
+    const updatedEstab = {
+      estab_name: estabName,
+      address: address,
+      image_link: imageLink,
+      contacts: contactNumbers
+    }
+
+    fetch(`http://localhost:3001/${establishment_id}/updateestab`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(updatedEstab)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error('Error updating item:', data.error);
+      } else {
+        console.log('Item updated successfully:', data);
+        window.location.reload();
+      }
+    })
+    .catch(error => console.error('Network error:', error));
+  }
+
+  const handleArrowClick = () => {
+    setSearchData([]);
   };
 
   const handleSearch = () => {
@@ -286,10 +315,6 @@ function KusinaMenu() {
         setSearchData(Array.isArray(searchData) ? searchData : []);
       })
       .catch((err) => console.log(err));
-  };
-
-  const handleArrowClick = () => {
-    setSearchData([]);
   };
 
   const handleSortPrice = (order) => {
@@ -759,7 +784,7 @@ function KusinaMenu() {
             <form
               method="dialog"
               className="modal-content"
-              //   onSubmit={handleSubmit}
+              onSubmit={handleUpdateEstab}
             >
               <div className="mb-2">
                 <p className="mb-2">Name:</p>
@@ -768,9 +793,6 @@ function KusinaMenu() {
                   id="name"
                   name="name"
                   placeholder="Name"
-                  //   value={editData.name || ""}
-                  //   onChange={handleInfoChange}
-                  //   value="Food Establishment"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
@@ -781,20 +803,30 @@ function KusinaMenu() {
                   id="address"
                   name="address"
                   placeholder="Address"
-                  //   value="Address of the food establishment"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
               <div className="mb-2">
-                <p className="mb-2">Contact No:</p>
-                <input
-                  type="text"
-                  id="contact"
-                  name="contact"
-                  placeholder="Contact"
-                  //   value="09XXXXXXXXX"
-                  className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
-                />
+                <p className="mb-2">Contact Numbers:</p>
+                  {contactNumbers.map((contact, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    value={contact}
+                    onChange={(e) => handleContactChange(index, e.target.value)}
+                    placeholder={`Contact Number ${index + 1}`}
+                    className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
+                  />
+                ))}
+              </div>
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleAddContactField}
+                  className="flex justify-end items-end text-kusinaprimary py-2 underline rounded-3xl focus:outline-none focus:shadow-outline"
+                >
+                  <p>Add Another Contact Number</p>
+                </button>
               </div>
               <div className="mb-2">
                 <p className="mb-2">Image Link:</p>
@@ -803,7 +835,6 @@ function KusinaMenu() {
                   id="link"
                   name="link"
                   placeholder="Link"
-                  //   value="09XXXXXXXXX"
                   className="bg-white font-poppins shrink appearance-none h-16 pl-4 pr-4 text-base w-full max-w-screen rounded-md border mb-2"
                 />
               </div>
@@ -811,7 +842,6 @@ function KusinaMenu() {
                 <button
                   type="submit"
                   className="bg-kusinaprimarylight hover:bg-kusinaprimary text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
-                  //   onClick={}
                 >
                   Apply Changes
                 </button>
