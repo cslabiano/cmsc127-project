@@ -35,7 +35,7 @@ function KusinaMenu() {
   const [reviewData, setReviewData] = useState([]);
   const [estReview, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [contactNumbers, setContactNumbers] = useState([""])
+  const [contactNumbers, setContactNumbers] = useState([""]);
 
   // const itemsToShow =
   //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
@@ -277,25 +277,25 @@ function KusinaMenu() {
       estab_name: estabName,
       address: address,
       image_link: imageLink,
-      contacts: contactNumbers
-    }
+      contacts: contactNumbers,
+    };
 
     fetch(`http://localhost:3001/${establishment_id}/updateestab`, {
-      method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(updatedEstab)
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedEstab),
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        console.error('Error updating item:', data.error);
-      } else {
-        console.log('Item updated successfully:', data);
-        window.location.reload();
-      }
-    })
-    .catch(error => console.error('Network error:', error));
-  }
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          console.error("Error updating item:", data.error);
+        } else {
+          console.log("Item updated successfully:", data);
+          window.location.reload();
+        }
+      })
+      .catch((error) => console.error("Network error:", error));
+  };
 
   const handleArrowClick = () => {
     setSearchData([]);
@@ -463,72 +463,6 @@ function KusinaMenu() {
               </button>
               {showPopup && (
                 <div className="popup flex justify-between flex-wrap animate-transitionIn">
-                  <div className="Category mt-8 flex align-middle">
-                    <p className="px-4 py-2 text-grn-i font-bold">
-                      Classification:
-                    </p>
-                    <div className="flex gap-2 flex-wrap">
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("meat")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("meat")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Meat
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("vegetable")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("vegetable")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Vegetable
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("dairy")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("dairy")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Dairy
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("pastry")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("pastry")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Pastry
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => toggleClassification("beverage")}
-                        className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
-                          itemClassifications.includes("beverage")
-                            ? "bg-kusinaprimary text-white"
-                            : "bg-kusinabg text-kusinaprimary"
-                        }`}
-                      >
-                        Beverage
-                      </button>
-                    </div>
-                  </div>
-
                   <div className="mt-8 flex align-middle">
                     <p className="px-4 py-2 text-grn-i font-bold">Price:</p>
                     <div className="flex gap-2 flex-wrap">
@@ -556,7 +490,7 @@ function KusinaMenu() {
                         Ascending
                       </button>
 
-                      <button
+                      {/* <button
                         type="button"
                         onClick={() => setBetween(!between)}
                         className={`border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 ${
@@ -566,11 +500,11 @@ function KusinaMenu() {
                         }`}
                       >
                         Between...
-                      </button>
+                      </button> */}
                     </div>
                   </div>
 
-                  {between && (
+                  {/* {between && (
                     <div className="mt-8 flex align-middle">
                       <p className="px-4 py-2 text-grn-i font-bold">
                         Min Price:
@@ -591,9 +525,9 @@ function KusinaMenu() {
                         className="border-2 border-kusinaprimary font-semibold rounded-full px-4 py-2 bg-kusinabg text-kusinaprimary"
                       />
                     </div>
-                  )}
+                  )} */}
 
-                  <div className="sortbutton mt-8">
+                  {/* <div className="sortbutton mt-8">
                     <button
                       type="button"
                       //   onClick={() => }
@@ -601,7 +535,7 @@ function KusinaMenu() {
                     >
                       Apply changes
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               )}
 
@@ -808,7 +742,7 @@ function KusinaMenu() {
               </div>
               <div className="mb-2">
                 <p className="mb-2">Contact Numbers:</p>
-                  {contactNumbers.map((contact, index) => (
+                {contactNumbers.map((contact, index) => (
                   <input
                     key={index}
                     type="text"
