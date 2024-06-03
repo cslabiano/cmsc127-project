@@ -9,6 +9,7 @@ import KusinaComment from "../components/KusinaComment";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import KusinaSkeleton from "../components/KusinaSkeleton";
 
 function KusinaMenu(props) {
   const user_id = localStorage.getItem("user_id");
@@ -16,7 +17,8 @@ function KusinaMenu(props) {
   let { search_term } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [classification, setClassification] = useState("NONE");
-  const [price, setPrice] = useState("NONE");
+  const [price, setPrice] = useState("");
+  const [sortPrice, setSortPrice] = useState([]);
   const [between, setBetween] = useState(false);
   const [estRating, setEstRating] = useState(5);
   const [minprice, setMinPrice] = useState(0);
@@ -32,6 +34,7 @@ function KusinaMenu(props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [reviewData, setReviewData] = useState([]);
   const [estReview, setComment] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // const itemsToShow =
   //   searchTerm !== "" && searchData.length > 0 ? searchData : data;
@@ -72,15 +75,22 @@ function KusinaMenu(props) {
       );
   };
 
-  const fetchSortedData = (order) => {
-    fetch(`http://localhost:3001/${establishment_id}/sortPrice?sort=${order}`)
-      .then((res) => res.json())
-      .then((foodItems) => {
-        console.log(foodItems);
-        setFoodItems(foodItems);
-      })
-      .catch((err) => console.log(err));
-  };
+  const fetchSortedData = (orderQuery) => {
+    // console.log("Price: ", price)
+    console.log("OrderQuery: ", orderQuery)
+    const order = orderQuery=== "asc" ? "ASC" : "DESC";
+    console.log("Order: ", order)
+    
+    fetch(`http://localhost:3001/${establishment_id}/sortprice?order=${order}`)
+    .then((res) => res.json())
+    .then((sortPrice) => {
+      console.log("Sorted Price: ", sortPrice);
+      setSortPrice(Array.isArray(sortPrice) ? sortPrice : []);
+      setIsLoading(false)
+    })
+    .catch((err) => console.log(err))
+    
+  }
 
   const fetchReviewData = () => {
     let endpoint;
@@ -260,10 +270,13 @@ function KusinaMenu(props) {
       body: JSON.stringify({ name: searchTerm }),
     })
       .then((res) => res.json())
-      .then((searchData) =>
+      .then((searchData) => {
+        console.log("Search data: ", searchData)
         setSearchData(Array.isArray(searchData) ? searchData : [])
+      }
       )
       .catch((err) => console.log(err));
+      
   };
 
   const handleArrowClick = () => {
@@ -271,13 +284,15 @@ function KusinaMenu(props) {
   };
 
   const handleSortPrice = (order) => {
-    console.log(order);
-    setPrice(order === "asc" ? "low" : "high");
-    fetchSortedData(order);
-  };
+    console.log("handleSortPrice: ",order)
+    setPrice(order === "asc" ? "low" : "high")
+    // console.log("Price after handle: ",price);
+    setIsLoading(true);
+    fetchSortedData(order)
+  }
 
   const foodToShow =
-    searchTerm !== "" && searchData.length > 0 ? searchData : foodItems;
+  (searchTerm !== "" && searchData.length > 0) ? searchData : isLoading ? <KusinaSkeleton /> : (sortPrice.length > 0 ? sortPrice : foodItems);
   // const foodToShow = foodItems;
 
   return (
@@ -540,7 +555,8 @@ function KusinaMenu(props) {
 
               <div className="flex justify-center mt-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {foodToShow.map((item) => (
+                  {isLoading && <KusinaSkeleton />}
+                  {!isLoading && foodToShow.map((item) => (
                     <div key={item.id}>
                       <KusinaFoodBox
                         name={item.name}

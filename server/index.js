@@ -11,7 +11,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   // NOTE: CHANGE PASSWORD BASED ON YOUR PERSONAL COMPUTER'S MYSQL ROOT ACCOUNT PASSWORD
-  password: "qwerty",
+  password: "1234",
   database: "kusina",
 });
 
@@ -22,6 +22,11 @@ db.connect((err) => {
     return;
   }
   console.log("Connected to the MySQL server.");
+});
+
+app.use((req, res, next) => {
+  console.log(`Request URL: ${req.url}, Method: ${req.method}`);
+  next();
 });
 
 /*********** USER TABLE ************/
@@ -274,7 +279,7 @@ app.get(`/:estab_id/estreviews`, (req, res) => {
   // }
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
-    console.log(data);
+    // console.log(data);
     return res.json(data);
   });
 });
@@ -285,7 +290,7 @@ app.get(`/:estab_id/estmonthreviews`, (req, res) => {
     "select user_id, user_name, date, time, rating, comment from estabreview natural join user where estab_id= ? and date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
   db.query(sql, [estab_id], (err, data) => {
     if (err) return res.json(err);
-    console.log(data);
+    // console.log(data);
     return res.json(data);
   });
 });
@@ -303,7 +308,7 @@ app.get("/:item_id/itemreviews", (req, res) => {
 
   db.query(sql, [item_id], (err, data) => {
     if (err) return res.json(err);
-    console.log(data);
+    // console.log(data);
     return res.json(data);
   });
 });
@@ -314,7 +319,7 @@ app.get(`/:item_id/itemmonthreviews`, (req, res) => {
     "select user_id, user_name, date, time, rating, comment from itemreview natural join user where item_id= ? and date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
   db.query(sql, [item_id], (err, data) => {
     if (err) return res.json(err);
-    console.log(data);
+    // console.log(data);
     return res.json(data);
   });
 });
@@ -328,7 +333,7 @@ app.post("/:estab_id/search", (req, res) => {
     "SELECT i.name, i.price, i.description, i.image_link, COALESCE(AVG(ir.rating), 0) AS avg_rating, ic.classification FROM item i LEFT JOIN establishment e ON i.estab_id = e.estab_id LEFT JOIN itemreview ir ON i.item_id = ir.item_id LEFT JOIN itemclass ic ON ic.item_id = i.item_id WHERE LOWER(i.name) LIKE LOWER(?) AND i.estab_id = ? GROUP BY i.item_id";
   db.query(sql, [`%${name}%`, estab_id], (err, data) => {
     if (err) return res.status(500).json({ error: err });
-    console.log("Query results:", data);
+    // console.log("Query results:", data);
     return res.json(data);
   });
 });
@@ -470,10 +475,10 @@ app.get(`/:estab_id/filterClass`, (req, res) => {
       .status(400)
       .json({ error: "Classification query parameter is required" });
   }
-  console.log(classification);
-  const classificationsArray = classification.split(",");
-  const placeholders = classificationsArray.map(() => "?").join(",");
-  console.log(placeholders);
+  // console.log(classification);
+  const classificationsArray = classification.split(',');
+  const placeholders = classificationsArray.map(() => '?').join(',');
+  // console.log(placeholders);
   const sql = `SELECT i.*, ic.classification FROM item i JOIN itemclass ic ON i.item_id = ic.item_id WHERE i.estab_id = ? AND ic.classification IN (${placeholders})`;
   const queryParams = [estab_id, ...classificationsArray];
   db.query(sql, queryParams, (err, results) => {
@@ -485,21 +490,34 @@ app.get(`/:estab_id/filterClass`, (req, res) => {
   });
 });
 
-app.get(`/:estab_id/sortPrice`, (req, res) => {
-  const { sort } = req.query;
+app.get(`/:estab_id/sortprice`, (req, res) => {
+  console.log("I m here")
+  process.stdout.write("Im here")
   const { estab_id } = req.params;
-  const sortOrder = sort === "asc" ? "ASC" : "DESC";
-  const sql = `SELECT i.*, e.estab_name AS establishmentName, i.image_link as imageLink, e.address AS establishmentAddress, COALESCE(AVG(ir.rating), 0) AS avg_rating, GROUP_CONCAT(DISTINCT c.classification) AS classifications
+  const { order } = req.query;
+  console.log("Received a request to /:estab_id/sortprice endpoint"); // Log at the start of the request
+  console.log("Received sort order:", order);
+  console.log("Received establishment id:", estab_id);
+
+  let sortsql = `SELECT i.*, e.estab_name AS establishmentName, e.address AS establishmentAddress, COALESCE(AVG(ir.rating), 0) AS avg_rating, GROUP_CONCAT(DISTINCT c.classification) AS classifications
     FROM item i
     JOIN establishment e ON i.estab_id = e.estab_id
     LEFT JOIN itemclass c ON c.item_id = i.item_id
     LEFT JOIN itemreview ir ON i.item_id = ir.item_id
     WHERE i.estab_id = ?
-    GROUP BY i.item_id
-    ORDER BY i.price ${sortOrder}`;
-  db.query(sql, [estab_id], (err, data) => {
+    GROUP BY i.item_id`;
+
+    if (order === "DESC") {
+      sortsql += " ORDER BY i.price DESC";
+    } else {
+      sortsql += " ORDER BY i.price ASC";
+    }
+
+    console.log("SQL: ", sortsql)
+  db.query(sortsql, [estab_id], (err, results) => {
     if (err) return res.json(err);
-    return res.json(data);
+    console.log("Sort Price: ", results)
+    return res.status(200).json(results);
   });
 });
 /*************** ITEM REVIEW TABLE ***************/
